@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+\\"-//Hibernate/Hibernate Configuration DTD 3.0//EN\\"
+\\"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd\\">
+
+<hibernate-configuration>
+
+<session-factory>
+
+<!-- Database connection settings -->
+<property name=\\"connection.driver_class\\">org.gjt.mm.mysql.Driver</property>
+<property name=\\"connection.url\\">jdbc:mysql://${LINGCLOUD_SERVER}:3306/naming?useUnicode=true&amp;characterEncoding=utf-8&amp;mysqlEncoding=utf-8</property>
+<property name=\\"connection.username\\">${MYSQL_USERNAME}</property>
+<property name=\\"connection.password\\">${MYSQL_PASSWORD}</property>
+
+<!-- SQL dialect -->
+<!--<property name=\\"dialect\\">org.hibernate.dialect.HSQLDialect</property>-->
+<property name=\\"dialect\\">org.hibernate.dialect.MySQLDialect</property>
+
+<!-- Enable Hibernate's automatic session context management -->
+<property name=\\"current_session_context_class\\">thread</property>
+
+<!-- Disable the second-level cache -->
+<property name=\\"cache.provider_class\\">org.hibernate.cache.NoCacheProvider</property>
+
+<!-- Echo all executed SQL to stdout -->
+<!--
+<property name=\\"show_sql\\">true</property>
+<property name=\\"format_sql\\">true</property>
+<property name=\\"use_sql_comments\\">true</property>
+-->
+
+<!-- Use C3P0 connection pool -->
+<property name=\\"hibernate.connection.provider_class\\">
+	org.hibernate.connection.C3P0ConnectionProvider
+</property>
+<property name=\\"hibernate.c3p0.max_size\\">20</property>
+<property name=\\"hibernate.c3p0.min_size\\">5</property>
+<property name=\\"hibernate.c3p0.timeout\\">600</property>
+<property name=\\"hibernate.c3p0.max_statements\\">100</property>
+<property name=\\"hibernate.c3p0.idle_test_period\\">120</property>
+<property name=\\"hibernate.c3p0.acquire_increment\\">2</property>
+
+<!-- JDBC connection pool (use the built-in) -->
+<!--<property name=\\"connection.pool_size\\">1</property>-->
+
+
+<!-- Drop and re-create the database schema on startup -->
+<!-- <property name=\\"hbm2ddl.auto\\">create</property> -->
+
+<mapping file=\\"${LINGCLOUD_HOME_DIR}/conf/GNode.hbm.xml\\"/>
+
+</session-factory>
+
+</hibernate-configuration>

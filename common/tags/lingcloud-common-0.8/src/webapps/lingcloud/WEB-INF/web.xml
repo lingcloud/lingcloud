@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	version="2.4"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>LingCloud</display-name>
+	<description>LingCloud</description>
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>XMMPortal.root</param-value>
+	</context-param>
+
+	<!-- define a welcome page!-->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- Set log4j-->
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/log4j.properties</param-value>
+	</context-param>
+
+	<!--
+		SetCharsetEncoding Filter
+	-->
+	<filter>
+		<!-- filter name -->
+		<filter-name>SetCharsetEncodingFilter</filter-name>
+		<!-- which class is this filter-->
+		<filter-class>org.lingcloud.molva.portal.util.SetCharacterEncodingFilter</filter-class>
+		<!--
+			filter init parameters, these parameters will be used by filter's
+			init method.
+		-->
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>SetCharsetEncodingFilter</filter-name>
+		<!-- scope -->
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!--
+		No need CloseSession Filter
+	-->
+	<!-- Set ActionServlet Class-->
+	<servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+		<init-param>
+			<param-name>config</param-name>
+			<param-value>/WEB-INF/struts-config.xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>3</param-value>
+		</init-param>
+		<init-param>
+			<param-name>detail</param-name>
+			<param-value>3</param-value>
+		</init-param>
+		<!-- here ?-->
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>fileupload</servlet-name>
+		<servlet-class>org.lingcloud.molva.portal.servlet.FileUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileupload</servlet-name>
+		<url-pattern>/JSP/fileupload</url-pattern>
+
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
+	<!--Config struts and jstl tags (diff )-->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/applicationContext-*.xml,classpath*:applicationContext-*.xml
+		</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<mime-mapping>
+		<extension>doc</extension>
+		<mime-type>application/msword</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>xls</extension>
+		<mime-type>application/msexcel</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>pdf</extension>
+		<mime-type>application/pdf</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>zip</extension>
+		<mime-type>application/zip</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>rar</extension>
+		<mime-type>application/rar</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>txt</extension>
+		<mime-type>application/txt</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>chm</extension>
+		<mime-type>application/mshelp</mime-type>
+	</mime-mapping>
+
+	<mime-mapping>
+		<extension>mht</extension>
+		<mime-type>text/x-mht</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>rar</extension>
+		<mime-type>application/octet-stream</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>iso</extension>
+		<mime-type>application/octet-stream</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>exe</extension>
+		<mime-type>application/octet-stream</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>ape</extension>
+		<mime-type>application/octet-stream</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>rmvb</extension>
+		<mime-type>application/octet-stream</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>ico</extension>
+		<mime-type>image/x-icon</mime-type>
+	</mime-mapping>
+
+	<mime-mapping>
+		<extension>doc</extension>
+		<mime-type>application/msword</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>xls</extension>
+		<mime-type>application/vnd.ms-excel</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>ppt</extension>
+		<mime-type>application/vnd.ms-powerpoint</mime-type>
+	</mime-mapping>
+</web-app>
+
