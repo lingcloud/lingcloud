@@ -145,6 +145,12 @@ public class PartitionManager {
 		}
 	}
 
+	/**
+	 * Refresh the physical node.
+	 * @param pnid
+	 * @return
+	 * @throws Exception
+	 */
 	public synchronized PhysicalNode refreshPhysicalNode(String pnid)
 			throws Exception {
 		AssetManagerImpl ami = new AssetManagerImpl();
