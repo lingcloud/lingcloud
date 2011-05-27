@@ -58,6 +58,15 @@
 		<delete dir="${common.dist.dir}" />
 	</target>
 
+	<target name="clean-conf">
+		<!-- delete files created from .tmpl when do configure.sh -->
+		<delete file="conf/naming-hibernate.cfg.xml" />
+		<delete file="conf/molva.conf" />
+		<delete file="bin/scripts/configure/naming-conf/naming.sql" />
+		<delete file="bin/scripts/configure/opennebula-conf/oned.conf" />
+		<delete file="bin/scripts/configure/opennebula-conf/tm_clone.sh" />
+	</target>
+
 	<target name="clean-build">
 		<delete dir="${common.dist.dir}/build" />
 	</target>
