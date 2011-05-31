@@ -5,6 +5,7 @@
 <%@ page import="java.io.File"%>
 <%@ page import="java.io.FileInputStream"%>
 <%@ page import="java.io.InputStreamReader"%>
+<%@ page import="org.lingcloud.molva.xmm.vam.util.VAMConfig"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ page isELIgnored="false"%>
@@ -19,13 +20,22 @@
 
 	Locale loc = (Locale) request.getSession().getAttribute(
 			Globals.LOCALE_KEY);
-	if (loc == null) {
-		loc = new Locale("zh", "CN");
-		request.getSession().setAttribute(Globals.LOCALE_KEY, loc);
+	
+	String lang = VAMConfig.getLanguageSetting();
+
+	if (lang != null && lang.equals("zh")){
+		
+		if(loc == null){
+			loc = new Locale("zh","CN");
+			request.getSession().setAttribute(Globals.LOCALE_KEY, loc);	
+		}		
+	}else{
+		if(loc == null){
+			loc = new Locale("en","US");
+			request.getSession().setAttribute(Globals.LOCALE_KEY, loc);	
+		}
 	}
-	if (loc.getLanguage().equals("zh")) {
-	} else {
-	}
+
 	String version = "";
 	BufferedReader br = new BufferedReader(
 			new InputStreamReader(

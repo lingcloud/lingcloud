@@ -849,6 +849,21 @@
 	String highlight = "appliance";
 	Locale loc = (Locale) request.getSession().getAttribute(
 			Globals.LOCALE_KEY);
+
+	String lang = VAMConfig.getLanguageSetting();
+
+	if (lang != null && lang.equals("zh")){
+		if(loc == null){
+			loc = new Locale("zh","CN");
+			request.getSession().setAttribute(Globals.LOCALE_KEY, loc);	
+		}		
+	}else{
+		if(loc == null){
+			loc = new Locale("en","US");
+			request.getSession().setAttribute(Globals.LOCALE_KEY, loc);	
+		}
+	}
+	
 	final String browser_name = request.getRequestURI();
 	final String FOL_IMG = "";
 	boolean nohtml = false;

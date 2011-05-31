@@ -5,6 +5,7 @@
 <%@ page import="org.lingcloud.molva.xmm.ac.PartitionAC"%>
 <%@ page import="org.lingcloud.molva.ocl.lease.LeaseConstants.LeaseLifeCycleState"%>
 <%@ page import="org.lingcloud.molva.xmm.util.XMMConstants"%>
+<%@ page import="org.lingcloud.molva.xmm.vam.util.VAMConfig"%>
 <%@ page import="org.apache.struts.Globals"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -17,7 +18,20 @@
 			String highlight = "cluster";
 					
 			Locale loc = (Locale)request.getSession().getAttribute(Globals.LOCALE_KEY);
-			
+
+			String lang = VAMConfig.getLanguageSetting();
+
+			if (lang != null && lang.equals("zh")){
+				if(loc == null){
+					loc = new Locale("zh","CN");
+					request.getSession().setAttribute(Globals.LOCALE_KEY, loc);	
+				}		
+			}else{
+				if(loc == null){
+					loc = new Locale("en","US");
+					request.getSession().setAttribute(Globals.LOCALE_KEY, loc);	
+				}
+			}
 			String error = request.getParameter("error");
 			XMMClient vxc = null;
 			List<Partition> pl = null;

@@ -31,6 +31,9 @@ $(document).ready(function() {
   });
 });
 
+$(function() {   
+    $("#upload_container").draggable();   
+});
 
 function open_ul(){
 	
@@ -41,7 +44,7 @@ function open_ul(){
 	document.body.appendChild(divInb);
 	divInb.setAttribute('id','upload_inbetween');
 	divInb.setAttribute('style','background: rgb(136, 136, 136) none repeat scroll 0% 0%; position: absolute; z-index: 2; top: 0px; left: 0px; width: 100%; height: 100%;  opacity: 0.5;');
-	document.getElementById("upload_container").setAttribute("style","position: absolute; z-index: 99999; visibility: visible; left: 30%;top: 30%;width: 500px; display: block;");;
+	document.getElementById("upload_container").setAttribute("style","position: absolute; z-index: 99999; visibility: visible; left: 30%;top: 30%;width: 500px; display: block;");
 	if(navigator.appName == "Microsoft Internet Explorer"){
 		document.getElementById("upload_inbetween").style.filter = "alpha(opacity=40)";
 		document.getElementById("upload_container").style.filter = "alpha(opacity=100)";
@@ -64,8 +67,7 @@ function close_ul(){
 <body>
 
 <div id="upload_container"
-	style="display: none; position: absolute; z-index: 99999; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; min-width: 500px; max-width: 500px; left: 550px; top: 130px;"
-	class="ui-draggable">
+	style="display: none; position: absolute; z-index: 99999;" class="ui-draggable">
 <center><h1 id="upload_title" style="cursor: move;"></h1>
 <div id="upload_content"><input id="file_upload" name="file_upload"
 	type="file" /></div>
