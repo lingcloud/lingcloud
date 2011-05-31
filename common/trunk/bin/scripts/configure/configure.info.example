@@ -61,6 +61,9 @@ MAKE_APPLIANCE_HOST=10.0.0.12
 # the public IP pool for virtual appliances being made
 MAKE_APPLIANCE_IP_POOL=10.0.0.231-235
 
+# Display language of UI (e.g. en, zh)
+UI_LANGUAGE=en
+
 # Even if you only want to configure LingCloud Molva, you should complete
 # the following OpenNebula section to make Molva known where OpenNebula is.
 

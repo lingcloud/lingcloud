@@ -144,6 +144,7 @@ then
 	get_val "PUBLIC_IP_POOL" "the public IP pool for runtime virtual machines"
 	get_val "MAKE_APPLIANCE_HOST" "the host used to make appliance"
 	get_val "MAKE_APPLIANCE_IP_POOL" "the public IP pool for virtual appliances being made"
+	get_val "UI_LANGUAGE" "Display language of UI (e.g. en, zh)"
 
 	get_val "NFS_SERVER" "NFS server"
 	get_val "NFS_MOUNT_DIR" "NFS local mount directory"
