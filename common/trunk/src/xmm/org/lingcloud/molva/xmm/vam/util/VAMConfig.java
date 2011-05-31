@@ -89,6 +89,19 @@ public class VAMConfig {
 	}
 
 	/**
+	 * get the default language.
+	 * 
+	 * @return the language from molva.conf
+	 */
+	public static String getLanguageSetting(){
+		String lang = (String) properties.get("uiLanguage");
+		if(lang != null && lang != ""){
+			lang = lang.replace("\"", "");
+		}
+		return lang;
+	}
+	
+	/**
 	 * get the store file directory path.
 	 * 
 	 * @return the path
