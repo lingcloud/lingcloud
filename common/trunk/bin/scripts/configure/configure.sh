@@ -154,7 +154,7 @@ then
 	get_val "OPENNEBULA_MYSQL_USERNAME" "existed MySQL username for OpenNebula"
 	get_val "OPENNEBULA_MYSQL_PASSWORD" "existed MySQL password for OpenNebula"
 
-	_REGNUM="[1-9]\{1,3\}"
+	_REGNUM="[0-9]\{1,3\}"
 	_IP_1=`expr match "$MAKE_APPLIANCE_IP_POOL" "^\($_REGNUM\)\\.$_REGNUM\\.$_REGNUM\\.$_REGNUM-$_REGNUM$"`
 	_IP_2=`expr match "$MAKE_APPLIANCE_IP_POOL" "^$_REGNUM\\.\($_REGNUM\)\\.$_REGNUM\\.$_REGNUM-$_REGNUM$"`
 	_IP_3=`expr match "$MAKE_APPLIANCE_IP_POOL" "^$_REGNUM\\.$_REGNUM\\.\($_REGNUM\)\\.$_REGNUM-$_REGNUM$"`
