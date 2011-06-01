@@ -8,19 +8,19 @@
 0. System requirements
 ================================================================================
 
-[REQUERED] Main server (the server for LingCloud installation):
+[REQUIRED] Main server (the server for LingCloud installation):
   * CentOS 5.3-5.6 x86_64
   * Yum software source available
   * Firewall allowing 22, 5901 .. 59XX, and 8080 ports
 
-[REQUERED] NFS server (the server for virtual machine images storage):
+[REQUIRED] NFS server (the server for virtual machine images storage):
   * CentOS 5.3-5.6 x86_64
   * Yum software source available
   * Firewall allowing 22, 111, and 2049 ports
   * An NFS directory exported and allowing to be mounted from all the servers
   * Regardless of performance, can be the same server as the main server
 
-[REQUERED] Appliance server (the server for virtual appliances making):
+[REQUIRED] Appliance server (the server for virtual appliances making):
   * CentOS 5.3-5.6 x86_64
   * Yum software source available
   * Firewall allowing 22, 3306, 5901 .. 59XX, and 5981 .. 59XX ports
