@@ -29,11 +29,7 @@ $(document).ready(function() {
 	      alert(errorObj.type + ' Error: ' + errorObj.info);
 	    }
   });
-});
-
-$(function() {   
-    $("#upload_container").draggable();   
-});
+});  
 
 function open_ul(){
 	
@@ -45,10 +41,21 @@ function open_ul(){
 	divInb.setAttribute('id','upload_inbetween');
 	divInb.setAttribute('style','background: rgb(136, 136, 136) none repeat scroll 0% 0%; position: absolute; z-index: 2; top: 0px; left: 0px; width: 100%; height: 100%;  opacity: 0.5;');
 	document.getElementById("upload_container").setAttribute("style","position: absolute; z-index: 99999; visibility: visible; left: 30%;top: 30%;width: 500px; display: block;");
+	document.getElementById("upload_container").setAttribute("class","ui-draggable");
 	if(navigator.appName == "Microsoft Internet Explorer"){
 		document.getElementById("upload_inbetween").style.filter = "alpha(opacity=40)";
 		document.getElementById("upload_container").style.filter = "alpha(opacity=100)";
 	}
+	//Modified by Taoliang.
+	//Date: 2011.06.07
+	//Problem:When use this function on Chrome,missed click event.
+	$('#upload_title').mousedown(function() {
+		$("#upload_container").draggable();
+	});
+
+	$('#upload_title').mouseup(function() {
+		$("#upload_container").draggable("destroy");
+	});
 }
 function up(){
 	$("#file_upload").uploadifyUpload();
