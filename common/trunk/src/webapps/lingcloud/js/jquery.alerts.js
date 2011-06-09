@@ -235,7 +235,7 @@
 						top: '0px',
 						left: '0px',
 						width: '100%',
-						height: $(document).height(),
+						height: $(window).height(),
 						background: $.alerts.overlayColor,
 						opacity: $.alerts.overlayOpacity
 					});
@@ -257,7 +257,7 @@
 			
 			// IE6 fix
 			if( $.browser.msie && parseInt($.browser.version) <= 6 ) top = top + $(window).scrollTop();
-			$("#popup_overlay").height( $(document).height() );
+			$("#popup_overlay").height( $(window).height() );
 			$("#popup_container").css({
 				top: top + 'px',
 				left: left + 'px'

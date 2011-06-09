@@ -266,6 +266,14 @@ selectNone = function(targetCheckBox){
 callbackNodeDetailForCreateCluster = function(basePath, targetDiv, parGuid){
 	var form = document.getElementById("fastNewVirtualClusterForm");
 	var tdiv = document.getElementById(targetDiv);
+	if(tdiv){	
+		var _parentElement = tdiv.parentNode;
+	    if(_parentElement){
+	           _parentElement.removeChild(tdiv);
+	    }
+	}
+    tdiv = document.createElement("div");
+    tdiv.id = targetDiv;
 	var parid = form.parguid.value.trim();
 	if (parid === "") {
         alert(lingcloud.error.partIDNotNull);
@@ -280,13 +288,20 @@ callbackNodeDetailForCreateCluster = function(basePath, targetDiv, parGuid){
 	nodenum = form.nodenum.value.trim();
 	if(nodenum === "" ){
 		//alert("Please set node num.");
-		tdiv.innerHTML= lingcloud.error.nodeNumNotAssigned;
+		var tr = document.createElement("div");
+		tr.innerHTML= lingcloud.error.nodeNumNotAssigned;
+		tdiv.appendChild(tr);
+		if(_parentElement){
+			_parentElement.appendChild(tdiv);
+		}
 		return;
 	}
 	
 	url=basePath + "JSP/AjaxLoadDetailNodeConfig.jsp?nodenum="+nodenum + "&parid=" + parGuid;
-	tdiv.innerHTML="<table id=\"loadingTable\" width=600px><tbody><tr><td><img src=" + basePath + "images/table_loading.gif /></td><td>&nbsp;&nbsp;Loading Information...</td></tr></tbody></table>";
-    var ajax = initAjax();
+	var div = document.createElement("div");
+	div.innerHTML="<table id=\"loadingTable\" width=600px><tbody><tr><td><img src=" + basePath + "images/table_loading.gif /></td><td>&nbsp;&nbsp;Loading Information...</td></tr></tbody></table>";
+    tdiv.appendChild(div);
+	var ajax = initAjax();
     if (ajax === false || url === null) {
         return false;
     }
@@ -298,8 +313,11 @@ callbackNodeDetailForCreateCluster = function(basePath, targetDiv, parGuid){
                 if (xmlDoc === null) {
                     return;
                 }
-                //TODO           
-                tdiv.innerHTML = xmlDoc;
+                //TODO         
+                var div2 = document.createElement("div");
+            	div.innerHTML = xmlDoc;
+            	tdiv.appendChild(div2);
+//                tdiv.innerHTML = xmlDoc;
                 if(radio[0].checked){
                 	for(var i= 11; ;i++){
                 		var xx = 'nodeDetailR' + i;
@@ -321,6 +339,9 @@ callbackNodeDetailForCreateCluster = function(basePath, targetDiv, parGuid){
 							pageDiv4NodeDetail('nodeDetailR', pid, 10);
 						}
 					});
+                }
+                if(_parentElement){
+                	_parentElement.appendChild(tdiv);
                 }
             } else {
                 alert(lingcloud.error.responseNotFound + ajax.statusText);
@@ -938,6 +959,14 @@ changeCreateClusterTable = function(basePath, parid, targetDiv, random){
     };
     ajax.send(null);
 };
+showDialogForFastCreateCluster = function (basePath) {    
+    var str = "<form id=\"fastNewVirtualClusterForm\" action=\"" + basePath + "fastNewVirtualCluster.do\" method=\"post\">";
+    str += "<table id=\"loadingTable\" width=650px><tbody><tr><td><img src=" + basePath + "images/table_loading.gif /></td><td>&nbsp;&nbsp;Loading Information...</td></tr></tbody></table>";
+    str += "<script>loadForCreateCluster('" + basePath + "', 'loadingTable', 'fastNewVirtualClusterTable', 'fastNewVirtualClusterDiv')</script>";
+    str += "<table id=\"fastNewVirtualClusterTable\" style=\"DISPLAY:none\" ></table></form>";
+    jSubmit(str, lingcloud.Infrastructure.clusterOp.createCluster, callbackForFastCreateCluster);
+};
+
 loadForCreateCluster = function (basePath, loadingTable, targetTable, targetDiv) {
     var ajax = initAjax();
     if (ajax === false || url === null) {
@@ -956,8 +985,12 @@ loadForCreateCluster = function (basePath, loadingTable, targetTable, targetDiv)
 
                 var ltable = document.getElementById(loadingTable);
                 var ttable = document.getElementById(targetTable);
-                var div = document.getElementById(targetDiv);
-                div.innerHTML = xmlDoc;
+                var div = document.getElementById("innerhtml");
+                var tr = document.createElement("tr");
+                var td = document.createElement("td");
+                td.innerHTML = "<tbody><tr><td>" + xmlDoc + "</td></tr></tbody>";
+                tr.appendChild(td);
+                ttable.appendChild(tr);
                 ltable.style.display = "none";
                 ttable.style.display = "";
                 $.alerts._reposition();
@@ -1299,14 +1332,7 @@ diffTime = function(firstTime, secondTime, dateFormat){
 	
 	return (ft<et);
 }
-showDialogForFastCreateCluster = function (basePath) {    
-    var str = "<form id=\"fastNewVirtualClusterForm\" action=\"" + basePath + "fastNewVirtualCluster.do\" method=\"post\">";
-    str += "<table id=\"loadingTable\" width=650px><tbody><tr><td><img src=" + basePath + "images/table_loading.gif /></td><td>&nbsp;&nbsp;Loading Information...</td></tr></tbody></table>";
-    str += "<script>loadForCreateCluster('" + basePath + "', 'loadingTable', 'fastNewVirtualClusterTable', 'fastNewVirtualClusterDiv')</script>";
-    str += "<table id=\"fastNewVirtualClusterTable\" style=\"DISPLAY:none\" ><tbody>";
-    str += "<tr><td><div id=\"fastNewVirtualClusterDiv\"></div></td></tr></tbody></table></form>";
-    jSubmit(str, lingcloud.Infrastructure.clusterOp.createCluster, callbackForFastCreateCluster);
-};
+
 callbackForCreateAppliance = function (result) {
     if (result) {
 		// ok.
