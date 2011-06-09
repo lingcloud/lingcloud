@@ -56,10 +56,10 @@ partitionDriverPath="${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/partition-driver.sh"
 virtualClusterConfigDriverPath="${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/vcConfig_driver.sh"
 
 # static meta info sender
-staticMetaInfoSender="scp ${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/static-metaInfo-collector.sh root@\\$host:/tmp/static-metaInfo-collector.sh"
+staticMetaInfoSender="scp -o StrictHostKeyChecking=no -o PasswordAuthentication=no ${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/static-metaInfo-collector.sh root@\\$host:/tmp/static-metaInfo-collector.sh"
 
 # static meta info collector
-staticMetaInfoCollector="ssh -o StrictHostKeyChecking=no root@\\$host bash -c /tmp/static-metaInfo-collector.sh"
+staticMetaInfoCollector="ssh -o StrictHostKeyChecking=no -o PasswordAuthentication=no root@\\$host bash -c /tmp/static-metaInfo-collector.sh"
 
 # command killing VM, this script is not available now, it is rarely used.
 vmKiller="${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/vmkiller.sh"

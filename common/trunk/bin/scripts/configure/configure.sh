@@ -215,6 +215,7 @@ then
 	command cp "opennebula-conf/im_xen.conf" "$OPENNEBULA_DIR/etc/im_xen" || onerror "failed to copy im_xen.conf"
 	command cp "opennebula-conf/xmm4nics.sh" "$OPENNEBULA_DIR/lib/remotes/im/xen.d" || onerror "failed to copy xmm4nics.sh"
 	command cp "opennebula-conf/tm_clone.sh" "$OPENNEBULA_DIR/lib/tm_commands/nfs" || onerror "failed to copy tm_clone.sh"
+	command cp "opennebula-conf/CommandManager.rb" "$OPENNEBULA_DIR/lib/ruby" || onerror "failed to copy CommandManager.rb"
 fi
 
 # 2.2. Initialize OpenNebula database
@@ -267,4 +268,3 @@ fi
 popd
 
 echo "Done."
-
