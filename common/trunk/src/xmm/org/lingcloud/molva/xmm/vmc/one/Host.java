@@ -269,6 +269,13 @@ public class Host extends PoolElement {
 		} else if (state.equals(HOST_STATES[2])) {
 			newpn.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
 					.toString());
+		} else if (state.equals(HOST_STATES[3])) {
+			newpn.setRunningStatus(XMMConstants.MachineRunningState.ERROR
+					.toString());
+		} 
+		else if (state.equals(HOST_STATES[4])) {
+			newpn.setRunningStatus(XMMConstants.MachineRunningState.STOP
+					.toString());
 		}
 		// Other state will handled by outside.
 		return newpn;
