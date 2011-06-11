@@ -171,7 +171,7 @@ then
 		for ((_i=_IP_START,_j=1;_i<=_IP_END;_i++,_j++))
 		do
 			_MAC_4=`printf "%02x" $_i`
-			MAKE_APPLIANCE_VM="${MAKE_APPLIANCE_VM}makeApplianceVM$_j=appliance-$_j,02:00:00:01:00:$_MAC_4|00:00:$_MAC_1:$_MAC_2:$_MAC_3:$_MAC_4,xenbr0,$((80+_j))
+			MAKE_APPLIANCE_VM="${MAKE_APPLIANCE_VM}makeApplianceVM$_j=appliance-$_j,02:00:00:01:00:$_MAC_4|ee:ee:$_MAC_1:$_MAC_2:$_MAC_3:$_MAC_4,xenbr0,$((80+_j))
 " # newline is necessary
 		done
 	fi

@@ -17,6 +17,7 @@ LINGCLOUD_HOME="$PWD/../../.."
 LINGCLOUD_CONF_DIR="$LINGCLOUD_HOME/conf"
 LINGCLOUD_CONF_MOLVA="$LINGCLOUD_CONF_DIR/molva.conf"
 NFS_MOUNT_DIR=`grep "nfsMountDir=" "$LINGCLOUD_CONF_MOLVA" | egrep -v "^[[:blank:]]*#" | head -1 | cut -d= -f2-`
+NFS_MOUNT_DIR=`eval echo $NFS_MOUNT_DIR`
 export ONE_LOCATION="$NFS_MOUNT_DIR/opennebula"
 export ONE_AUTH="$ONE_LOCATION/etc/one_auth"
 export ONE_XMLRPC="http://localhost:2633/RPC2"

@@ -106,13 +106,16 @@ makeApplianceUser="root"
 # the count of appliances can be made (MAX: 19)
 makeApplianceVMCount="${MAKE_APPLIANCE_VM_COUNT}"
 
+# the IP pool of appliances
+makeApplianceIpPool="${MAKE_APPLIANCE_IP_POOL}"
+
 # the information of virtual machine used to make appliance
 # makeApplianceVM*=<name>,<MAC address>,<bridge>,<vnc port>
-# makeApplianceVM1=appliance-1,02:00:00:01:00:f1|00:00:ac:16:01:f1,xenbr0,81
-# makeApplianceVM2=appliance-2,02:00:00:01:00:f2|00:00:ac:16:01:f2,xenbr0,82
-# makeApplianceVM3=appliance-3,02:00:00:01:00:f3|00:00:ac:16:01:f3,xenbr0,83
-# makeApplianceVM4=appliance-4,02:00:00:01:00:f4|00:00:ac:16:01:f4,xenbr0,84
-# makeApplianceVM5=appliance-5,02:00:00:01:00:f5|00:00:ac:16:01:f5,xenbr0,85
+# makeApplianceVM1=appliance-1,02:00:00:01:00:f1|ee:ee:ac:16:01:f1,xenbr0,81
+# makeApplianceVM2=appliance-2,02:00:00:01:00:f2|ee:ee:ac:16:01:f2,xenbr0,82
+# makeApplianceVM3=appliance-3,02:00:00:01:00:f3|ee:ee:ac:16:01:f3,xenbr0,83
+# makeApplianceVM4=appliance-4,02:00:00:01:00:f4|ee:ee:ac:16:01:f4,xenbr0,84
+# makeApplianceVM5=appliance-5,02:00:00:01:00:f5|ee:ee:ac:16:01:f5,xenbr0,85
 ${MAKE_APPLIANCE_VM}
 
 # display language of UI (e.g. en, zh)
