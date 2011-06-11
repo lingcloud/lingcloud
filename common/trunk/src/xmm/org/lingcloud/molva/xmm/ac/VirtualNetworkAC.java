@@ -664,12 +664,8 @@ public class VirtualNetworkAC extends AssetController {
 		String nipdMac = getValidMacField(Integer.toHexString(nipd));
 		String mac = XMMConstants.MAC_PREFIX + ":" + nipaMac + ":"
 				+ nipbMac + ":" + nipcMac + ":" + nipdMac;
-		if (VirtualNetworkManager.isMacUsed(mac)) {
-			return "00:00:" + nipaMac + ":" + nipbMac + ":" + nipcMac + ":"
-					+ nipdMac;
-		} else {
-			return mac;
-		}
+
+		return mac;
 	}
 
 	private List<Nic> generateNicListByIps(String headnodeip,

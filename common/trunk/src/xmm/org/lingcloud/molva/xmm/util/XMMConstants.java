@@ -127,7 +127,7 @@ public class XMMConstants {
 	/**
 	 * Fixme this mac prefix can not be modified, due to many reasons. hehe!
 	 */
-	public static final String MAC_PREFIX = "00:00";
+	public static final String MAC_PREFIX = "ee:ee";
 
 	public static final String QUOTA_CPU = "QUOTA_CPU";
 
