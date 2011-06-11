@@ -31,58 +31,69 @@ function fixIp2Host {
 	echo ""
 }
 
+function ipRange2Host {
+	local range=$1
+	description=$2
+	if [ "$range" = "" ]
+	then
+		while [ 0 ]
+		do
+			echo "## $description"
+			echo "## Can't get the ip range for vm"
+			echo -n "## Do you want to exit (y/n)?"
+			read out
+			if [ "$out" != "y" -a "$out" != "Y" ]
+			then
+				echo -n "## Input the ip range (e.g. 192.168.0.1-100): "
+				read range
+				if chkRange $range
+				then
+					break
+				fi
+			else
+				exit 1
+			fi
+		done
+	fi
+
+	echo ""
+
+	macPrefix="EE:EE"
+
+	tmp=`echo $range | awk -F '-' '{print $1}'`
+	ipSep1=`echo $tmp | awk -F '.' '{print $1}'`
+	ipSep2=`echo $tmp | awk -F '.' '{print $2}'`
+	ipSep3=`echo $tmp | awk -F '.' '{print $3}'`
+	ipSep4=`echo $tmp | awk -F '.' '{print $4}'`
+	ipSep5=`echo $range | awk -F '-' '{print $2}'`
+
+	ipPrefix="$ipSep1.$ipSep2.$ipSep3"
+
+	macPrefix="$macPrefix:"`echo "obase=16;ibase=10;$ipSep1"| bc`
+	macPrefix="$macPrefix:"`echo "obase=16;ibase=10;$ipSep2"| bc`
+	macPrefix="$macPrefix:"`echo "obase=16;ibase=10;$ipSep3"| bc`
+
+	suffix=$ipSep4
+	while [ $suffix -le $ipSep5 ]
+	do
+		ip="$ipSep1.$ipSep2.$ipSep3.$suffix"
+		host="vm-node$suffix"
+		mac="$macPrefix:"`echo "obase=16;ibase=10;$suffix"| bc`
+		fixIp2Host $host $mac $ip
+		suffix=$(($suffix + 1))
+	done
+}
+
 LINGCLOUD_HOME="$PWD/../../.."
 LINGCLOUD_CONF_DIR="$LINGCLOUD_HOME/conf"
 LINGCLOUD_CONF_MOLVA="$LINGCLOUD_CONF_DIR/molva.conf"
 
 range=`grep "publicIpPool=" "$LINGCLOUD_CONF_MOLVA" | egrep -v "^[[:blank:]]*#" | head -1 | cut -d= -f2-`
 range=`eval echo $range`
-if [ "$range" = "" ]
-then
-	while [ 0 ]
-	do
-		echo "## Can't get the ip range for vm"
-		echo -n "## Do you want to exit (y/n)?"
-		read out
-		if [ "$out" != "y" -a "$out" != "Y" ]
-		then
-			echo -n "## Input the ip range (e.g. 192.168.0.1-100): "
-			read range
-			if chkRange $range
-			then
-				break
-			fi
-		else
-			exit 1
-		fi
-	done
-fi
+ipRange2Host "$range" "Public ip pool"
 
-echo ""
-
-macPrefix="EE:EE"
-
-tmp=`echo $range | awk -F '-' '{print $1}'`
-ipSep1=`echo $tmp | awk -F '.' '{print $1}'`
-ipSep2=`echo $tmp | awk -F '.' '{print $2}'`
-ipSep3=`echo $tmp | awk -F '.' '{print $3}'`
-ipSep4=`echo $tmp | awk -F '.' '{print $4}'`
-ipSep5=`echo $range | awk -F '-' '{print $2}'`
-
-ipPrefix="$ipSep1.$ipSep2.$ipSep3"
-
-macPrefix="$macPrefix:"`echo "obase=16;ibase=10;$ipSep1"| bc`
-macPrefix="$macPrefix:"`echo "obase=16;ibase=10;$ipSep2"| bc`
-macPrefix="$macPrefix:"`echo "obase=16;ibase=10;$ipSep3"| bc`
-
-suffix=$ipSep4
-while [ $suffix -le $ipSep5 ]
-do
-	ip="$ipSep1.$ipSep2.$ipSep3.$suffix"
-	host="vm-node$suffix"
-	mac="$macPrefix:"`echo "obase=16;ibase=10;$suffix"| bc`
-	fixIp2Host $host $mac $ip
-	suffix=$(($suffix + 1))
-done
+range=`grep "makeApplianceIpPool=" "$LINGCLOUD_CONF_MOLVA" | egrep -v "^[[:blank:]]*#" | head -1 | cut -d= -f2-`
+range=`eval echo $range`
+ipRange2Host "$range" "Make appliance ip pool"
 
 exit 0
