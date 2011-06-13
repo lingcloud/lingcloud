@@ -899,7 +899,7 @@ public class VirtualClientImpl implements VirtualClient {
 			return;
 		}
 		if (cid > 0) {
-			Cluster.add(client, hid, cid);
+			Cluster.add(client, cid, hid);
 		}
 	}
 

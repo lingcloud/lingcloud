@@ -203,7 +203,7 @@ public class ONEVMDeployPolicier extends VirtualMachineDeployPolicier {
 
 		// support multiple partition by only one OpenNebula instance.
 		Vector<String> rank_targets = new Vector<String>();
-		rank_targets.add("RUNNING_VMS");
+		rank_targets.add("\"RUNNING_VMS\"");
 		Vector<String> req_targets = new Vector<String>();
 		req_targets.add("\"CLUSTER = \\\"" + nr.getPartitionId() + "\\\"\"");
 		HashMap<String, Vector<String>> result = new HashMap<String, Vector<String>>();
