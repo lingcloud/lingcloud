@@ -949,9 +949,25 @@ changeCreateClusterTable = function(basePath, parid, targetDiv, random){
 				var xmlDoc = ajax.responseText
 				if(xmlDoc == null){
 					return;
+				}	
+				
+				var tdiv = document.getElementById(targetDiv);
+				
+				if(tdiv){	
+					var _parentElement = tdiv.parentNode;
+				    if(_parentElement){
+				           _parentElement.removeChild(tdiv);
+				    }
+					tdiv = document.createElement("div");
+				    tdiv.id = targetDiv;
+
+				    tdiv.innerHTML = "<tbody><tr><td>" + xmlDoc + "</td></tr></tbody>";
+				    
+				    if(_parentElement){
+	                	_parentElement.appendChild(tdiv);
+				    }
 				}
-                var div = document.getElementById(targetDiv);
-                div.innerHTML = xmlDoc;
+
             } else {
                 alert(lingcloud.error.responseNotFound + ajax.statusText);
             }
@@ -972,7 +988,7 @@ loadForCreateCluster = function (basePath, loadingTable, targetTable, targetDiv)
     if (ajax === false || url === null) {
         return false;
     }
-    var url = basePath + "JSP/AjaxCreateCluster.jsp?targetDiv="+targetDiv;
+    var url = basePath + "JSP/AjaxCreateCluster.jsp?targetDiv="+targetTable;
     ajax.open("GET", url, true);
     ajax.onreadystatechange = function () {
         if (ajax.readyState == 4) {
