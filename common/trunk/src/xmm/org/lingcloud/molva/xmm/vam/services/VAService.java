@@ -874,8 +874,8 @@ public class VAService {
 	 *            appliance's GUID
 	 * @param discGuid
 	 *            the disc's GUID, if want to unmount the disc, please set GUID
-	 *            as null; if want to mount the LingCloudAgent disc, please set GUID
-	 *            as VAMConstants.LINGCLOUD_AGENT
+	 *            as null; if want to mount the LingCloudAgent disc, please set
+	 *            GUID as VAMConstants.LINGCLOUD_AGENT
 	 * @throws Exception
 	 */
 	public void changeDisc(String applianceGuid, String discGuid)

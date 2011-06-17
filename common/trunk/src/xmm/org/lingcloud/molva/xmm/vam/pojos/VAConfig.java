@@ -765,6 +765,7 @@ public class VAConfig {
 	 * 		software section element.
 	 */
 	
+	@SuppressWarnings("rawtypes")
 	private void parseSoftware(Element software) {
 		for (Iterator it = software.elementIterator(); it.hasNext();) {
 			Element section = (Element) it.next();
@@ -807,6 +808,7 @@ public class VAConfig {
 	 * 		hardware section element
 	 */
 	
+	@SuppressWarnings("rawtypes")
 	private void parseHardware(Element hardware) {
 		for (Iterator it = hardware.elementIterator(); it.hasNext();) {
 			Element section = (Element) it.next();
@@ -888,6 +890,7 @@ public class VAConfig {
 	 * load config from file, must set the path before the operation.
 	 */
 	
+	@SuppressWarnings("rawtypes")
 	public void loadConfig() {
 		// load XML document from file
 		File inputXml = new File(getPath());

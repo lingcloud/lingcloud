@@ -38,7 +38,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 
 public class ModifyVirtualDiscAction extends NeedLoginAction {
@@ -56,7 +55,8 @@ public class ModifyVirtualDiscAction extends NeedLoginAction {
 	 * The main method.
 	 */
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			DynaValidatorForm newFileForm = (DynaValidatorForm) form;
 			if (newFileForm == null) {
@@ -71,9 +71,9 @@ public class ModifyVirtualDiscAction extends NeedLoginAction {
 			String osversion = (String) newFileForm.get("osversion");
 			String app = (String) newFileForm.get("app");
 			String thispage = (String) newFileForm.get("thispage");
-			
-			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-					guid, discName, format, type })) {
+
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { guid,
+					discName, format, type })) {
 				throw new Exception("Please input the correct parameters of "
 						+ "Guid, Disc Name, Format, Disc Type!");
 			}
@@ -83,23 +83,24 @@ public class ModifyVirtualDiscAction extends NeedLoginAction {
 
 			if (type.equals(VAMConstants.VAD_DISK_TYPE_OS)) {
 				if (os == null || osversion == null || os.equals("")) {
-					throw new Exception("Please input the correct parameters of "
-							+ "Operating System, OS Version!");
+					throw new Exception(
+							"Please input the correct parameters of "
+									+ "Operating System, OS Version!");
 				}
 				os = os.trim();
 				osversion = osversion.trim();
-				
-			} else  if (type.equals(VAMConstants.VAD_DISK_TYPE_APP)){
-				if (app == null ) {
-					throw new Exception("Please input the correct parameters of "
-							+ "Application!");
+
+			} else if (type.equals(VAMConstants.VAD_DISK_TYPE_APP)) {
+				if (app == null) {
+					throw new Exception(
+							"Please input the correct parameters of "
+									+ "Application!");
 				}
 			} else {
 				throw new Exception("Please input the correct parameters of "
 						+ "Disc Type!");
 			}
-			
-			
+
 			if (thispage == null || "".equals(thispage)) {
 				this.url = request.getContextPath()
 						+ "/JSP/viewVirtualDisc.jsp";
@@ -110,17 +111,17 @@ public class ModifyVirtualDiscAction extends NeedLoginAction {
 				this.url = request.getContextPath() + thispage.trim();
 			}
 			log.info("User want to modify a virtual disc from url : " + url);
-			
+
 			VirtualApplianceManager vam = VAMUtil.getVAManager();
 			VAFile vafile = vam.queryFile(guid);
 			VADisk disc = new VADisk(vafile);
 			disc.setId(discName);
 			disc.setFormat(format);
 			disc.setDiskType(type);
-			
+
 			List<String> appl = new ArrayList<String>();
 			if (type.equals(VAMConstants.VAD_DISK_TYPE_APP)) {
-				if (app != null && !app.equals("")){
+				if (app != null && !app.equals("")) {
 					String[] apps = app.split("\\|");
 					for (int i = 0; i < apps.length; i++) {
 						appl.add(apps[i]);
@@ -131,9 +132,9 @@ public class ModifyVirtualDiscAction extends NeedLoginAction {
 				disc.setOs(os, osversion);
 			}
 			disc.setApplications(appl);
-			
+
 			vafile = vam.updateFile(disc);
-			
+
 			log.info("A virtual disc with the name " + vafile.getId()
 					+ " is updated successfully.");
 			/*

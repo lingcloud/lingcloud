@@ -27,7 +27,6 @@ import org.lingcloud.molva.xmm.vmc.one.VmTemplate;
  * 
  * @version 1.0.1 2010-5-30<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class VirtualNode extends Node {
 	/**
@@ -43,17 +42,20 @@ public class VirtualNode extends Node {
 
 	public static final String VMTEMPLATE = "vmTemplate";
 
-	public static final String PARENT_PHYSICALNODE_NAME = "parentPhysialNodeName";
+	public static final String PARENT_PHYSICALNODE_NAME = 
+		"parentPhysialNodeName";
 
-	public static final String VNC_PORT_IN_PARENT_PHYSICALNODE = "vncPortInParentPhysialNode";
+	public static final String VNC_PORT_IN_PARENT_PHYSICALNODE = 
+		"vncPortInParentPhysialNode";
 
 	public static final String BOOTLOADER = "bootLoader";
 
 	public static final String VM_DEPLOY_POLICER = "vmDeployPolicer";
 
-	public static final String VM_DEPLOY_SCHEDULE_RESULT = "vmDeployScheduleResult";
+	public static final String VM_DEPLOY_SCHEDULE_RESULT = 
+		"vmDeployScheduleResult";
 
-	public static String APPLIANCE_NAME = "applianceName";
+	public static final String APPLIANCE_NAME = "applianceName";
 
 	// FIXME now left the disk info handled by virtual appliance.
 
@@ -134,6 +136,7 @@ public class VirtualNode extends Node {
 				XmlUtil.toXml(vmDeployParams));
 	}
 
+	@SuppressWarnings("unchecked")
 	public HashMap<String, Vector<String>> getVmDeployScheduleResult() {
 		String xml = this.getAttributes().get(
 				VirtualNode.VM_DEPLOY_SCHEDULE_RESULT);

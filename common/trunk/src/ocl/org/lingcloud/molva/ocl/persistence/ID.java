@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @author zouyongqiang<br>
  * 
  */
-public final class ID implements Comparable, Serializable {
+public final class ID implements Comparable<ID>, Serializable {
 	/*
 	 * This file is based on OpenChord project's class ID written by Sven
 	 * Kaffille, Karsten Loesing.
@@ -109,7 +109,6 @@ public final class ID implements Comparable, Serializable {
 
 		return new ID(id);
 	}
-	
 
 	/**
 	 * Representation of this as a String.
@@ -155,8 +154,8 @@ public final class ID implements Comparable, Serializable {
 			if (block.length() < 2) {
 				block = "0" + block;
 			}
-			
-			//don't split the bytes.
+
+			// don't split the bytes.
 			buf.append(block);
 		}
 		result = buf.toString();
@@ -327,46 +326,6 @@ public final class ID implements Comparable, Serializable {
 	}
 
 	/**
-	 * Compare current ID with the given object. If either the object is not a
-	 * ID or both IDs' lengths do not match, a ClassCastException is thrown.
-	 * Otherwise both IDs are compared byte by byte.
-	 * 
-	 * @param otherObj
-	 *            the other object to be compared.
-	 * @return -1, 0, or 1, if this ID is smaller, same size, or greater than
-	 *         the given object, respectively.
-	 */
-	public int compareTo(Object otherObj) {
-		if (!(otherObj instanceof ID)) {
-			throw new ClassCastException("Must be compared with ID.");
-		}
-
-		ID otherKey = (ID) otherObj;
-		if (this.getLength() != otherKey.getLength()) {
-			throw new ClassCastException(
-					"Only ID objects with same length can be "
-							+ "compared! This ID is " + this.id.length
-							+ " bits long while the other ID is "
-							+ otherKey.getLength() + " bits long.");
-		}
-
-		// compare value byte by byte
-		byte[] otherBytes = new byte[this.id.length];
-		System.arraycopy(otherKey.id, 0, otherBytes, 0, this.id.length);
-
-		final int midN = 128;
-		for (int i = 0; i < this.id.length; i++) {
-			if ((byte) (id[i] - midN) < (byte) (otherBytes[i] - midN)) {
-				return -1; // this ID is smaller
-			} else if ((byte) (id[i] - midN) > (byte) (otherBytes[i] - midN)) {
-				return 1; // this ID is greater
-			}
-		}
-		return 0;
-
-	}
-
-	/**
 	 * @see java.lang.Object#hashCode()
 	 * @return the hash code of the ID.
 	 */
@@ -418,5 +377,40 @@ public final class ID implements Comparable, Serializable {
 		return ((!fromID.equals(maxID) && this.compareTo(fromID) > 0 && this
 				.compareTo(maxID) <= 0) || (!minID.equals(toID)
 				&& this.compareTo(minID) >= 0 && this.compareTo(toID) < 0));
+	}
+
+	/**
+	 * Compare current ID with the given object. If either the object is not a
+	 * ID or both IDs' lengths do not match, a ClassCastException is thrown.
+	 * Otherwise both IDs are compared byte by byte.
+	 * 
+	 * @param otherObj
+	 *            the other object to be compared.
+	 * @return -1, 0, or 1, if this ID is smaller, same size, or greater than
+	 *         the given object, respectively.
+	 */
+	public int compareTo(ID otherObj) {
+		ID otherKey = otherObj;
+		if (this.getLength() != otherKey.getLength()) {
+			throw new ClassCastException(
+					"Only ID objects with same length can be "
+							+ "compared! This ID is " + this.id.length
+							+ " bits long while the other ID is "
+							+ otherKey.getLength() + " bits long.");
+		}
+
+		// compare value byte by byte
+		byte[] otherBytes = new byte[this.id.length];
+		System.arraycopy(otherKey.id, 0, otherBytes, 0, this.id.length);
+
+		final int midN = 128;
+		for (int i = 0; i < this.id.length; i++) {
+			if ((byte) (id[i] - midN) < (byte) (otherBytes[i] - midN)) {
+				return -1; // this ID is smaller
+			} else if ((byte) (id[i] - midN) > (byte) (otherBytes[i] - midN)) {
+				return 1; // this ID is greater
+			}
+		}
+		return 0;
 	}
 }

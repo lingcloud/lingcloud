@@ -176,7 +176,8 @@ public class VAMConstants {
 	public static final String VA_OS_OTHER = "Other";
 	
 	public static final String[] VA_OS_LIST = new String[] { VA_OS_LINUX,
-			VA_OS_FREEBSD, VA_OS_SOLARIS, VA_OS_WINDOWS, VA_OS_DOS, VA_OS_OTHER };
+			VA_OS_FREEBSD, VA_OS_SOLARIS, VA_OS_WINDOWS, VA_OS_DOS, 
+			VA_OS_OTHER };
 	
 	public static final String VA_ACCESS_WAY = "accessWay";
 	

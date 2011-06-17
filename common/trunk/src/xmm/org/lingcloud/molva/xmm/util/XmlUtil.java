@@ -47,14 +47,14 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
- * Some utilities for xml manipulation, all obvious and straightforward
+ * Some utilities for xml manipulation, all obvious and straightforward.
  * 
  * @author pxbl
  * @version $Id: XmlUtil.java,v 1.4 2007/10/03 08:07:00 zouyongqiang Exp $
  */
 public final class XmlUtil {
 
-	private static final Log log = LogFactory.getLog(XmlUtil.class);
+	private static Log log = LogFactory.getLog(XmlUtil.class);
 
 	private static DocumentBuilder builder;
 
@@ -62,29 +62,26 @@ public final class XmlUtil {
 
 	static {
 
-		{
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			factory.setCoalescing(true);
-			factory.setExpandEntityReferences(true);
-			factory.setIgnoringComments(true);
-			factory.setIgnoringElementContentWhitespace(false);
-			factory.setNamespaceAware(false);
-			factory.setValidating(false);
-			try {
-				builder = factory.newDocumentBuilder();
-			} catch (ParserConfigurationException e) {
-				throw new RuntimeException(e);
-			}
+		DocumentBuilderFactory documentFactory = DocumentBuilderFactory
+				.newInstance();
+		documentFactory.setCoalescing(true);
+		documentFactory.setExpandEntityReferences(true);
+		documentFactory.setIgnoringComments(true);
+		documentFactory.setIgnoringElementContentWhitespace(false);
+		documentFactory.setNamespaceAware(false);
+		documentFactory.setValidating(false);
+		try {
+			builder = documentFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException(e);
 		}
 
-		{
-			TransformerFactory factory = TransformerFactory.newInstance();
-			try {
-				transformer = factory.newTransformer();
-			} catch (TransformerConfigurationException e) {
-				throw new RuntimeException(e);
-			}
+		TransformerFactory transformerFactory = TransformerFactory
+				.newInstance();
+		try {
+			transformer = transformerFactory.newTransformer();
+		} catch (TransformerConfigurationException e) {
+			throw new RuntimeException(e);
 		}
 
 	}
@@ -99,8 +96,9 @@ public final class XmlUtil {
 		try {
 			transformer.transform(source, result);
 		} catch (TransformerException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 		}
 	}
 
@@ -110,8 +108,9 @@ public final class XmlUtil {
 		try {
 			transformer.transform(source, result);
 		} catch (TransformerException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 		}
 	}
 
@@ -122,8 +121,9 @@ public final class XmlUtil {
 			sw.close();
 			return sw.getBuffer().toString();
 		} catch (IOException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 			return null;
 		}
 	}
@@ -132,16 +132,19 @@ public final class XmlUtil {
 		try {
 			return builder.parse(file);
 		} catch (FileNotFoundException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 			return null;
 		} catch (SAXException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 			return null;
 		} catch (IOException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 			return null;
 		}
 	}
@@ -150,12 +153,14 @@ public final class XmlUtil {
 		try {
 			return builder.parse(is);
 		} catch (SAXException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 			return null;
 		} catch (IOException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 			return null;
 		}
 	}
@@ -164,12 +169,14 @@ public final class XmlUtil {
 		try {
 			return builder.parse(new InputSource(reader));
 		} catch (SAXException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 			return null;
 		} catch (IOException e) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				e.printStackTrace();
+			}
 			return null;
 		}
 	}
@@ -186,21 +193,21 @@ public final class XmlUtil {
 		return Base64.decodeBase64(data.getBytes());
 	}
 
-    //add toXml() and fromXml(). by Yongqiang Zou. 2007.1.24.
-	private static final XStream xstream = new XStream(new DomDriver());
-	
+	// add toXml() and fromXml(). by Yongqiang Zou. 2007.1.24.
+	private static final XStream XSTREAM = new XStream(new DomDriver());
+
 	public static String toXml(Object obj) {
 		if (obj == null) {
 			return "";
 		}
-		return xstream.toXML(obj);
+		return XSTREAM.toXML(obj);
 	}
-	
+
 	public static Object fromXml(String xml) {
 		if (XMMUtil.isEmptyString(xml)) {
 			return null;
 		}
-		Object obj = xstream.fromXML(xml);
+		Object obj = XSTREAM.fromXML(xml);
 		return obj;
 	}
 }

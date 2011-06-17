@@ -41,7 +41,7 @@
 			json.addItem("format", disc.getFormat());
 			json.addItemOk();
 
-			result = json.ToString();
+			result = json.toString();
 
 		} catch (Exception e) {
 			String error = e.toString();

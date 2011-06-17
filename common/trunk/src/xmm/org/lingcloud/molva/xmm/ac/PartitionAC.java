@@ -31,7 +31,6 @@ import org.lingcloud.molva.xmm.vmc.VirtualClient;
  * 
  * @version 1.0.1 2010-5-28<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class PartitionAC extends AssetController {
 	/**
@@ -61,15 +60,16 @@ public class PartitionAC extends AssetController {
 
 	public static final String REQUIRED_ATTR_NODETYPE = "nodeType";
 
-	public static final String ATTR_NODE_PRE_INSTALLED_SOFT = "nodePreInstalledSoft";
+	public static final String ATTR_NODE_PRE_INSTALLED_SOFT 
+										= "nodePreInstalledSoft";
 
 	public static final String NODE_DEPLOY_STATUS_CLONED = "cloned";
 
 	/**
-	 * vaild partition type
+	 * valid partition type.
 	 */
-	public static final String[] validTypeList = { HPC, VM, DC, INIT, STORAGE,
-			GENERAL };
+	public static final String[] VALID_TYPE_LIST = { HPC, VM, DC, INIT,
+			STORAGE, GENERAL };
 
 	private static String parDriverPath = null;
 
@@ -80,10 +80,9 @@ public class PartitionAC extends AssetController {
 		Partition par = new Partition(asset);
 		String nodeType = par.getNodeType();
 		if (!isValidType(nodeType)) {
-			throw new Exception(
-					"The partition of "
-							+ asset.getName()
-							+ " should has a valid attribute with the name of nodeType.");
+			throw new Exception("The partition of "
+				+ asset.getName()
+				+ " should has a valid attribute with the name of nodeType.");
 		}
 		// For support multiple
 		// virtual machine leasing partition.
@@ -100,11 +99,13 @@ public class PartitionAC extends AssetController {
 	}
 
 	public static boolean isValidType(String type) {
-		if (type == null || type.trim().equals(""))
+		if (type == null || type.trim().equals("")) {
 			return false;
-		for (int i = 0; i < PartitionAC.validTypeList.length; i++) {
-			if (PartitionAC.validTypeList[i].trim().equals(type.trim()))
+		}
+		for (int i = 0; i < PartitionAC.VALID_TYPE_LIST.length; i++) {
+			if (PartitionAC.VALID_TYPE_LIST[i].trim().equals(type.trim())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -134,7 +135,8 @@ public class PartitionAC extends AssetController {
 	}
 
 	@Override
-	public double calculatePrice(Asset asset, HashMap params) throws Exception {
+	public double calculatePrice(Asset asset, 
+			HashMap<String, String> params) throws Exception {
 		return asset.getPrice();
 	}
 
@@ -166,11 +168,9 @@ public class PartitionAC extends AssetController {
 		return asset;
 	}
 
+	@SuppressWarnings("unused")
 	private static boolean isValidPath(String imagePlace) {
-		if (imagePlace == null || imagePlace.trim().equals(""))
-			return false;
-		else
-			return true;
+		return !(imagePlace == null || imagePlace.trim().equals(""));
 	}
 
 	public static boolean addPNNode(String ip, String type) throws Exception {
@@ -198,11 +198,8 @@ public class PartitionAC extends AssetController {
 		try {
 			stdout = XMMUtil.runCommand(cmdSB.toString());
 
-			if (stdout == null || !(stdout.trim().equals("true"))){
-				
-				return false;
-			}else
-				return true;
+			
+			return !(stdout == null || !(stdout.trim().equals("true")));
 		} catch (Exception e) {
 			log.error("Execute \"" + cmdSB.toString() + "\" fail, caused by "
 					+ e.getMessage());
@@ -211,8 +208,9 @@ public class PartitionAC extends AssetController {
 	}
 
 	public static String getPhysicalNodeStatus(String ip) throws Exception {
-		if (ip == null || ip.trim().equals(""))
+		if (ip == null || ip.trim().equals("")) {
 			throw new Exception("Illega argument.");
+		}
 		if (parImageServer == null || "".equals(parImageServer)) {
 			parImageServer = XMMUtil.getPartitionServerAddressInCfgFile();
 		}
@@ -226,10 +224,11 @@ public class PartitionAC extends AssetController {
 		try {
 			log.debug("command: \"" + command + "\"");
 			String stdout = XMMUtil.runCommand(command);
-			if (stdout == null || stdout.trim().equals(""))
+			if (stdout == null || stdout.trim().equals("")) {
 				throw new RemoteException("unknown status");
-			else
+			} else {
 				return stdout.trim();
+			}
 		} catch (Exception e) {
 			log.error("Execute \"" + command + "\" fail, caused by "
 					+ e.getMessage());

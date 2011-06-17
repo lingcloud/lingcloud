@@ -49,11 +49,10 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 
 /**
  * <strong>Purpose:</strong><br>
- * TODO
+ * TODO.
  * 
  * @version 1.0.1 2010-7-22<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn<br>
  */
 
 public class VirtualClusterAMM implements AssetMatchMaker {
@@ -66,7 +65,8 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 	/**
 	 * Used to handle error. It should be isolated with other instance.
 	 */
-	private HashMap<String, String> lastMatchedAssetsIdAndTypeMap = new HashMap<String, String>();
+	private HashMap<String, String> lastMatchedAssetsIdAndTypeMap = 
+		new HashMap<String, String>();
 
 	public Lease assetMatchMaking(Lease lease) throws Exception {
 		if (lease == null) {
@@ -140,20 +140,14 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 			boolean isForVM) throws Exception {
 		VirtualCluster clone = vc.clone();
 		HashMap<String, NodeRequirement> nrmap = clone.getNodeRequirements();
-		// Move these check to checkSatiable4VMVCByCreateVN method. mared at
-		// 2010-12-10.
-		String partitionId = clone.getPartitionId();
-		String name = clone.getName() + "_VN";
-		String vnController = VirtualNetworkAC.class.getName();
-		int netSize = nrmap.size(), pubipNum = 0;
-		// if the head node ip is null, then the VirtualNetworkAC will
-		// choose a proper node as the head node.
+		int pubipNum = 0;
 		String headNodeIp = null, lastPriIpNeedPubIp = null;
 		List<String> otherNodeIps = new ArrayList<String>();
 
-		Iterator it = nrmap.keySet().iterator();
-		HashMap<String, NodeRequirement> newnrmap = (HashMap<String, NodeRequirement>) nrmap
-				.clone();
+		Iterator<String> it = nrmap.keySet().iterator();
+		@SuppressWarnings("unchecked")
+		HashMap<String, NodeRequirement> newnrmap = (HashMap<String, 
+				NodeRequirement>) nrmap.clone();
 		while (it.hasNext()) {
 			String ip = (String) it.next();
 			// A bug due to fail-fast iterator. When iterator all elements in
@@ -188,7 +182,7 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 				// assign
 				// them to vm by amm itself.
 				if (!XMMUtil
-						.ipIsValid(ip, VirtualNetworkManager.validIpSec)) {
+						.ipIsValid(ip, VirtualNetworkManager.getValidIpSec())) {
 					if (nr.isNeedPublicIP()) {
 						pubipNum++;
 					}
@@ -261,21 +255,8 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 
 		clone.setNodeRequirements(newnrmap);
 		// advanced usage
-		HashMap<String, String> attributes = new HashMap<String, String>();
-		attributes.put(VirtualNetwork.AUTO_CREATE_TAG, "" + true);
-		attributes.put(VirtualNetwork.VN_RESERVE_NODE_TAG, "" + false);
-		attributes.put(VirtualNetworkAC.OPTIONAL_ATTR_PUBLICIP_NUM, ""
-				+ pubipNum);
-
-		String desc = "Automatically allocate virtual network for the virtual cluster "
-				+ vc.getName() + " in the partition " + clone.getPartitionId();
-		String[] otherips = new String[] {};
-		if (otherNodeIps != null && !otherNodeIps.isEmpty()) {
-			otherips = otherNodeIps.toArray(new String[otherNodeIps.size()]);
-		}
-		VirtualNetwork vn = VirtualNetworkManager.getInstance()
-				.createVirtualNetwork(partitionId, name, vnController, netSize,
-						headNodeIp, otherips, attributes, desc);
+		VirtualNetwork vn = createVirtualNetwork(clone, pubipNum, headNodeIp, 
+				otherNodeIps);
 		clone.setVirtualNetworkId(vn.getGuid());
 
 		HashMap<String, String> itmap = new HashMap<String, String>();
@@ -294,6 +275,33 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 		return clone;
 	}
 
+	private VirtualNetwork createVirtualNetwork(VirtualCluster vc, 
+			int pubipNum, String headNodeIp, 
+			List<String> otherNodeIps) throws Exception {
+		HashMap<String, String> attributes = new HashMap<String, String>();
+		attributes.put(VirtualNetwork.AUTO_CREATE_TAG, "" + true);
+		attributes.put(VirtualNetwork.VN_RESERVE_NODE_TAG, "" + false);
+		attributes.put(VirtualNetworkAC.OPTIONAL_ATTR_PUBLICIP_NUM, ""
+				+ pubipNum);
+
+		String partitionId = vc.getPartitionId();
+		String name = vc.getName() + "_VN";
+		String vnController = VirtualNetworkAC.class.getName();
+		int netSize = vc.getNodeRequirements().size();
+		String desc = "Automatically allocate virtual network for the "
+			+ "virtual cluster " + vc.getName() + " in the partition " 
+			+ partitionId;
+		String[] otherips = new String[] {};
+		if (otherNodeIps != null && !otherNodeIps.isEmpty()) {
+			otherips = otherNodeIps.toArray(new String[otherNodeIps.size()]);
+		}
+		
+		VirtualNetwork vn = VirtualNetworkManager.getInstance()
+				.createVirtualNetwork(partitionId, name, vnController, netSize,
+						headNodeIp, otherips, attributes, desc);
+		return vn;
+	}
+
 	private VirtualCluster matchPMNodesByExistVN(VirtualCluster vc)
 			throws Exception {
 		// TODO simple solusion now, we only get the pn node info in virtual
@@ -310,7 +318,7 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 			// reserve physical node, so we must set the lease id for every
 			// physical node here.
 			if (vn.isNeedToReserveNode() && !vn.isAutoCreate()) {
-				Iterator it = itmap.keySet().iterator();
+				Iterator<String> it = itmap.keySet().iterator();
 				while (it.hasNext()) {
 					String pnid = (String) it.next();
 					PhysicalNode pn = PartitionManager.getInstance()
@@ -325,8 +333,8 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 		return clone;
 	}
 
-	private HashMap<String, String> matchPMNodesByPrivateIpNics(VirtualNetwork vn)
-			throws Exception {
+	private HashMap<String, String> matchPMNodesByPrivateIpNics(
+			VirtualNetwork vn) throws Exception {
 		List<Nic> nics = vn.getPrivateIpNics();
 		HashMap<String, String> itmap = new HashMap<String, String>();
 		String[] fields = new String[] { "name" };
@@ -397,24 +405,166 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 		return accessWay;
 	}
 
-	private HashMap<String, String> matchVMNodesByVNAndRequirements(
-			VirtualNetwork vn, HashMap<String, NodeRequirement> oldnrmap)
+	private HashMap<String, String> createNodesBySameRequirement(
+			VirtualNetwork vn, HashMap<String, NodeRequirement> nrmap) 
 			throws Exception {
-		// FIXME all the network info are according to virtual network obejct.
-		HashMap<String, NodeRequirement> nrmap = (HashMap<String, NodeRequirement>) oldnrmap
-				.clone();
 		HashMap<String, String> itmap = new HashMap<String, String>();
-		if (nrmap.containsKey(XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG)) {
-			NodeRequirement nr = nrmap
-					.get(XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG);
-			String partitionId = nr.getPartitionId();
-			boolean isDeploy = false;
+		
+		NodeRequirement nr = nrmap.get(XMMConstants.
+				ALL_NODE_SAME_REQUIREMENT_TAG);
+		String partitionId = nr.getPartitionId();
+		boolean isDeploy = false;
+		String vnController = VirtualNodeAC.class.getName();
+		
+		String applianceId = nr.getVirtualApplicanceID();
+		
+		VirtualAppliance va = VAMUtil.getVAManager().queryAppliance(
+				applianceId);
+		if (va == null) {
+			throw new Exception("The required virtual appliance ("
+					+ applianceId + ") is not exist.");
+		}
+		VirtualAppliance snapshot = VAMUtil.getVAManager()
+				.allocateAppliance(va.getGuid(), null, null);
+		if (snapshot == null) {
+			throw new Exception("The snapshot of virtual appliance ("
+					+ va.getName() + ") is created failed.");
+		}
+		itmap.put(snapshot.getGuid(), VirtualAppliance.class.getName());
+		lastMatchedAssetsIdAndTypeMap.put(snapshot.getGuid(),
+				VirtualAppliance.class.getName());
+		String vaFileNames = this.getVAFileNames(snapshot);
+		String loader = snapshot.getBootLoader();
+		List<String> accessWay = snapshot.getAccessWay();
+		
+		// advanced usage.
+		// the following attributes are required.
+		HashMap<String, String> attributes = new HashMap<String, String>();
+		// attributes.put(VirtualNode.IS_HEAD_NODE, "" + nr.isHeadNode());
+		attributes.put(VirtualNode.CPUNUM, "" + nr.getCpuNum());
+		attributes.put(VirtualNode.MEMSIZE, "" + nr.getMemorySize());
+		attributes.put(VirtualNode.APPLIANCE_FILE_NAMES, vaFileNames);
+		attributes.put(VirtualNode.BOOTLOADER, loader);
+		// XXX the head node can support vnc login always. move this line
+		// backward.
+		// attributes.put(VirtualNode.ACCESSWAY, XmlUtil.toXml(accessWay));
+		attributes.put(VirtualNode.APPLIANCE_NAME, snapshot.getVAName());
+		
+		List<Nic> pips = vn.getPrivateIpNics();
+		HashMap<String, Nic> puips = vn.getPublicIpNics();
+		for (int i = 0; i < pips.size(); i++) {
+			Nic privateIpNic = pips.get(i);
+			String privateIp = privateIpNic.getIp();
+			Nic publicIpNic = puips.get(privateIp);
+			String publicIp = null;
+			if (publicIpNic != null) {
+				publicIp = publicIpNic.getIp();
+			}
+			String desc = privateIp + " Virtual Machine";
+			if (privateIp.equals(vn.getHeadNodeIp())) {
+				// the trustable level of virtual network is bigger than nr.
+				attributes.put(VirtualNode.IS_HEAD_NODE, "" + true);
+				accessWay = this.checkVNCAccessWay(accessWay);
+			} else {
+				attributes.put(VirtualNode.IS_HEAD_NODE, "" + false);
+			}
+		
+			List<Nic> nodeNics = new ArrayList<Nic>();
+			nodeNics.add(privateIpNic);
+			if (publicIpNic != null) {
+				nodeNics.add(publicIpNic);
+			}
+			attributes.put(VirtualNode.NICS, XmlUtil.toXml(nodeNics));
+			attributes.put(VirtualNode.ACCESSWAY, XmlUtil.toXml(accessWay));
+		
+			// XXX added at 2010-12-15 for vm deploy.
+			attributes.put(VirtualNode.VM_DEPLOY_POLICER,
+					nr.getVmDeployPolicer());
+			VirtualMachineDeployPolicier vmdp = 
+				(VirtualMachineDeployPolicier) Class
+					.forName(nr.getVmDeployPolicer()).newInstance();
+			HashMap<String, Vector<String>> deployResult = vmdp
+					.generateDeployPolicy(vn.getPartitionId(), privateIp,
+							nr);
+			if (deployResult != null) {
+				// if deployResult == null, then we donot consider any
+				// deploy schedule policy.
+				attributes.put(VirtualNode.VM_DEPLOY_SCHEDULE_RESULT,
+						XmlUtil.toXml(deployResult));
+			}
+		
+			try {
+				VirtualNode vnode = PartitionManager.getInstance()
+						.addVirtualNode(partitionId, privateIp, publicIp,
+								vnController, applianceId, isDeploy,
+								attributes, desc);
+				itmap.put(vnode.getGuid(), VirtualNode.class.getName());
+				lastMatchedAssetsIdAndTypeMap.put(vnode.getGuid(),
+						VirtualNode.class.getName());
+			} catch (Exception e) {
+				String msg = "Error occurred when create a virtual node"
+					+ " info (" + privateIp + "), due to " + e.toString();
+				log.error(msg);
+				// XXX May cause garbage, we need to garbage collection.
+				// left garbage collection to errorHandler.
+			}
+		}
+		
+		return itmap;
+	}
+	
+	private HashMap<String, String> createNodesByDifferentRequirements(
+			VirtualNetwork vn, HashMap<String, NodeRequirement> nrmap) 
+			throws Exception {
+		HashMap<String, String> itmap = new HashMap<String, String>();
+		
+		List<Nic> pips = vn.getPrivateIpNics();
+		HashMap<String, Nic> pubnics = vn.getPublicIpNics();
+		String partitionId = vn.getPartitionId();
+		int tag = pips.size();
+		for (int i = 0; i < pips.size(); i++) {
+			Nic privateIpNic = pips.get(i);
+			String privateIp = privateIpNic.getIp();
+			if (!nrmap.containsKey(privateIp) && i < tag) {
+				// the ip in virtual network may not be equals elements in
+				// the nrmap, due to portal input difference and virtual
+				// network manager try-best to allocate ip addresses.
+				// handle user apply ip firstly.
+				pips.add(privateIpNic);
+				continue;
+			}
+			NodeRequirement nr = null;
+			if (i >= tag) {
+				Iterator<String> it = nrmap.keySet().iterator();
+				while (it.hasNext()) {
+					String key = (String) it.next();
+					if (privateIp.equals(key)) {
+						continue;
+					}
+					nr = nrmap.get(key);
+					it.remove();
+					nr.setPrivateIP(privateIp);
+					// A bug, don't put the privateip as key again, then in
+					// the next loop, the previous ip will be overwritten.
+					break;
+				}
+			} else {
+				nr = nrmap.get(privateIp);
+			}
+
+			Nic publicIpNic = pubnics.get(privateIp);
+			String publicIp = null;
+			if (publicIpNic != null) {
+				publicIp = publicIpNic.getIp();
+				nr.setNeedPublicIP(true);
+			}
 			String vnController = VirtualNodeAC.class.getName();
+			boolean isDeploy = false;
 
 			String applianceId = nr.getVirtualApplicanceID();
-
 			VirtualAppliance va = VAMUtil.getVAManager().queryAppliance(
 					applianceId);
+
 			if (va == null) {
 				throw new Exception("The required virtual appliance ("
 						+ applianceId + ") is not exist.");
@@ -431,201 +581,83 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 			String vaFileNames = this.getVAFileNames(snapshot);
 			String loader = snapshot.getBootLoader();
 			List<String> accessWay = snapshot.getAccessWay();
-
 			// advanced usage.
 			// the following attributes are required.
-			HashMap<String, String> attributes = new HashMap<String, String>();
-			// attributes.put(VirtualNode.IS_HEAD_NODE, "" + nr.isHeadNode());
+			HashMap<String, String> attributes = 
+				new HashMap<String, String>();
+			if (privateIp.equals(vn.getHeadNodeIp())) {
+				// attributes.put(VirtualNode.IS_HEAD_NODE, "" +
+				// nr.isHeadNode());
+				// the trustable level of virtual network is bigger than nr.
+				attributes.put(VirtualNode.IS_HEAD_NODE, "" + true);
+				accessWay = this.checkVNCAccessWay(accessWay);
+			} else {
+				attributes.put(VirtualNode.IS_HEAD_NODE, "" + false);
+			}
 			attributes.put(VirtualNode.CPUNUM, "" + nr.getCpuNum());
 			attributes.put(VirtualNode.MEMSIZE, "" + nr.getMemorySize());
 			attributes.put(VirtualNode.APPLIANCE_FILE_NAMES, vaFileNames);
 			attributes.put(VirtualNode.BOOTLOADER, loader);
-			// XXX the head node can support vnc login always. move this line
-			// backward.
-			// attributes.put(VirtualNode.ACCESSWAY, XmlUtil.toXml(accessWay));
-			attributes.put(VirtualNode.APPLIANCE_NAME, snapshot.getVAName());
-
-			List<Nic> pips = vn.getPrivateIpNics();
-			HashMap<String, Nic> puips = vn.getPublicIpNics();
-			for (int i = 0; i < pips.size(); i++) {
-				Nic privateIpNic = pips.get(i);
-				String privateIp = privateIpNic.getIp();
-				Nic publicIpNic = puips.get(privateIp);
-				String publicIp = null;
-				if (publicIpNic != null) {
-					publicIp = publicIpNic.getIp();
-				}
-				String desc = privateIp + " Virtual Machine";
-				if (privateIp.equals(vn.getHeadNodeIp())) {
-					// the trustable level of virtual network is bigger than nr.
-					attributes.put(VirtualNode.IS_HEAD_NODE, "" + true);
-					accessWay = this.checkVNCAccessWay(accessWay);
-				} else {
-					attributes.put(VirtualNode.IS_HEAD_NODE, "" + false);
-				}
-
-				List<Nic> nodeNics = new ArrayList<Nic>();
-				nodeNics.add(privateIpNic);
-				if (publicIpNic != null) {
-					nodeNics.add(publicIpNic);
-				}
-				attributes.put(VirtualNode.NICS, XmlUtil.toXml(nodeNics));
-				attributes.put(VirtualNode.ACCESSWAY, XmlUtil.toXml(accessWay));
-
-				// XXX added at 2010-12-15 for vm deploy.
-				attributes.put(VirtualNode.VM_DEPLOY_POLICER,
-						nr.getVmDeployPolicer());
-				VirtualMachineDeployPolicier vmdp = (VirtualMachineDeployPolicier) Class
-						.forName(nr.getVmDeployPolicer()).newInstance();
-				HashMap<String, Vector<String>> deployResult = vmdp
-						.generateDeployPolicy(vn.getPartitionId(), privateIp,
-								nr);
-				if (deployResult != null) {
-					// if deployResult == null, then we donot consider any
-					// deploy schedule policy.
-					attributes.put(VirtualNode.VM_DEPLOY_SCHEDULE_RESULT,
-							XmlUtil.toXml(deployResult));
-				}
-
-				try {
-					VirtualNode vnode = PartitionManager.getInstance()
-							.addVirtualNode(partitionId, privateIp, publicIp,
-									vnController, applianceId, isDeploy,
-									attributes, desc);
-					itmap.put(vnode.getGuid(), VirtualNode.class.getName());
-					lastMatchedAssetsIdAndTypeMap.put(vnode.getGuid(),
-							VirtualNode.class.getName());
-				} catch (Exception e) {
-					String msg = "Error occurred when create a virtual node info ("
-							+ privateIp + "), due to " + e.toString();
-					log.error(msg);
-					// XXX May cause garbage, we need to garbage collection.
-					// left garbage collection to errorHandler.
-				}
+			attributes.put(VirtualNode.ACCESSWAY, XmlUtil.toXml(accessWay));
+			attributes
+					.put(VirtualNode.APPLIANCE_NAME, snapshot.getVAName());
+			List<Nic> nodeNics = new ArrayList<Nic>();
+			nodeNics.add(privateIpNic);
+			if (publicIpNic != null) {
+				nodeNics.add(publicIpNic);
 			}
+			attributes.put(VirtualNode.NICS, XmlUtil.toXml(nodeNics));
+
+			// XXX added at 2010-12-15 for vm deploy.
+			attributes.put(VirtualNode.VM_DEPLOY_POLICER,
+					nr.getVmDeployPolicer());
+			VirtualMachineDeployPolicier vmdp = 
+				(VirtualMachineDeployPolicier) Class
+					.forName(nr.getVmDeployPolicer()).newInstance();
+			HashMap<String, Vector<String>> deployResult = vmdp
+					.generateDeployPolicy(vn.getPartitionId(), privateIp,
+							nr);
+			if (deployResult != null) {
+				// if deployResult == null, then we donot consider any
+				// deploy schedule policy.
+				attributes.put(VirtualNode.VM_DEPLOY_SCHEDULE_RESULT,
+						XmlUtil.toXml(deployResult));
+			}
+
+			String desc = nr.getPrivateIP() + " Virtual Machine";
+			try {
+				VirtualNode vnode = PartitionManager.getInstance()
+						.addVirtualNode(partitionId, privateIp, publicIp,
+								vnController, applianceId, isDeploy,
+								attributes, desc);
+				itmap.put(vnode.getGuid(), VirtualNode.class.getName());
+				lastMatchedAssetsIdAndTypeMap.put(vnode.getGuid(),
+						VirtualNode.class.getName());
+			} catch (Exception e) {
+				String msg = "Error occurred when create a virtual node"
+					+ " info (" + privateIp + "), due to " + e.toString();
+				log.error(msg);
+				throw new Exception(msg);
+				// // XXX May cause garbage, we need to garbage collection.
+				// left garbage collection to errorHandler.
+			}
+		}
+		
+		return itmap;
+	}
+	
+	private HashMap<String, String> matchVMNodesByVNAndRequirements(
+			VirtualNetwork vn, HashMap<String, NodeRequirement> oldnrmap)
+			throws Exception {
+		// FIXME all the network info are according to virtual network obejct.
+		@SuppressWarnings("unchecked")
+		HashMap<String, NodeRequirement> nrmap = 
+			(HashMap<String, NodeRequirement>) oldnrmap.clone();
+		HashMap<String, String> itmap = new HashMap<String, String>();
+		if (nrmap.containsKey(XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG)) {
+			itmap = createNodesBySameRequirement(vn, nrmap);
 		} else {
-			List<Nic> pips = vn.getPrivateIpNics();
-			HashMap<String, Nic> pubnics = vn.getPublicIpNics();
-			String partitionId = vn.getPartitionId();
-			int tag = pips.size();
-			for (int i = 0; i < pips.size(); i++) {
-				Nic privateIpNic = pips.get(i);
-				String privateIp = privateIpNic.getIp();
-				if (!nrmap.containsKey(privateIp) && i < tag) {
-					// the ip in virtual network may not be equals elements in
-					// the nrmap, due to portal input difference and virtual
-					// network manager try-best to allocate ip addresses.
-					// handle user apply ip firstly.
-					pips.add(privateIpNic);
-					continue;
-				}
-				NodeRequirement nr = null;
-				if (i >= tag) {
-					Iterator it = nrmap.keySet().iterator();
-					while (it.hasNext()) {
-						String key = (String) it.next();
-						if (privateIp.equals(key)) {
-							continue;
-						}
-						nr = nrmap.get(key);
-						it.remove();
-						nr.setPrivateIP(privateIp);
-						// A bug, don't put the privateip as key again, then in
-						// the next loop, the previous ip will be overwritten.
-						break;
-					}
-				} else {
-					nr = nrmap.get(privateIp);
-				}
-
-				Nic publicIpNic = pubnics.get(privateIp);
-				String publicIp = null;
-				if (publicIpNic != null) {
-					publicIp = publicIpNic.getIp();
-					nr.setNeedPublicIP(true);
-				}
-				String vnController = VirtualNodeAC.class.getName();
-				boolean isDeploy = false;
-
-				String applianceId = nr.getVirtualApplicanceID();
-				VirtualAppliance va = VAMUtil.getVAManager().queryAppliance(
-						applianceId);
-
-				if (va == null) {
-					throw new Exception("The required virtual appliance ("
-							+ applianceId + ") is not exist.");
-				}
-				VirtualAppliance snapshot = VAMUtil.getVAManager()
-						.allocateAppliance(va.getGuid(), null, null);
-				if (snapshot == null) {
-					throw new Exception("The snapshot of virtual appliance ("
-							+ va.getName() + ") is created failed.");
-				}
-				itmap.put(snapshot.getGuid(), VirtualAppliance.class.getName());
-				lastMatchedAssetsIdAndTypeMap.put(snapshot.getGuid(),
-						VirtualAppliance.class.getName());
-				String vaFileNames = this.getVAFileNames(snapshot);
-				String loader = snapshot.getBootLoader();
-				List<String> accessWay = snapshot.getAccessWay();
-				// advanced usage.
-				// the following attributes are required.
-				HashMap<String, String> attributes = new HashMap<String, String>();
-				if (privateIp.equals(vn.getHeadNodeIp())) {
-					// attributes.put(VirtualNode.IS_HEAD_NODE, "" +
-					// nr.isHeadNode());
-					// the trustable level of virtual network is bigger than nr.
-					attributes.put(VirtualNode.IS_HEAD_NODE, "" + true);
-					accessWay = this.checkVNCAccessWay(accessWay);
-				} else {
-					attributes.put(VirtualNode.IS_HEAD_NODE, "" + false);
-				}
-				attributes.put(VirtualNode.CPUNUM, "" + nr.getCpuNum());
-				attributes.put(VirtualNode.MEMSIZE, "" + nr.getMemorySize());
-				attributes.put(VirtualNode.APPLIANCE_FILE_NAMES, vaFileNames);
-				attributes.put(VirtualNode.BOOTLOADER, loader);
-				attributes.put(VirtualNode.ACCESSWAY, XmlUtil.toXml(accessWay));
-				attributes
-						.put(VirtualNode.APPLIANCE_NAME, snapshot.getVAName());
-				List<Nic> nodeNics = new ArrayList<Nic>();
-				nodeNics.add(privateIpNic);
-				if (publicIpNic != null) {
-					nodeNics.add(publicIpNic);
-				}
-				attributes.put(VirtualNode.NICS, XmlUtil.toXml(nodeNics));
-
-				// XXX added at 2010-12-15 for vm deploy.
-				attributes.put(VirtualNode.VM_DEPLOY_POLICER,
-						nr.getVmDeployPolicer());
-				VirtualMachineDeployPolicier vmdp = (VirtualMachineDeployPolicier) Class
-						.forName(nr.getVmDeployPolicer()).newInstance();
-				HashMap<String, Vector<String>> deployResult = vmdp
-						.generateDeployPolicy(vn.getPartitionId(), privateIp,
-								nr);
-				if (deployResult != null) {
-					// if deployResult == null, then we donot consider any
-					// deploy schedule policy.
-					attributes.put(VirtualNode.VM_DEPLOY_SCHEDULE_RESULT,
-							XmlUtil.toXml(deployResult));
-				}
-
-				String desc = nr.getPrivateIP() + " Virtual Machine";
-				try {
-					VirtualNode vnode = PartitionManager.getInstance()
-							.addVirtualNode(partitionId, privateIp, publicIp,
-									vnController, applianceId, isDeploy,
-									attributes, desc);
-					itmap.put(vnode.getGuid(), VirtualNode.class.getName());
-					lastMatchedAssetsIdAndTypeMap.put(vnode.getGuid(),
-							VirtualNode.class.getName());
-				} catch (Exception e) {
-					String msg = "Error occurred when create a virtual node info ("
-							+ privateIp + "), due to " + e.toString();
-					log.error(msg);
-					throw new Exception(msg);
-					// // XXX May cause garbage, we need to garbage collection.
-					// left garbage collection to errorHandler.
-				}
-			}
+			itmap = createNodesByDifferentRequirements(vn, nrmap);
 		}
 		return itmap;
 	}
@@ -722,7 +754,7 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 		HashMap<String, String> itmap = vc.getAssetIdAndTypeMap();
 		HashMap<String, String> itmapbak = new HashMap<String, String>(itmap);
 		if (itmap != null && !itmap.isEmpty()) {
-			Iterator it = itmap.keySet().iterator();
+			Iterator<String> it = itmap.keySet().iterator();
 			log.warn("due to system error or termination operation"
 					+ ", it needs to clear all matched assets "
 					+ "for the virtual cluster " + vc.getName());
@@ -758,7 +790,8 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 		// again.
 		if (lastMatchedAssetsIdAndTypeMap != null
 				&& !lastMatchedAssetsIdAndTypeMap.isEmpty()) {
-			Iterator it = lastMatchedAssetsIdAndTypeMap.keySet().iterator();
+			Iterator<String> it = lastMatchedAssetsIdAndTypeMap.keySet()
+				.iterator();
 			log.warn("-------------------------"
 					+ "Roll Back For Asset Match Making"
 					+ "--------------------------------");
@@ -869,7 +902,8 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 				this.checkSatiable4VMVC(vc);
 			} else {
 				// TODO
-				log.debug("Nothing to do now for the physical node typed virtual cluster.");
+				log.debug("Nothing to do now for the physical node typed"
+						+ " virtual cluster.");
 			}
 		}
 		log.info("The lease of VirtualCluster (" + lease.getName()
@@ -903,11 +937,11 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 			throws Exception {
 		HashMap<String, NodeRequirement> nrmap = vc.getNodeRequirements();
 		if (nrmap == null) {
-			throw new Exception(
-					"Both the virtual network id and the node requirement are null");
+			throw new Exception("Both the virtual network id and the node"
+					+ " requirement are null");
 		} else if (nrmap.size() < 1
-				|| (nrmap.size() == 1 && nrmap
-						.containsKey(XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG))) {
+				|| (nrmap.size() == 1 && nrmap.containsKey(
+						XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG))) {
 			throw new Exception("When the virtual network id is null, "
 					+ "the node requirements should have detail information.");
 		}
@@ -925,8 +959,8 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 			throws Exception {
 		VirtualNetwork vn = VirtualNetworkManager.getInstance().view(
 				vc.getVirtualNetworkId());
-		HashMap<String, NodeRequirement> nrmap = (HashMap<String, NodeRequirement>) vc
-				.getNodeRequirements();
+		HashMap<String, NodeRequirement> nrmap = 
+			(HashMap<String, NodeRequirement>) vc.getNodeRequirements();
 		if (nrmap.containsKey(XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG)) {
 			NodeRequirement nr = nrmap
 					.get(XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG);
@@ -946,12 +980,13 @@ public class VirtualClusterAMM implements AssetMatchMaker {
 				totalCpu += nr.getCpuNum();
 				totalMem += nr.getMemorySize();
 			}
-			this.checkSatiable4Resource(vc.getPartitionId(), totalCpu, totalMem);
+			this.checkSatiable4Resource(vc.getPartitionId(), totalCpu, 
+					totalMem);
 		}
 	}
 
-	private void checkSatiable4Resource(String parid, int totalCpu, int totalMem)
-			throws Exception {
+	private void checkSatiable4Resource(String parid, int totalCpu, 
+			int totalMem) throws Exception {
 		List<PhysicalNode> pnlist = PartitionManager.getInstance()
 				.listPhysicalNode(parid);
 		if (pnlist == null || pnlist.isEmpty()) {

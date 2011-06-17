@@ -30,7 +30,6 @@ import org.lingcloud.molva.xmm.client.XMMClient;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class FreeVirtualClusterAction extends NeedLoginAction {
 	/**
@@ -41,7 +40,8 @@ public class FreeVirtualClusterAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 
 			DynaValidatorForm freeClusterForm = (DynaValidatorForm) form;
@@ -52,8 +52,7 @@ public class FreeVirtualClusterAction extends NeedLoginAction {
 			String vcguid = (String) freeClusterForm.get("vcguid");
 			String thisPage = (String) freeClusterForm.get("thispage");
 			// String targetDiv = (String) freeClusterForm.get("targetdiv");
-			if (XMMPortalUtil
-					.checkParamsBlankOrNull(new String[] { vcguid })) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { vcguid })) {
 				// Get form from session, try again.
 				throw new Exception("Please input the correct parameters of "
 						+ "virtual cluster guid: ");
@@ -70,8 +69,8 @@ public class FreeVirtualClusterAction extends NeedLoginAction {
 				}
 				this.url = request.getContextPath() + thisPage.trim();
 			}
-			log.info("User want to delete a cluster "
-					+ vcguid + " from url : " + url);
+			log.info("User want to delete a cluster " + vcguid + " from url : "
+					+ url);
 			XMMClient vxc = XMMPortalUtil.getXMMClient();
 			long begin = System.currentTimeMillis();
 			vxc.destroyVirtualCluster(vcguid);

@@ -23,7 +23,6 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
  * 
  * @version 1.0.1 2010-5-30<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class PhysicalNode extends Node {
 	/**
@@ -111,9 +110,12 @@ public class PhysicalNode extends Node {
 	}
 
 	public int getRunningVms() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				"runningVms")) ? 0 : Integer.parseInt((String) this
-				.getAttributes().get("runningVms"));
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				"runningVms"))) {
+			return 0;
+		}
+		return Integer.parseInt((String) this.getAttributes()
+				.get("runningVms"));
 	}
 
 	public void setRunningVms(int runningVms) {
@@ -121,8 +123,11 @@ public class PhysicalNode extends Node {
 	}
 
 	public boolean getVmProvisonerTag() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				"vmProvisonerTag")) ? true : Boolean.parseBoolean((String) this
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				"vmProvisonerTag"))) {
+			return true;
+		}
+		return Boolean.parseBoolean((String) this
 				.getAttributes().get("vmProvisonerTag"));
 	}
 

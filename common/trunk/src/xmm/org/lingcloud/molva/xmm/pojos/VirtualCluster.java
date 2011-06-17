@@ -26,7 +26,6 @@ import org.lingcloud.molva.xmm.util.XMMConstants;
  * 
  * @version 1.0.1 2009-9-15<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class VirtualCluster extends Lease {
 
@@ -139,7 +138,7 @@ public class VirtualCluster extends Lease {
 	public String getVirtualNetworkId() {
 		HashMap<String, String> aitm = this.getAssetIdAndTypeMap();
 		if (aitm.containsValue(VirtualNetwork.class.getName())) {
-			Iterator iterator = aitm.keySet().iterator();
+			Iterator<String> iterator = aitm.keySet().iterator();
 			while (iterator.hasNext()) {
 				String id = (String) iterator.next();
 				String type = aitm.get(id);
@@ -182,7 +181,7 @@ public class VirtualCluster extends Lease {
 			return aitMap;
 		}
 		HashMap<String, String> nodeMap = new HashMap<String, String>();
-		Iterator it = aitMap.keySet().iterator();
+		Iterator<String> it = aitMap.keySet().iterator();
 		while (it.hasNext()) {
 			String key = (String) it.next();
 			String type = aitMap.get(key);
@@ -204,6 +203,7 @@ public class VirtualCluster extends Lease {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public HashMap<String, NodeRequirement> getNodeRequirements() {
 		String xml = this.getAdditionalTerms().get("nodeRequirements");
 		if (xml == null || "".equals(xml)) {

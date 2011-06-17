@@ -33,7 +33,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 
 public class NewApplianceCategoryAction extends NeedLoginAction {
@@ -45,24 +44,23 @@ public class NewApplianceCategoryAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
-			
+
 			DynaValidatorForm newAppCateForm = (DynaValidatorForm) form;
 			if (newAppCateForm == null) {
 				throw new Exception(
 						"The form is submitted failed, please retry: ");
 			}
-			String categoryname = (String) newAppCateForm
-					.get("categoryname");
+			String categoryname = (String) newAppCateForm.get("categoryname");
 			String thispage = (String) newAppCateForm.get("thispage");
-			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-					categoryname })) {
+			if (XMMPortalUtil
+					.checkParamsBlankOrNull(new String[] { categoryname })) {
 				throw new Exception("Please input the correct parameters of "
 						+ "categoryname!");
 			}
 			categoryname = categoryname.trim();
-			
 
 			if (thispage == null || "".equals(thispage)) {
 				this.url = request.getContextPath()
@@ -74,10 +72,10 @@ public class NewApplianceCategoryAction extends NeedLoginAction {
 				this.url = request.getContextPath() + thispage.trim();
 			}
 			log.info("User want to new a appliance category from url : " + url);
-			
+
 			VirtualApplianceManager vam = VAMUtil.getVAManager();
 			VACategory cate = vam.addCategory(categoryname);
-			
+
 			log.info("A appliance category with the name " + cate.getCategory()
 					+ " is added successfully.");
 			/*

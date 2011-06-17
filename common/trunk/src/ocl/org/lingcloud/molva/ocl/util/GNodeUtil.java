@@ -15,6 +15,7 @@ package org.lingcloud.molva.ocl.util;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.lingcloud.molva.ocl.persistence.GNode;
@@ -63,7 +64,7 @@ public class GNodeUtil {
 			throw new GNodeException(new Exception(msg));
 		}
 
-		Map attributes = gnode.getAttributes();
+		Map<String, String> attributes = gnode.getAttributes();
 
 		if (attributes == null) {
 			String msg = "Should use empty attribute map, don't use null";
@@ -76,10 +77,10 @@ public class GNodeUtil {
 		}
 
 		long totalLength = 0;
-		Set attrs = attributes.entrySet();
-		Iterator it = attrs.iterator();
+		Set<Entry<String, String>> attrs = attributes.entrySet();
+		Iterator<Entry<String, String>> it = attrs.iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
+			Entry<String, String> entry = it.next();
 			Object obj = entry.getValue();
 			// bug fixed: if is null, OK!
 			if (obj == null) {

@@ -23,29 +23,29 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * <strong>Purpose:This class is to filt all request and response's charset.</strong><br>
+ * <strong>Purpose:This class is to filt all request and response's
+ * charset.</strong><br>
  * TODO.
  * 
  * @version 1.0.1 Jan 3, 2008<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class SetCharacterEncodingFilter implements Filter {
 
 	/**
 	 * This variable indicates which character-encoding used.
 	 */
-	protected String encoding = null;
+	private String encoding = null;
 
 	/**
 	 * An instance to config filter.
 	 */
-	protected FilterConfig filterConfig = null;
+	private FilterConfig filterConfig = null;
 
 	/**
 	 * If ignore is true, it indicates to use encoding variable's value.
 	 */
-	protected boolean ignore = true;
+	private boolean ignore = true;
 
 	/**
 	 * The method need to be implemented to invoke before filter call. To set

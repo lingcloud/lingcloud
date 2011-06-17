@@ -27,7 +27,6 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
  * 
  * @version 1.0.1 2010-8-8<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class Node extends Asset {
 
@@ -121,9 +120,11 @@ public class Node extends Asset {
 	}
 
 	public int getCpuNum() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				CPUNUM)) ? 0 : Integer.parseInt((String) this.getAttributes()
-				.get(CPUNUM));
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				CPUNUM))) {
+			return 0;
+		}
+		return Integer.parseInt((String) this.getAttributes().get(CPUNUM));
 	}
 
 	public void setCpuNum(int cpuNum) {
@@ -134,9 +135,11 @@ public class Node extends Asset {
 	}
 
 	public int getMemorySize() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				MEMSIZE)) ? 0 : Integer.parseInt((String) this.getAttributes()
-				.get(MEMSIZE));
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				MEMSIZE))) {
+			return 0;
+		}
+		return Integer.parseInt((String) this.getAttributes().get(MEMSIZE));
 	}
 
 	public void setMemsize(int memSize) {
@@ -147,8 +150,11 @@ public class Node extends Asset {
 	}
 
 	public int getFreeCpu() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				FREE_CPU)) ? 0 : Integer.parseInt((String) this.getAttributes()
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				FREE_CPU))) {
+			return 0;
+		}
+		return Integer.parseInt((String) this.getAttributes()
 				.get(FREE_CPU));
 	}
 
@@ -157,9 +163,12 @@ public class Node extends Asset {
 	}
 
 	public int getFreeMemory() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				FREE_MEMORY)) ? 0 : Integer.parseInt((String) this
-				.getAttributes().get(FREE_MEMORY));
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				FREE_MEMORY))) {
+			return 0;
+		}
+		return Integer.parseInt((String) this.getAttributes()
+				.get(FREE_MEMORY));
 	}
 
 	public void setFreeMemory(int freeMemory) {
@@ -213,6 +222,7 @@ public class Node extends Asset {
 		this.getAttributes().put(Node.PUBLIC_IPS, sb.toString());
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Nic> getNics() {
 		// it is hard to distinguish the private ip nic and public nic in the
 		// total nics. so the private ip, public ip are get from user input. The
@@ -260,6 +270,7 @@ public class Node extends Asset {
 		return this.getAttributes().get(RUNNING_STATUS);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<String> getAccessWay() {
 		String awstr = (String) this.getAttributes().get(ACCESSWAY);
 		return (List<String>) XmlUtil.fromXml(awstr);
@@ -347,9 +358,11 @@ public class Node extends Asset {
 	}
 
 	public int getCpuSpeed() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				CPUSPEED)) ? 0 : Integer.parseInt((String) this.getAttributes()
-				.get(CPUSPEED));
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				CPUSPEED))) {
+			return 0;
+		}
+		return Integer.parseInt((String) this.getAttributes().get(CPUSPEED));
 	}
 
 	public void setCpuSpeed(int cpuSpeed) {

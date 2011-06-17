@@ -84,7 +84,7 @@ public class GNodeInfo implements Serializable, Cloneable {
 	/**
 	 * extension part. It's key-value pairs. Default is a empty map.
 	 */
-	private Map attributes = new HashMap();
+	private Map<String, String> attributes = new HashMap<String, String>();
 
 	/**
 	 * get the guid of Object.
@@ -188,7 +188,7 @@ public class GNodeInfo implements Serializable, Cloneable {
 	 * 
 	 * @return extension part.
 	 */
-	public Map getAttributes() {
+	public Map<String, String> getAttributes() {
 		return attributes;
 	}
 
@@ -198,7 +198,7 @@ public class GNodeInfo implements Serializable, Cloneable {
 	 * @param attributes
 	 *            extension part.
 	 */
-	public void setAttributes(Map attributes) {
+	public void setAttributes(Map<String, String> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -294,7 +294,8 @@ public class GNodeInfo implements Serializable, Cloneable {
 			// Caution!!! Should consider String and other type's deep copy
 			// later.
 			if (this.attributes != null) {
-				newGNode.setAttributes(new HashMap(this.attributes));
+				newGNode.setAttributes(new HashMap<String, String>(
+						this.attributes));
 			}
 		} catch (Exception e) {
 			throw new CloneNotSupportedException("Clone not support due to : "

@@ -42,7 +42,6 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
  * 
  * @version 1.0.1 2010-5-30<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class PPNPNController extends AssetController {
 
@@ -95,8 +94,8 @@ public class PPNPNController extends AssetController {
 
 	public void destroy(Asset asset) throws Exception {
 		if (asset.getAssetState() != null
-				&& (asset.getAssetState() == AssetConstants.AssetState.RESERVED || asset
-						.getAssetState() == AssetConstants.AssetState.LEASED)) {
+				&& (asset.getAssetState() == AssetConstants.AssetState.RESERVED 
+				|| asset.getAssetState() == AssetConstants.AssetState.LEASED)) {
 			if (asset.getLeaseId() == null || "".equals(asset.getLeaseId())) {
 				throw new Exception("The physical node (" + asset.getGuid()
 						+ " " + asset.getName()
@@ -157,7 +156,7 @@ public class PPNPNController extends AssetController {
 			
 			pn.setCpuNum(pnsmip.getCpuNum());
 			pn.setFreeCpu(pnsmip.getCpuNum());
-			pn.setCpuSpeed((int)pnsmip.getCpuSpeed());
+			pn.setCpuSpeed((int) pnsmip.getCpuSpeed());
 			
 			pn.setMemsize(pnsmip.getMem());
 			pn.setFreeMemory(pnsmip.getMem());
@@ -175,8 +174,8 @@ public class PPNPNController extends AssetController {
 	}
 
 	@Override
-	public double calculatePrice(Asset asset, HashMap params) throws Exception {
-		// TODO Auto-generated method stub
+	public double calculatePrice(Asset asset, 
+			HashMap<String, String> params) throws Exception {
 		return 0;
 	}
 
@@ -187,8 +186,8 @@ public class PPNPNController extends AssetController {
 		PhysicalNode pn = new PhysicalNode(asset);
 		String clusterId = pn.getVirtualClusterID();
 		if (clusterId == null || "".equals(clusterId)) {
-			throw new Exception(
-					"No cluster info in the physical node, so it can not be init.");
+			throw new Exception("No cluster info in the physical node,"
+					+ " so it can not be init.");
 		}
 		VirtualCluster vc = VirtualClusterManager.getInstance().view(clusterId);
 		String vnid = vc.getVirtualNetworkId();
@@ -268,9 +267,7 @@ public class PPNPNController extends AssetController {
 						+ "\" fail, caused by " + e.getMessage());
 				throw new RemoteException(e.getMessage(), e);
 			}
-		} else {
-			// no need to do anything.
-		}
+		} 
 		return true;
 	}
 
@@ -290,8 +287,8 @@ public class PPNPNController extends AssetController {
 		PhysicalNode pn = new PhysicalNode(asset);
 		String clusterId = pn.getVirtualClusterID();
 		if (clusterId == null || "".equals(clusterId)) {
-			throw new Exception(
-					"No cluster info in the physical node, so it can not be provisioned.");
+			throw new Exception("No cluster info in the physical node, "
+					+ "so it can not be provisioned.");
 		}
 		VirtualCluster vc = VirtualClusterManager.getInstance().view(clusterId);
 		String vnid = vc.getVirtualNetworkId();
@@ -330,13 +327,13 @@ public class PPNPNController extends AssetController {
 	}
 
 	public void start(Asset asset) {
-		// TODO
-		log.info("The physical node " + asset.getName() + " is started itself.");
+		log.info("The physical node " + asset.getName() 
+				+ " is started itself.");
 	}
 
 	public void stop(Asset asset) {
-		// TODO
-		log.info("The physical node " + asset.getName() + " is stopped itself.");
+		log.info("The physical node " + asset.getName() 
+				+ " is stopped itself.");
 	}
 
 }

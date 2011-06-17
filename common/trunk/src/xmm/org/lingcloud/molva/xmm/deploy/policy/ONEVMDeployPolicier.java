@@ -28,11 +28,10 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
 
 /**
  * <strong>Purpose:</strong><br>
- * TODO
+ * TODO.
  * 
  * @version 1.0.1 2010-12-15<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn<br>
  */
 
 public class ONEVMDeployPolicier extends VirtualMachineDeployPolicier {
@@ -104,13 +103,14 @@ public class ONEVMDeployPolicier extends VirtualMachineDeployPolicier {
 		}
 		Vector<String> target = new Vector<String>();
 		target.add("\"HOSTNAME = " + tarpn.getHostName() + "\"");
-		HashMap<String, Vector<String>> result = new HashMap<String, Vector<String>>();
+		HashMap<String, Vector<String>> result = 
+			new HashMap<String, Vector<String>>();
 		result.put(REQUIREMENTS, target);
 		log.info("End to deploy with assign policy for the virtual machine "
 				+ vmip + ", the assigned host is " + ip + ".");
 		return result;
 	}
-	
+
 	private HashMap<String, Vector<String>> deployWithLoadBalance(
 			List<PhysicalNode> availablePNodes, String vmip, NodeRequirement nr)
 			throws Exception {
@@ -127,14 +127,18 @@ public class ONEVMDeployPolicier extends VirtualMachineDeployPolicier {
 					&& pn.getFreeCpu() > nr.getCpuNum()
 					&& pn.getFreeMemory() > nr.getMemorySize()) {
 				pnodes.add(pn);
-				
+
 				// capacity of the physical node
-				cap = pn.getFreeCpu()/nr.getCpuNum() < pn.getFreeMemory()/nr.getMemorySize() ?
-						pn.getFreeCpu()/nr.getCpuNum() : pn.getFreeMemory()/nr.getMemorySize() ;
-				
+				if (pn.getFreeCpu() / nr.getCpuNum() < pn.getFreeMemory()
+						/ nr.getMemorySize()) {
+					cap = pn.getFreeCpu() / nr.getCpuNum();
+				} else {
+					cap = pn.getFreeMemory() / nr.getMemorySize();
+				}
+
 				capList.add(cap);
 				sum += cap;
-				
+
 			}
 		}
 		if (pnodes.isEmpty()) {
@@ -145,14 +149,15 @@ public class ONEVMDeployPolicier extends VirtualMachineDeployPolicier {
 		}
 		int r = Math.abs(rand.nextInt() % sum);
 		int index = 0;
-		for (; r < 0 && index < capList.size() ; index++) {
+		for (; r < 0 && index < capList.size(); index++) {
 			r -= capList.get(index);
 		}
 		index--;
-		
+
 		Vector<String> target = new Vector<String>();
 		target.add("\"HOSTNAME = " + pnodes.get(index).getHostName() + "\"");
-		HashMap<String, Vector<String>> result = new HashMap<String, Vector<String>>();
+		HashMap<String, Vector<String>> result = 
+			new HashMap<String, Vector<String>>();
 		result.put(REQUIREMENTS, target);
 		log.info("End to deploy (" + vmip
 				+ ") with balance policy, and choose the physical node "
@@ -160,39 +165,43 @@ public class ONEVMDeployPolicier extends VirtualMachineDeployPolicier {
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	private HashMap<String, Vector<String>> deployWithLoadAware(String vmip,
 			NodeRequirement nr) throws Exception {
-		log.info("Begin to deploy with load aware policy for the virtual machine "
-				+ vmip + ".");		
+		log.info("Begin to deploy with load aware policy for the virtual "
+				+ "machine " + vmip + ".");
 
 		// support multiple partition by only one OpenNebula instance.
-		Vector<String> rank_targets = new Vector<String>();
-		rank_targets.add("FREECPU");
-		Vector<String> req_targets = new Vector<String>();
-		req_targets.add("\"CLUSTER = \\\"" + nr.getPartitionId() + "\\\"\"");
-		HashMap<String, Vector<String>> result = new HashMap<String, Vector<String>>();
-		result.put(RANK, rank_targets);
-		result.put(REQUIREMENTS, req_targets);
+		Vector<String> rankTargets = new Vector<String>();
+		rankTargets.add("FREECPU");
+		Vector<String> reqTargets = new Vector<String>();
+		reqTargets.add("\"CLUSTER = \\\"" + nr.getPartitionId() + "\\\"\"");
+		HashMap<String, Vector<String>> result = 
+			new HashMap<String, Vector<String>>();
+		result.put(RANK, rankTargets);
+		result.put(REQUIREMENTS, reqTargets);
 		log.info("End to deploy with load aware policy for the virtual machine "
 				+ vmip + ".");
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	private HashMap<String, Vector<String>> deployWithPerformance(String vmip,
 			NodeRequirement nr) throws Exception {
-		log.info("Begin to deploy with performance policy for the virtual machine "
-				+ vmip + ".");
+		log.info("Begin to deploy with performance policy for the virtual "
+				+ "machine " + vmip + ".");
 
 		// support multiple partition by only one OpenNebula instance.
-		Vector<String> rank_targets = new Vector<String>();
-		rank_targets.add("\"- RUNNING_VMS\"");
-		Vector<String> req_targets = new Vector<String>();
-		req_targets.add("\"CLUSTER = \\\"" + nr.getPartitionId() + "\\\"\"");
-		HashMap<String, Vector<String>> result = new HashMap<String, Vector<String>>();
-		result.put(RANK, rank_targets);
-		result.put(REQUIREMENTS, req_targets);
-		log.info("End to deploy with performance policy for the virtual machine "
-				+ vmip + ".");
+		Vector<String> rankTargets = new Vector<String>();
+		rankTargets.add("\"- RUNNING_VMS\"");
+		Vector<String> reqTargets = new Vector<String>();
+		reqTargets.add("\"CLUSTER = \\\"" + nr.getPartitionId() + "\\\"\"");
+		HashMap<String, Vector<String>> result = 
+			new HashMap<String, Vector<String>>();
+		result.put(RANK, rankTargets);
+		result.put(REQUIREMENTS, reqTargets);
+		log.info("End to deploy with performance policy for the virtual"
+				+ " machine " + vmip + ".");
 		return result;
 	}
 
@@ -202,13 +211,14 @@ public class ONEVMDeployPolicier extends VirtualMachineDeployPolicier {
 				+ vmip + ".");
 
 		// support multiple partition by only one OpenNebula instance.
-		Vector<String> rank_targets = new Vector<String>();
-		rank_targets.add("\"RUNNING_VMS\"");
-		Vector<String> req_targets = new Vector<String>();
-		req_targets.add("\"CLUSTER = \\\"" + nr.getPartitionId() + "\\\"\"");
-		HashMap<String, Vector<String>> result = new HashMap<String, Vector<String>>();
-		result.put(RANK, rank_targets);
-		result.put(REQUIREMENTS, req_targets);
+		Vector<String> rankTargets = new Vector<String>();
+		rankTargets.add("\"RUNNING_VMS\"");
+		Vector<String> reqTargets = new Vector<String>();
+		reqTargets.add("\"CLUSTER = \\\"" + nr.getPartitionId() + "\\\"\"");
+		HashMap<String, Vector<String>> result = 
+			new HashMap<String, Vector<String>>();
+		result.put(RANK, rankTargets);
+		result.put(REQUIREMENTS, reqTargets);
 		log.info("End to deploy with effect policy for the virtual machine "
 				+ vmip + ".");
 		return result;
@@ -238,7 +248,8 @@ public class ONEVMDeployPolicier extends VirtualMachineDeployPolicier {
 		int index = Math.abs(rand.nextInt() % pnodes.size());
 		Vector<String> target = new Vector<String>();
 		target.add("\"HOSTNAME = " + pnodes.get(index).getHostName() + "\"");
-		HashMap<String, Vector<String>> result = new HashMap<String, Vector<String>>();
+		HashMap<String, Vector<String>> result = 
+			new HashMap<String, Vector<String>>();
 		result.put(REQUIREMENTS, target);
 		log.info("End to deploy (" + vmip
 				+ ") with random policy, and choose the physical node "

@@ -88,12 +88,13 @@ public class VmTemplate {
 
 	private SortedMap<String, String> simpleAttributes;
 
-	/** This a multi-map */
+	/** This a multi-map. */
 	private SortedMap<String, Set<Map<String, String>>> vectorAttributes;
 
 	private boolean hvmTag = false;
 
-	private static final String contextForXen = "import os, re\narch = os.uname()[4]\n"
+	private static final String CONTEXT_FOR_XEN = 
+			"import os, re\narch = os.uname()[4]\n"
 			+ "if re.search('64', arch):\n  arch_libdir = 'lib64'\n"
 			+ "else:\n  arch_libdir = 'lib'\n";
 
@@ -109,18 +110,20 @@ public class VmTemplate {
 	 */
 	public VmTemplate(VmTemplate toClone) {
 
-		simpleAttributes = new TreeMap<String, String>(toClone.simpleAttributes);
+		simpleAttributes = new TreeMap<String, String>(
+				toClone.simpleAttributes);
 
-		TreeMap<String, Set<Map<String, String>>> newVectorAttributes = new TreeMap<String, Set<Map<String, String>>>();
+		TreeMap<String, Set<Map<String, String>>> newVectorAttributes = 
+			new TreeMap<String, Set<Map<String, String>>>();
 
-		for (Entry<String, Set<Map<String, String>>> entryToClone : toClone.vectorAttributes
-				.entrySet()) {
+		for (Entry<String, Set<Map<String, String>>> entryToClone 
+				: toClone.vectorAttributes.entrySet()) {
 			final Set<Map<String, String>> currentSet = entryToClone.getValue();
-			Set<Map<String, String>> newAttributeSet = new LinkedHashSet<Map<String, String>>(
-					1);
+			Set<Map<String, String>> newAttributeSet = 
+				new LinkedHashSet<Map<String, String>>(1);
 			for (Map<String, String> vectorAttributeToClone : currentSet) {
-				final Map<String, String> attClone = new HashMap<String, String>(
-						vectorAttributeToClone);
+				final Map<String, String> attClone = 
+					new HashMap<String, String>(vectorAttributeToClone);
 				newAttributeSet.add(attClone);
 			}
 			newVectorAttributes.put(entryToClone.getKey(), newAttributeSet);
@@ -167,7 +170,7 @@ public class VmTemplate {
 		StringBuilder b = new StringBuilder();
 
 		if (this.hvmTag) {
-			b.append("RAW=[data=\"" + this.contextForXen + "\",type=\"xen\"]");
+			b.append("RAW=[data=\"" + CONTEXT_FOR_XEN + "\",type=\"xen\"]");
 			b.append(System.getProperty("line.separator"));
 		}
 
@@ -175,8 +178,8 @@ public class VmTemplate {
 			b.append(att.getKey()).append('=').append(att.getValue()).append(
 					System.getProperty("line.separator"));
 		}
-		for (Entry<String, Set<Map<String, String>>> vectorAtt : vectorAttributes
-				.entrySet()) {
+		for (Entry<String, Set<Map<String, String>>> vectorAtt 
+				: vectorAttributes.entrySet()) {
 
 			for (Map<String, String> subAttribute : vectorAtt.getValue()) {
 				b.append(vectorAtt.getKey()).append("=[");
@@ -214,10 +217,15 @@ public class VmTemplate {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ (simpleAttributes == null ? 0 : simpleAttributes.hashCode());
-		result = prime * result
-				+ (vectorAttributes == null ? 0 : vectorAttributes.hashCode());
+		result = prime * result;
+		if (simpleAttributes != null) {
+			result += simpleAttributes.hashCode();
+		}
+		result = prime * result;
+		if (vectorAttributes != null) {
+			result += vectorAttributes.hashCode();
+		}
+
 		return result;
 	}
 

@@ -44,7 +44,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-9-29<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class VirtualClusterManager {
 	// FIXME now we use lease life cycle state to describe virtual cluster
@@ -128,10 +127,11 @@ public class VirtualClusterManager {
 			long duration, Date expireTime, HashMap<String, String> attributes,
 			String desc) throws Exception {
 		AssetManagerImpl ami = new AssetManagerImpl();
+		@SuppressWarnings("unused")
 		Partition par = new Partition(ami.view(parid));
-		if (par == null) {
-			throw new Exception("The Partition " + parid + " is not exist.");
-		}
+//		if (par == null) {
+//			throw new Exception("The Partition " + parid + " is not exist.");
+//		}
 		VirtualNetwork vn = null;
 		if (vnid != null && !"".equals(vnid)) {
 			// The vnid == null or blank means the virtual network should be
@@ -146,15 +146,12 @@ public class VirtualClusterManager {
 
 		}
 
-		if (tenantId == null || "".equals(tenantId)) {
-		} else {
-		}
-
 		if (nrmap != null && nrmap.size() < 1) {
 			throw new Exception(
 					"The node requirement should have one record at least.");
 		} else if (nrmap != null
-				&& nrmap.containsKey(XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG)) {
+				&& nrmap.containsKey(XMMConstants
+						.ALL_NODE_SAME_REQUIREMENT_TAG)) {
 			if (vnid == null || "".equals(vnid)) {
 				throw new Exception("If you want all nodes have the "
 						+ "same configuration, then you must identify "
@@ -198,7 +195,7 @@ public class VirtualClusterManager {
 		}
 
 		// check the nrmap fields.
-		Iterator it = nrmap.keySet().iterator();
+		Iterator<String> it = nrmap.keySet().iterator();
 		while (it.hasNext()) {
 			String key = (String) it.next();
 			// A bug due to fail-fast iterator. When iterator all elements in
@@ -245,7 +242,8 @@ public class VirtualClusterManager {
 		if (vcluster == null) {
 			throw new Exception("The input virtual cluster is a null object!");
 		}
-		if (vcluster.getLifecycleState() != LeaseConstants.LeaseLifeCycleState.EFFECTIVE) {
+		if (vcluster.getLifecycleState() != LeaseConstants.
+				LeaseLifeCycleState.EFFECTIVE) {
 			return;
 		}
 		AssetManagerImpl ami = new AssetManagerImpl();
@@ -290,7 +288,8 @@ public class VirtualClusterManager {
 		if (vcluster == null) {
 			throw new Exception("The input virtual cluster is null.");
 		}
-		if (vcluster.getLifecycleState() != LeaseConstants.LeaseLifeCycleState.EFFECTIVE) {
+		if (vcluster.getLifecycleState() != LeaseConstants.
+				LeaseLifeCycleState.EFFECTIVE) {
 			return;
 		}
 		AssetManagerImpl ami = new AssetManagerImpl();
@@ -336,9 +335,10 @@ public class VirtualClusterManager {
 			return;
 		}
 		VirtualCluster vc = new VirtualCluster(lease);
-		if (vc == null) {
-			throw new Exception("The VirtualCluster " + vcid + " is not exist.");
-		}
+//		if (vc == null) {
+//			throw new Exception("The VirtualCluster " + vcid 
+//					+ " is not exist.");
+//		}
 		// terminate only control all assets to stop running, not remove them.
 		lmi.terminate(vcid);
 
@@ -351,7 +351,7 @@ public class VirtualClusterManager {
 					+ "the virtual cluster (" + vc.getName()
 					+ "), due to its assetIdAndType map is null or empty.");
 		} else {
-			Iterator it = assetIdType.keySet().iterator();
+			Iterator<String> it = assetIdType.keySet().iterator();
 			while (it.hasNext()) {
 				String id = (String) it.next();
 				String type = assetIdType.get(id);
@@ -482,8 +482,9 @@ public class VirtualClusterManager {
 		return vclist;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean checkValidity(Lease newLease, Lease lease) {
-		if ((newLease.getAcl() == null || newLease.getAcl().equals(
+		return (newLease.getAcl() == null || newLease.getAcl().equals(
 				lease.getAcl()))
 				&& (newLease.getAddTime() == null || newLease.getAddTime()
 						.equals(lease.getAddTime()))
@@ -497,14 +498,10 @@ public class VirtualClusterManager {
 				&& (newLease.getName() == null || newLease.getName().equals(
 						lease.getName()))
 				&& (newLease.getTenantId() == null || newLease.getTenantId()
-						.equals(lease.getTenantId()))
-		) {
-			return true;
-		} else {
-			return false;
-		}
+						.equals(lease.getTenantId()));
 	}
 
+	@SuppressWarnings("unused")
 	private void doMonitorConfig(VirtualNetwork vn, String method)
 			throws Exception {
 		String command = XMMUtil.getMonitorConfigCommandInCfgFile() + " "

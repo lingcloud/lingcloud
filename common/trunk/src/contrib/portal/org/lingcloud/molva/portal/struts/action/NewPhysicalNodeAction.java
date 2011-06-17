@@ -43,7 +43,6 @@ import org.lingcloud.molva.xmm.util.XmlUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class NewPhysicalNodeAction extends NeedLoginAction {
 	/**
@@ -54,7 +53,8 @@ public class NewPhysicalNodeAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			DynaValidatorForm newHostNodeForm = (DynaValidatorForm) form;
 			if (newHostNodeForm == null) {
@@ -67,8 +67,8 @@ public class NewPhysicalNodeAction extends NeedLoginAction {
 			String redeploy = (String) newHostNodeForm.get("redeploy");
 			String description = (String) newHostNodeForm.get("description");
 			String thisPage = (String) newHostNodeForm.get("thispage");
-			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-					parguid, privateip, redeploy })) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { parguid,
+					privateip, redeploy })) {
 				throw new Exception("Please input the correct parameters of "
 						+ "target partition, redeploy, and privateip: ");
 				// }
@@ -101,34 +101,32 @@ public class NewPhysicalNodeAction extends NeedLoginAction {
 				throw new Exception("The target partition is not exist.");
 			}
 			String pnController = null;
-			if (par.getAssetController()
-					.equals(PartitionAC.class.getName())) {
+			if (par.getAssetController().equals(PartitionAC.class.getName())) {
 				if (par.getAttributes() != null
 						&& par.getAttributes().containsKey(
 								PartitionAC.REQUIRED_ATTR_NODETYPE)
-						&& par.getAttributes().get(
-								PartitionAC.REQUIRED_ATTR_NODETYPE).equals(
-								PartitionAC.VM)) {
+						&& par.getAttributes()
+								.get(PartitionAC.REQUIRED_ATTR_NODETYPE)
+								.equals(PartitionAC.VM)) {
 					pnController = PVNPNController.class.getName();
 				} else {
 					pnController = PPNPNController.class.getName();
 				}
 
 			}
-			List accessWay = new ArrayList<String>();
+			List<String> accessWay = new ArrayList<String>();
 
 			accessWay.add(VAMConstants.VA_ACCESS_WAY_SSH);
 
 			accessWay.add(VAMConstants.VA_ACCESS_WAY_VNC);
 
-			HashMap<String,String> attr = new HashMap<String,String>();
+			HashMap<String, String> attr = new HashMap<String, String>();
 
 			attr.put(Node.ACCESSWAY, XmlUtil.toXml(accessWay));
-			
-			
+
 			PhysicalNode pn = vxc.addPhysicalNode(parguid, privateip, publicip,
 					pnController, red, attr, description);
-			for(int i = 0 ; i < pn.getAccessWay().size(); i++){
+			for (int i = 0; i < pn.getAccessWay().size(); i++) {
 				log.info(pn.getAccessWay().get(i));
 			}
 			log.info("A physical node with the private ip "
@@ -149,7 +147,7 @@ public class NewPhysicalNodeAction extends NeedLoginAction {
 			log.error(e.toString());
 			// request.getSession().invalidate();
 			request.setAttribute("errormsg", e.getMessage().replace("\n", ""));
-			//super.addErrors(e.getMessage(), request);
+			// super.addErrors(e.getMessage(), request);
 			return mapping.findForward("failure");
 		}
 	}

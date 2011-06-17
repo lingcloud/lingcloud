@@ -32,7 +32,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class DeleteApplianceCategoryAction extends NeedLoginAction {
 	/**
@@ -43,9 +42,10 @@ public class DeleteApplianceCategoryAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
-			
+
 			DynaValidatorForm deleteAppCateForm = (DynaValidatorForm) form;
 			if (deleteAppCateForm == null) {
 				throw new Exception(
@@ -53,8 +53,7 @@ public class DeleteApplianceCategoryAction extends NeedLoginAction {
 			}
 			String guid = (String) deleteAppCateForm.get("guid");
 			String thisPage = (String) deleteAppCateForm.get("thispage");
-			if (XMMPortalUtil
-					.checkParamsBlankOrNull(new String[] { guid })) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { guid })) {
 				throw new Exception("Please input the correct parameters of "
 						+ "appliance category guid: ");
 			}
@@ -71,12 +70,13 @@ public class DeleteApplianceCategoryAction extends NeedLoginAction {
 			}
 			log.info("User want to delete a appliance category " + guid
 					+ "from url : " + url);
-			
+
 			VirtualApplianceManager vam = VAMUtil.getVAManager();
 			VACategory cate = vam.queryCategory(guid);
 			vam.removeCategory(guid);
-			log.info(" A appliance category with the name " + cate.getCategory() + " "
-					+ cate.getGuid() + " is removed successfully.");
+			log.info(" A appliance category with the name "
+					+ cate.getCategory() + " " + cate.getGuid()
+					+ " is removed successfully.");
 			/*
 			 * set object to request so that other pages can use.
 			 */
@@ -93,7 +93,6 @@ public class DeleteApplianceCategoryAction extends NeedLoginAction {
 			log.error(e.toString());
 			super.addErrors(e.getMessage(), request);
 			return mapping.findForward("failure");
-		} finally {
 		}
 	}
 }

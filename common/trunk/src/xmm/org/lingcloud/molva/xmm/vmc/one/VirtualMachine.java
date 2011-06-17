@@ -16,7 +16,6 @@
 
 package org.lingcloud.molva.xmm.vmc.one;
 
-
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 
@@ -27,80 +26,60 @@ import org.lingcloud.molva.xmm.pojos.VirtualNode;
 import org.lingcloud.molva.xmm.util.XMMConstants;
 
 /**
- * This class represents an OpenNebula VM.
- * It also offers static XML-RPC call wrappers.
+ * This class represents an OpenNebula VM. It also offers static XML-RPC call
+ * wrappers.
  */
-public class VirtualMachine extends PoolElement{
+public class VirtualMachine extends PoolElement {
 
-    private static final String METHOD_PREFIX = "vm.";
-    private static final String ALLOCATE = METHOD_PREFIX + "allocate";
-    private static final String INFO     = METHOD_PREFIX + "info";
-    private static final String DEPLOY   = METHOD_PREFIX + "deploy";
-    private static final String ACTION   = METHOD_PREFIX + "action";
-    private static final String MIGRATE  = METHOD_PREFIX + "migrate";
-    private static final String SAVEDISK = METHOD_PREFIX + "savedisk";
+	private static final String METHOD_PREFIX = "vm.";
+	private static final String ALLOCATE = METHOD_PREFIX + "allocate";
+	private static final String INFO = METHOD_PREFIX + "info";
+	private static final String DEPLOY = METHOD_PREFIX + "deploy";
+	private static final String ACTION = METHOD_PREFIX + "action";
+	private static final String MIGRATE = METHOD_PREFIX + "migrate";
+	private static final String SAVEDISK = METHOD_PREFIX + "savedisk";
 
-    public static final String[] VM_STATES =
-    {
-        "INIT",
-        "PENDING",
-        "HOLD",
-        "ACTIVE",
-        "STOPPED",
-        "SUSPENDED",
-        "DONE",
-        "FAILED" };
+	public static final int VM_STATE_INIT = 0;
+	public static final int VM_STATE_PENDING = 1;
+	public static final int VM_STATE_HOLD = 2;
+	public static final int VM_STATE_ACTIVE = 3;
+	public static final int VM_STATE_STOPPED = 4;
+	public static final int VM_STATE_SUSPENDED = 5;
+	public static final int VM_STATE_DONE = 6;
+	public static final int VM_STATE_FAILED = 7;
 
-    private static final String[] SHORT_VM_STATES =
-    {
-        "init",
-        "pend",
-        "hold",
-        "actv",
-        "stop",
-        "susp",
-        "done",
-        "fail" };
+	public static final int LCM_STATE_INIT = 0;
+	public static final int LCM_STATE_PROLOG = 1;
+	public static final int LCM_STATE_BOOT = 2;
+	public static final int LCM_STATE_RUNNING = 3;
+	public static final int LCM_STATE_MIGRATE = 4;
+	public static final int LCM_STATE_SAVE_STOP = 5;
+	public static final int LCM_STATE_SAVE_SUSPEND = 6;
+	public static final int LCM_STATE_SAVE_MIGRATE = 7;
+	public static final int LCM_STATE_PROLOG_MIGRATE = 8;
+	public static final int LCM_STATE_PROLOG_RESUME = 9;
+	public static final int LCM_STATE_EPILOG_STOP = 10;
+	public static final int LCM_STATE_EPILOG = 11;
+	public static final int LCM_STATE_SHUTDOWN = 12;
+	public static final int LCM_STATE_CANCEL = 13;
+	public static final int LCM_STATE_FAILURE = 14;
+	public static final int LCM_STATE_DELETE = 15;
+	public static final int LCM_STATE_UNKNOWN = 16;
 
-    public static final String[] LCM_STATE =
-    {
-        "LCM_INIT",
-        "PROLOG",
-        "BOOT",
-        "RUNNING",
-        "MIGRATE",
-        "SAVE_STOP",
-        "SAVE_SUSPEND",
-        "SAVE_MIGRATE",
-        "PROLOG_MIGRATE",
-        "PROLOG_RESUME",
-        "EPILOG_STOP",
-        "EPILOG",
-        "SHUTDOWN",
-        "CANCEL",
-        "FAILURE",
-        "DELETE",
-        "UNKNOWN" };
+	public static final String[] VM_STATES = { "INIT", "PENDING", "HOLD",
+			"ACTIVE", "STOPPED", "SUSPENDED", "DONE", "FAILED" };
 
-    private static final String[] SHORT_LCM_STATES =
-    {
-        null,
-        "prol",
-        "boot",
-        "runn",
-        "migr",
-        "save",
-        "save",
-        "save",
-        "migr",
-        "prol",
-        "epil",
-        "epil",
-        "shut",
-        "shut",
-        "fail",
-        "dele",
-        "unkn" };
+	private static final String[] SHORT_VM_STATES = { "init", "pend", "hold",
+			"actv", "stop", "susp", "done", "fail" };
+
+	public static final String[] LCM_STATE = { "LCM_INIT", "PROLOG", "BOOT",
+			"RUNNING", "MIGRATE", "SAVE_STOP", "SAVE_SUSPEND", "SAVE_MIGRATE",
+			"PROLOG_MIGRATE", "PROLOG_RESUME", "EPILOG_STOP", "EPILOG",
+			"SHUTDOWN", "CANCEL", "FAILURE", "DELETE", "UNKNOWN" };
+
+	private static final String[] SHORT_LCM_STATES = { null, "prol", "boot",
+			"runn", "migr", "save", "save", "save", "migr", "prol", "epil",
+			"epil", "shut", "shut", "fail", "dele", "unkn" };
 
 	/**
 	 * Creates a new VM representation.
@@ -123,13 +102,13 @@ public class VirtualMachine extends PoolElement{
 
 	// Added by Xiaoyi Lu for get vid.
 	public VirtualMachine(String oneresponse, Client client)
-			throws NumberFormatException, XPathExpressionException {
+			throws XPathExpressionException {
 		super(oneresponse, client);
 	}
 
-    // =================================
-    // Static XML-RPC methods
-    // =================================
+	// =================================
+	// Static XML-RPC methods
+	// =================================
 
 	/**
 	 * Allocates a new VM in OpenNebula.
@@ -159,23 +138,21 @@ public class VirtualMachine extends PoolElement{
 		return client.call(INFO, id);
 	}
 
+	// =================================
+	// Instanced object XML-RPC methods
+	// =================================
 
-    // =================================
-    // Instanced object XML-RPC methods
-    // =================================
-
-    /**
-     * Loads the xml representation of the virtual machine.
-     * The info is also stored internally.
-     *
-     * @see VirtualMachine#info(Client, int)
-     */
-    public OneResponse info()
-    {
-        OneResponse response = info(client, id);
-        super.processInfo(response);
-        return response;
-    }
+	/**
+	 * Loads the xml representation of the virtual machine. The info is also
+	 * stored internally.
+	 * 
+	 * @see VirtualMachine#info(Client, int)
+	 */
+	public OneResponse info() {
+		OneResponse response = info(getClient(), getID());
+		super.processInfo(response);
+		return response;
+	}
 
 	/**
 	 * Initiates the instance of the VM on the target host.
@@ -186,7 +163,7 @@ public class VirtualMachine extends PoolElement{
 	 * @return If an error occurs the error message contains the reason.
 	 */
 	public OneResponse deploy(int hostId) {
-		return client.call(DEPLOY, id, hostId);
+		return getClient().call(DEPLOY, getID(), hostId);
 	}
 
 	/**
@@ -211,7 +188,7 @@ public class VirtualMachine extends PoolElement{
 	 * @return If an error occurs the error message contains the reason.
 	 */
 	protected OneResponse action(String action) {
-		return client.call(ACTION, action, id);
+		return getClient().call(ACTION, action, getID());
 	}
 
 	/**
@@ -225,25 +202,26 @@ public class VirtualMachine extends PoolElement{
 	 * @return If an error occurs the error message contains the reason.
 	 */
 	public OneResponse migrate(int hostId, boolean live) {
-		return client.call(MIGRATE, id, hostId, live);
+		return getClient().call(MIGRATE, getID(), hostId, live);
 	}
 
-    /**
-     * Sets the specified vm's disk to be saved in a new image when the
-     * VirtualMachine shutdowns.
-     * 
-     * @param diskId ID of the disk to be saved.
-     * @param imageId ID of the image where the disk will be saved.
-     * @return If an error occurs the error message contains the reason.
-     */
-    public OneResponse savedisk(int diskId, int imageId)
-    {
-        return client.call(SAVEDISK, diskId, imageId);
-    }
+	/**
+	 * Sets the specified vm's disk to be saved in a new image when the
+	 * VirtualMachine shutdowns.
+	 * 
+	 * @param diskId
+	 *            ID of the disk to be saved.
+	 * @param imageId
+	 *            ID of the image where the disk will be saved.
+	 * @return If an error occurs the error message contains the reason.
+	 */
+	public OneResponse savedisk(int diskId, int imageId) {
+		return getClient().call(SAVEDISK, diskId, imageId);
+	}
 
-    // =================================
-    // Helpers
-    // =================================
+	// =================================
+	// Helpers
+	// =================================
 
 	/**
 	 * Shuts down the already deployed VM.
@@ -370,7 +348,10 @@ public class VirtualMachine extends PoolElement{
 	public String stateStr() {
 		int state = state();
 		// Modified by Xiaoyi Lu to improve robust.
-		return state != -1 ? VM_STATES[state()] : "";
+		if (state != -1) {
+			return VM_STATES[state()];
+		}
+		return "";
 	}
 
 	/**
@@ -380,7 +361,10 @@ public class VirtualMachine extends PoolElement{
 	 */
 	public int lcmState() {
 		String state = xpath("LCM_STATE");
-		return state != null ? Integer.parseInt(state) : -1;
+		if (state != null) {
+			return Integer.parseInt(state);
+		}
+		return -1;
 	}
 
 	/**
@@ -391,7 +375,10 @@ public class VirtualMachine extends PoolElement{
 	public String lcmStateStr() {
 		int state = lcmState();
 		// Modified by Xiaoyi Lu to improve robust.
-		return state != -1 ? LCM_STATE[state] : "";
+		if (state != -1) {
+			return LCM_STATE[state];
+		}
+		return "";
 	}
 
 	/**
@@ -406,8 +393,9 @@ public class VirtualMachine extends PoolElement{
 			shortStateStr = SHORT_VM_STATES[state];
 			if (shortStateStr.equals("actv")) {
 				int lcmState = lcmState();
-				if (lcmState != -1)
+				if (lcmState != -1) {
 					shortStateStr = SHORT_LCM_STATES[lcmState];
+				}
 			}
 		}
 		return shortStateStr;
@@ -421,27 +409,30 @@ public class VirtualMachine extends PoolElement{
 
 		String state = this.stateStr();
 		String lcmState = this.lcmStateStr();
-		if (state.equals(VM_STATES[0]) || state.equals(VM_STATES[1])
-				|| lcmState.equals(LCM_STATE[1])
-				|| lcmState.equals(LCM_STATE[2])) {
+		if (state.equals(VM_STATES[VM_STATE_INIT])
+				|| state.equals(VM_STATES[VM_STATE_PENDING])
+				|| lcmState.equals(LCM_STATE[LCM_STATE_INIT])
+				|| lcmState.equals(LCM_STATE[LCM_STATE_PROLOG])) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.BOOT
 					.toString());
-		} else if (state.equals(VM_STATES[3]) && lcmState.equals(LCM_STATE[3])) {
+		} else if (state.equals(VM_STATES[VM_STATE_ACTIVE])
+				&& lcmState.equals(LCM_STATE[LCM_STATE_RUNNING])) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
 					.toString());
-		} else if (state.equals(VM_STATES[4])) {
+		} else if (state.equals(VM_STATES[VM_STATE_STOPPED])) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.STOP
 					.toString());
-		} else if (lcmState.equals(LCM_STATE[5])) {
+		} else if (lcmState.equals(LCM_STATE[LCM_STATE_SAVE_STOP])) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.STOPPING
 					.toString());
-		} else if (state.equals(VM_STATES[6]) && lcmState.equals(LCM_STATE[12])) {
+		} else if (state.equals(VM_STATES[VM_STATE_DONE])
+				&& lcmState.equals(LCM_STATE[LCM_STATE_SHUTDOWN])) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.SHUTDOWN
 					.toString());
-		} else if (state.equals(VM_STATES[1])) {
+		} else if (state.equals(VM_STATES[VM_STATE_PENDING])) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.WAIT_DEPLOY
 					.toString());
-		} else if (state.equals(VM_STATES[5])) {
+		} else if (state.equals(VM_STATES[VM_STATE_SUSPENDED])) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.SUSPENDED
 					.toString());
 		} else {
@@ -461,4 +452,3 @@ public class VirtualMachine extends PoolElement{
 		return this.xpath("/VM/HISTORY/HOSTNAME");
 	}
 }
-

@@ -26,6 +26,7 @@ import org.lingcloud.molva.ocl.poll.AssetPollingTask;
 import org.lingcloud.molva.ocl.poll.PollingTaskManager;
 import org.lingcloud.molva.xmm.ac.PPNPNController;
 import org.lingcloud.molva.xmm.ac.PVNPNController;
+import org.lingcloud.molva.xmm.pojos.Nic;
 import org.lingcloud.molva.xmm.pojos.Partition;
 import org.lingcloud.molva.xmm.pojos.PhysicalNode;
 import org.lingcloud.molva.xmm.pojos.VirtualCluster;
@@ -39,7 +40,6 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
  * 
  * @version 1.0.1 2010-5-28<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class PartitionManager {
 	/**
@@ -88,15 +88,12 @@ public class PartitionManager {
 			throws Exception {
 		AssetManagerImpl ami = new AssetManagerImpl();
 		Partition par = new Partition(ami.view(parGuid));
-		if (par == null) {
-			// Ignore this error.
-			return null;
-		}
+		
 		List<PhysicalNode> pnl = this.listPhysicalNode(par.getGuid());
 		if (pnl != null && pnl.size() > 0) {
 			throw new Exception(
-					"There are physical node exist in the partition ("
-							+ par.getName() + "), please destroy them firstly.");
+				"There are physical node exist in the partition ("
+					+ par.getName() + "), please destroy them firstly.");
 		}
 		String[] fields = new String[] { "additionalTerms['"
 				+ VirtualCluster.PARTITION_ID + "']" };
@@ -106,8 +103,8 @@ public class PartitionManager {
 				.searchVirtualCluster(fields, operators, values);
 		if (vcl != null && vcl.size() > 0) {
 			throw new Exception(
-					"There are virtual cluster exist in the partition ("
-							+ par.getName() + "), please destroy them firstly.");
+				"There are virtual cluster exist in the partition ("
+					+ par.getName() + "), please destroy them firstly.");
 		}
 		Partition removedPar = new Partition(ami.remove(par.getGuid(), false));
 		log.info("One partition (" + removedPar.getName() + " "
@@ -156,7 +153,8 @@ public class PartitionManager {
 		AssetManagerImpl ami = new AssetManagerImpl();
 		Asset asset = ami.view(pnid);
 		if (asset == null) {
-			throw new Exception("The PhysicalNode " + pnid + " does not exist.");
+			throw new Exception("The PhysicalNode " + pnid 
+					+ " does not exist.");
 		}
 		PhysicalNode oldPn = new PhysicalNode(asset);
 		Asset freshedAsset = null;
@@ -175,21 +173,22 @@ public class PartitionManager {
 		}
 		PhysicalNode newPn = new PhysicalNode(freshedAsset);
 		if (newPn != null) {
-			List nicsource = oldPn.getNics();
-			List nicnew = newPn.getNics();
+			List<Nic> nicsource = oldPn.getNics();
+			List<Nic> nicnew = newPn.getNics();
 			if (nicsource != null && nicnew != null
 					&& nicsource.size() != nicnew.size()) {
 				VirtualNetworkManager.triggerNetworkInfoRemove(nicsource);
 				VirtualNetworkManager.triggerNetworkInfoAdd(nicnew);
 			}
-			return newPn;
-		} else {
-			log.error("The physical node " + pnid
-					+ " in metainfo system, but not in the reality."
-					+ " It will be deleted from metainfo system.");
-			ami.remove(pnid, true);
-			return null;
-		}
+		} 
+//		else {
+//			log.error("The physical node " + pnid
+//					+ " in metainfo system, but not in the reality."
+//					+ " It will be deleted from metainfo system.");
+//			ami.remove(pnid, true);
+//			return null;
+//		}
+		return newPn;
 	}
 	
 	private boolean testPhysicalNode(String ip, String type) throws Exception {
@@ -199,17 +198,21 @@ public class PartitionManager {
 			String cmd = XMMUtil.getTestPhysicalNodeCmdInCfgFile();
 			if (cmd == null || "".equals(cmd)) {
 				log.error("can't get testPhycialNodeCmd in Cfg file.");
-				throw new Exception("can't get testPhycialNodeCmd in Cfg file.");
+				throw new Exception("can't get testPhycialNodeCmd "
+						+ "in Cfg file.");
 			}
 			cmdSB.append(cmd).append(" " + ip + " " + type);
 			String stdout = XMMUtil.runCommand(cmdSB.toString());
 			if (stdout.trim().equals("true")) {
-				log.info("test phycial node " + ip + " for " + type + " sucess.");
-			}else {
-				log.info("test phycial node " + ip + " for " + type + " Failed: " + stdout);
-				throw new Exception("test phycial node " + ip + " for " + type + " Failed: " + stdout);
+				log.info("test phycial node " + ip + " for " + type 
+						+ " sucess.");
+			} else {
+				log.info("test phycial node " + ip + " for " + type 
+						+ " Failed: " + stdout);
+				throw new Exception("test phycial node " + ip + " for " 
+						+ type + " Failed: " + stdout);
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			throw e;
 		}
 		
@@ -241,7 +244,8 @@ public class PartitionManager {
 		String testType = "";
 		if (pnController.contains(PVNPNController.class.getSimpleName())) {
 			testType = "VM";
-		}else if (pnController.contains(PPNPNController.class.getSimpleName())) {
+		} else if (pnController.contains(PPNPNController.class
+				.getSimpleName())) {
 			testType = "Common";
 		}
 		this.testPhysicalNode(privateIp, testType);
@@ -393,12 +397,12 @@ public class PartitionManager {
 					PhysicalNode pn = new PhysicalNode(aseli.get(j));
 					PhysicalNode refreshedPN = null;
 					try {
-						Asset a = ami.refresh(pn);
-						if (a == null) {
-							ami.remove(a.getGuid(), true);
+						Asset asset = ami.refresh(pn);
+						if (asset == null) {
+							ami.remove(pn.getGuid(), true);
 							continue;
 						}
-						refreshedPN = new PhysicalNode(a);
+						refreshedPN = new PhysicalNode(asset);
 						log.info("Successfully to load ("
 								+ refreshedPN.getName() + ") physical node"
 								+ " to the partition " + asli.get(i).getName()
@@ -413,7 +417,8 @@ public class PartitionManager {
 								+ " is added to polling task manager.");
 					} catch (Exception e) {
 						log.error("Ignore an error occured when load a"
-								+ " physical node info, due to " + e.toString());
+								+ " physical node info, due to " 
+								+ e.toString());
 						continue;
 					}
 				}
@@ -604,7 +609,7 @@ public class PartitionManager {
 			return null;
 		}
 		VirtualNode vn = null;
-		if (isUndeploy == true) {
+		if (isUndeploy) {
 			vn = new VirtualNode(ami.remove(nodeid, false));
 		} else {
 			vn = new VirtualNode(ami.remove(nodeid, true));

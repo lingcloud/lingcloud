@@ -23,7 +23,6 @@ import org.lingcloud.molva.xmm.util.XMMConstants;
  * 
  * @version 1.0.1 2010-5-28<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class Partition extends Asset {
 

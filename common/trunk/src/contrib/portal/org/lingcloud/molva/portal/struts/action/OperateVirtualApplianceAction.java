@@ -33,7 +33,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class OperateVirtualApplianceAction extends NeedLoginAction {
 	/**
@@ -44,7 +43,8 @@ public class OperateVirtualApplianceAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 
 			DynaValidatorForm operateVAForm = (DynaValidatorForm) form;
@@ -55,8 +55,8 @@ public class OperateVirtualApplianceAction extends NeedLoginAction {
 			String vaguid = (String) operateVAForm.get("guid");
 			String action = (String) operateVAForm.get("action");
 			String thisPage = (String) operateVAForm.get("thispage");
-			if (XMMPortalUtil
-					.checkParamsBlankOrNull(new String[] { vaguid, action })) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { vaguid,
+					action })) {
 				// Get form from session, try again.
 				throw new Exception("Please input the correct parameters of "
 						+ "virtual appliance guid");
@@ -82,8 +82,8 @@ public class OperateVirtualApplianceAction extends NeedLoginAction {
 				vam.startAppliance(vaguid);
 			} else if (action.equals("stop")) {
 				vam.stopAppliance(vaguid);
-			} 
-			
+			}
+
 			log.info(" A virtual appliance with the name " + va.getVAName()
 					+ " " + va.getGuid() + " is operated successfully.");
 			/*

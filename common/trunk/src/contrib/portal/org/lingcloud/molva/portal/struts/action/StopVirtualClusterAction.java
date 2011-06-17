@@ -25,14 +25,12 @@ import org.apache.struts.validator.DynaValidatorForm;
 import org.lingcloud.molva.portal.util.XMMPortalUtil;
 import org.lingcloud.molva.xmm.client.XMMClient;
 
-
 /**
  * <strong>Purpose:To stop a virtual cluster.</strong><br>
  * TODO.
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class StopVirtualClusterAction extends NeedLoginAction {
 	/**
@@ -43,7 +41,8 @@ public class StopVirtualClusterAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			DynaValidatorForm stopClusterForm = (DynaValidatorForm) form;
 			if (stopClusterForm == null) {
@@ -53,8 +52,7 @@ public class StopVirtualClusterAction extends NeedLoginAction {
 			String vcguid = (String) stopClusterForm.get("vcguid");
 			String thisPage = (String) stopClusterForm.get("thispage");
 			// String targetDiv = (String) freeClusterForm.get("targetdiv");
-			if (XMMPortalUtil
-					.checkParamsBlankOrNull(new String[] { vcguid })) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { vcguid })) {
 				throw new Exception("Please input the correct parameters of "
 						+ "virtual cluster guid: ");
 			}
@@ -69,8 +67,8 @@ public class StopVirtualClusterAction extends NeedLoginAction {
 				}
 				this.url = request.getContextPath() + thisPage.trim();
 			}
-			log.info("User want to start a cluster "
-					+ vcguid + " from url : " + url);
+			log.info("User want to start a cluster " + vcguid + " from url : "
+					+ url);
 			// if (targetDiv == null || "".equals(targetDiv)) {
 			// targetDiv = "allHostsDiv";
 			// }

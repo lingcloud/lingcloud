@@ -20,7 +20,6 @@ package org.lingcloud.molva.xmm.pojos;
  * 
  * @version 1.0.1 2010-7-5<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class Nic {
 

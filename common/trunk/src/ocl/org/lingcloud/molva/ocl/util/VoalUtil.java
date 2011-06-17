@@ -125,7 +125,7 @@ public class VoalUtil {
 		try {
 			lmi.update(lease.getGuid(), lease);
 		} catch (Exception e) {
-			
+			return;
 		}
 	}
 
@@ -139,11 +139,11 @@ public class VoalUtil {
 		try {
 			ami.update(asset.getGuid(), asset);
 		} catch (Exception e) {
-			
+			return;
 		}
 	}
-	
+
 	private VoalUtil() {
-		
+
 	}
 }

@@ -33,7 +33,7 @@ public abstract class AssetController {
 		if (newAsset == null || asset == null) {
 			return false;
 		}
-		
+
 		return ((newAsset.getAddTime() == null || newAsset.getAddTime().equals(
 				asset.getAddTime()))
 				&& (newAsset.getAssetController() == null || newAsset
@@ -47,7 +47,7 @@ public abstract class AssetController {
 				&& (newAsset.getAssetLeaserId() == null || newAsset
 						.getAssetLeaserId().equals(asset.getAssetLeaserId()))
 				&& (newAsset.getOwnerId() == null || newAsset.getOwnerId()
-						.equals(asset.getOwnerId()))
+						.equals(asset.getOwnerId())) 
 				&& newAsset.getPrice() == asset.getPrice());
 	}
 
@@ -57,8 +57,7 @@ public abstract class AssetController {
 		if (checkValidity(createdAsset, asset)) {
 			return createdAsset;
 		} else {
-			throw new Exception(
-					"The fields of acl, assetController, guid, "
+			throw new Exception("The fields of acl, assetController, guid, "
 					+ "groupid, cai, name, assetLeaserId, ownerId,"
 					+ " and addTime can be modified when create "
 					+ "asset in controller.");
@@ -78,9 +77,9 @@ public abstract class AssetController {
 				return polledAsset;
 			} else {
 				throw new Exception(
-						"The fields of acl, assetController, guid, "
-						+ "groupid, cai, name, assetLeaserId, ownerId, price,"
-						+ " and addTime can be modified when poll asset.");
+					"The fields of acl, assetController, guid, "
+					+ "groupid, cai, name, assetLeaserId, ownerId, price,"
+					+ " and addTime can be modified when poll asset.");
 			}
 		} catch (Throwable t) {
 			VoalUtil.setLastErrorMessage4Asset(
@@ -125,8 +124,8 @@ public abstract class AssetController {
 
 	public abstract Asset poll(Asset asset) throws Exception;
 
-	public abstract double calculatePrice(Asset asset, HashMap params)
-			throws Exception;
+	public abstract double calculatePrice(Asset asset,
+			HashMap<String, String> params) throws Exception;
 
 	public abstract Asset init(Asset asset) throws Exception;
 

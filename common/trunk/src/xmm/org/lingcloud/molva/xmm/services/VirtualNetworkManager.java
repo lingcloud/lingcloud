@@ -39,9 +39,7 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
  * 
  * @version 1.0.1 2009-9-20<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
-@Deprecated
 public class VirtualNetworkManager {
 
 	/**
@@ -51,24 +49,53 @@ public class VirtualNetworkManager {
 
 	private static VirtualNetworkManager vnm = new VirtualNetworkManager();
 
-	public static boolean publicIpEnable = false;
+	private static boolean publicIpEnable = false;
 
-	public static ArrayList publicIpPool = null;
+	private static ArrayList<String> publicIpPool = null;
 
 	/**
 	 * key-value, ip-Nic.
 	 */
-	public static final Map<String, Nic> ipPool = Collections
+	public static final Map<String, Nic> IP_POOL = Collections
 			.synchronizedMap(new HashMap<String, Nic>());
 
-	public static int headNodeIpC = 0;
+	private static int headNodeIpC = 0;
 
-	public static int headNodeIpD = 1;
+	private static int headNodeIpD = 1;
 
-	public static String validIpSec = "192.168.0.1-192.168.255.254";
+	private static String validIpSec = "192.168.0.1-192.168.255.254";
 
 	private static boolean isIpReverse = false;
+	
+	private static final int MAX_LAST_IP_FIELD = 254;
+	
+	private static final int MAX_IP_FIELD = 255;
 
+	
+	public static boolean isPublicIpEnable() {
+		return publicIpEnable;
+	}
+
+	public static void setPublicIpEnable(boolean publicIpEnable) {
+		VirtualNetworkManager.publicIpEnable = publicIpEnable;
+	}
+	
+	public static ArrayList<String> getPublicIpPool() {
+		return publicIpPool;
+	}
+
+	public static void setPublicIpPool(ArrayList<String> publicIpPool) {
+		VirtualNetworkManager.publicIpPool = publicIpPool;
+	}
+	
+	public static String getValidIpSec() {
+		return validIpSec;
+	}
+
+	public static void setValidIpSec(String validIpSec) {
+		VirtualNetworkManager.validIpSec = validIpSec;
+	}
+	
 	/**
 	 * key-value, mac-Nic.
 	 */
@@ -76,7 +103,7 @@ public class VirtualNetworkManager {
 	 * FIXME, ipPool and macPool are different for its number, because when some
 	 * ips are illegal, but the macs are legal.
 	 */
-	private static final Map<String, Nic> macPool = Collections
+	private static final Map<String, Nic> MAX_POOL = Collections
 			.synchronizedMap(new WeakHashMap<String, Nic>());
 
 	static {
@@ -106,12 +133,13 @@ public class VirtualNetworkManager {
 			AssetManagerImpl ami = new AssetManagerImpl();
 			String[] fields = new String[] { "type" };
 			String[] operators = new String[] { "=" };
-			Object[] values = new Object[] { XMMConstants.VIRTUAL_NETWORK_TYPE };
-			List vnls = ami.search(fields, operators, values);
+			Object[] values = new Object[] { 
+					XMMConstants.VIRTUAL_NETWORK_TYPE };
+			List<Asset> vnls = ami.search(fields, operators, values);
 			for (int i = 0; i < vnls.size(); ++i) {
 				VirtualNetwork vn = new VirtualNetwork((Asset) vnls.get(i));
 				// TODO should check with reality.
-				List nics = vn.getPrivateIpNics();
+				List<Nic> nics = vn.getPrivateIpNics();
 				if (nics != null) {
 					for (int j = 0; j < nics.size(); j++) {
 						Nic le = (Nic) nics.get(j);
@@ -122,7 +150,7 @@ public class VirtualNetworkManager {
 
 				HashMap<String, Nic> punics = vn.getPublicIpNics();
 				if (punics != null && !punics.isEmpty()) {
-					Iterator it = punics.values().iterator();
+					Iterator<Nic> it = punics.values().iterator();
 					while (it.hasNext()) {
 						Nic le = (Nic) it.next();
 						triggerIpPoolAdd(le);
@@ -130,7 +158,7 @@ public class VirtualNetworkManager {
 					}
 				}
 
-				List gws = vn.getVirtualGateWay();
+				List<Nic> gws = vn.getVirtualGateWay();
 				if (gws != null) {
 					for (int j = 0; j < gws.size(); j++) {
 						Nic le = (Nic) gws.get(j);
@@ -155,7 +183,7 @@ public class VirtualNetworkManager {
 				publicIpPool = XMMUtil.loadPublicIp();
 				String msg = "Successfully load available public ip are : ";
 				for (int k = 0; k < publicIpPool.size(); ++k) {
-					if (ipPool.containsKey(publicIpPool.get(k))) {
+					if (IP_POOL.containsKey(publicIpPool.get(k))) {
 						publicIpPool.remove(k);
 					} else {
 						msg += publicIpPool.get(k) + ";";
@@ -265,57 +293,49 @@ public class VirtualNetworkManager {
 		return newvn;
 	}
 
-	public synchronized static boolean isIpUsed(String ip) {
-		if (ipPool.containsKey(ip)) {
-			return true;
-		} else {
-			return false;
-		}
+	public static synchronized boolean isIpUsed(String ip) {
+		return IP_POOL.containsKey(ip);
 	}
 
-	public synchronized static boolean isMacUsed(String mac) {
-		if (macPool.containsKey(mac)) {
-			return true;
-		} else {
-			return false;
-		}
+	public static synchronized boolean isMacUsed(String mac) {
+		return MAX_POOL.containsKey(mac);
 	}
 
-	public synchronized static void triggerMacPoolAdd(Nic nic) {
+	public static synchronized void triggerMacPoolAdd(Nic nic) {
 		if (nic == null || nic.getMac() == null) {
 			return; // Ignore this case.
 		}
-		if (macPool.containsKey(nic.getMac())) {
-			macPool.remove(nic.getMac());
+		if (MAX_POOL.containsKey(nic.getMac())) {
+			MAX_POOL.remove(nic.getMac());
 		}
-		macPool.put(nic.getMac(), nic);
+		MAX_POOL.put(nic.getMac(), nic);
 	}
 
-	public synchronized static void triggerIpPoolAdd(Nic nic) {
+	public static synchronized void triggerIpPoolAdd(Nic nic) {
 		if (nic == null || nic.getIp() == null) {
 			return; // Ignore this error.
 		}
-		if (ipPool.containsKey(nic.getIp())) {
-			ipPool.remove(nic.getIp());
+		if (IP_POOL.containsKey(nic.getIp())) {
+			IP_POOL.remove(nic.getIp());
 		}
-		ipPool.put(nic.getIp(), nic);
+		IP_POOL.put(nic.getIp(), nic);
 	}
 
-	public synchronized static void triggerMacPoolRemove(Nic nic) {
+	public static synchronized void triggerMacPoolRemove(Nic nic) {
 		if (nic == null || nic.getMac() == null) {
 			return; // ignore this error.
 		}
-		if (macPool.containsKey(nic.getMac())) {
-			macPool.remove(nic.getMac());
+		if (MAX_POOL.containsKey(nic.getMac())) {
+			MAX_POOL.remove(nic.getMac());
 		}
 	}
 
-	public synchronized static void triggerIpPoolRemove(Nic nic) {
+	public static synchronized void triggerIpPoolRemove(Nic nic) {
 		if (nic == null || nic.getIp() == null) {
 			return; // Ignore this error.
 		}
-		if (ipPool.containsKey(nic.getIp())) {
-			ipPool.remove(nic.getIp());
+		if (IP_POOL.containsKey(nic.getIp())) {
+			IP_POOL.remove(nic.getIp());
 		}
 	}
 
@@ -355,7 +375,7 @@ public class VirtualNetworkManager {
 		VirtualNetwork vn = new VirtualNetwork(asset);
 
 		if (privateIp != null && !"".equals(privateIp)) {
-			List pips = vn.getPrivateIpNics();
+			List<Nic> pips = vn.getPrivateIpNics();
 			for (int i = 0; i < pips.size(); i++) {
 				Nic nic = (Nic) pips.get(i);
 				String ip = nic.getIp();
@@ -385,7 +405,7 @@ public class VirtualNetworkManager {
 		}
 		VirtualNetwork vn = new VirtualNetwork(asset);
 		if (privateIp != null && !"".equals(privateIp)) {
-			List pips = vn.getPrivateIpNics();
+			List<Nic> pips = vn.getPrivateIpNics();
 			boolean inNetworkFlag = false;
 			for (int i = 0; i < pips.size(); i++) {
 				Nic nic = (Nic) pips.get(i);
@@ -456,11 +476,7 @@ public class VirtualNetworkManager {
 			List<PhysicalNode> pnlist = PartitionManager.getInstance()
 					.searchPhysicalNode(searchConditions, operators, values);
 			PhysicalNode pn = pnlist.get(0);
-			if (pn.getAssetState().equals(AssetConstants.AssetState.IDLE)) {
-				return true;
-			} else {
-				return false;
-			}
+			return pn.getAssetState().equals(AssetConstants.AssetState.IDLE);
 		} catch (Exception e) {
 			log.error("Search PhysicalNode failed due to : " + e.toString());
 			return false;
@@ -529,13 +545,14 @@ public class VirtualNetworkManager {
 				+ headNodeIpD;
 		while (VirtualNetworkManager.isIpUsed(ip)) {
 			headNodeIpD++;
-			if (headNodeIpD == 252) {
+			if (headNodeIpD == MAX_LAST_IP_FIELD - 2) {
 				// a trick : this policy can make sure there is a 253 ip as the
 				// first slave node.
 				headNodeIpC++;
 				headNodeIpD = 1;
 			}
-			if (headNodeIpC == 255 && headNodeIpD == 252) {
+			if (headNodeIpC == MAX_IP_FIELD 
+					&& headNodeIpD == MAX_LAST_IP_FIELD - 2) {
 				if (isIpReverse) {
 					// FIXME because when the system running, other ip
 					// resource will be released.

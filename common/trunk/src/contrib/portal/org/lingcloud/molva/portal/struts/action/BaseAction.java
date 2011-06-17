@@ -13,7 +13,6 @@
 
 package org.lingcloud.molva.portal.struts.action;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.Action;
@@ -26,14 +25,13 @@ import org.apache.struts.action.ActionServlet;
  * 
  * @version 1.0.1 Jan 3, 2008<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 @SuppressWarnings("deprecation")
 public abstract class BaseAction extends Action {
 
 	public void setServlet(ActionServlet actionServlet) {
 		super.setServlet(actionServlet);
-		ServletContext servletContext = actionServlet.getServletContext();
+		// ServletContext servletContext = actionServlet.getServletContext();
 	}
 
 	protected void addErrors(String msg, HttpServletRequest request) {

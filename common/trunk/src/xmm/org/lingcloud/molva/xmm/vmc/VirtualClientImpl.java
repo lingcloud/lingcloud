@@ -40,7 +40,9 @@ import org.lingcloud.molva.xmm.pojos.VirtualNode;
 import org.lingcloud.molva.xmm.services.PartitionManager;
 import org.lingcloud.molva.xmm.util.XMMConstants;
 import org.lingcloud.molva.xmm.util.XMMUtil;
-import org.lingcloud.molva.xmm.vmc.one.*;
+import org.lingcloud.molva.xmm.vmc.one.Host;
+import org.lingcloud.molva.xmm.vmc.one.VirtualMachine;
+import org.lingcloud.molva.xmm.vmc.one.VmTemplate;
 
 /**
  * <strong>Purpose:</strong><br>
@@ -48,7 +50,6 @@ import org.lingcloud.molva.xmm.vmc.one.*;
  * 
  * @version 1.0.1 2010-9-23<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class VirtualClientImpl implements VirtualClient {
 
@@ -59,10 +60,10 @@ public class VirtualClientImpl implements VirtualClient {
 
 	private final Client client;
 
-	private static final Map<URL, Client> clients = Collections
+	private static final Map<URL, Client> CLIENTS = Collections
 			.synchronizedMap(new WeakHashMap<URL, Client>());
 
-	private static String VMKiller;
+	private static String vmKiller;
 
 	public static final String IM_PRIFX = "im_";
 
@@ -72,16 +73,21 @@ public class VirtualClientImpl implements VirtualClient {
 
 	private static int currentClusterInPublicNode = 0;
 
-	private static final String hvmLoaderLocation = "/usr/lib/xen/boot/hvmloader";
+	private static final String HVM_LOADER_LOCATION = 
+		"/usr/lib/xen/boot/hvmloader";
 
 	// user to index hard disk in hvm loader. e.g. hda,hdb,hdc...
 	// TODO now we support seven disks.
 	public static final String[] HD_ARRAY = new String[] { "hda", "hdb", "hdc",
 			"hdd", "hde", "hdf", "hdg" };
 
-	private static final String deviceModelLocation = "'/usr/' + arch_libdir + '/xen/bin/qemu-dm'";
+	private static final String DEVICE_MODEL_LOCATION = 
+		"'/usr/' + arch_libdir + '/xen/bin/qemu-dm'";
 
-	private static final String pygrubLoaderLocation = "/usr/bin/pygrub";
+	private static final String PYGRUB_LOADER_LOCATION = 
+		"/usr/bin/pygrub";
+	
+	private static final int VNC_PORT = 5900;
 
 	/**
 	 * Constructs the client stub with a reference to the XMLRPC server, e.g.
@@ -108,14 +114,14 @@ public class VirtualClientImpl implements VirtualClient {
 			throw new IllegalStateException("Server URL must be supplied");
 		}
 
-		if (clients.containsKey(serverURL)) {
-			client = clients.get(serverURL);
+		if (CLIENTS.containsKey(serverURL)) {
+			client = CLIENTS.get(serverURL);
 			return;
 		}
 
 		synchronized (this) {
 			client = new Client(token, serverURL.toString());
-			clients.put(serverURL, client);
+			CLIENTS.put(serverURL, client);
 		}
 	}
 
@@ -124,12 +130,14 @@ public class VirtualClientImpl implements VirtualClient {
 		String privateIp = pn.getPrivateIps()[0];
 		if (privateIp == null || "".equals(privateIp)) {
 			throw new Exception(
-					"The privateIp is null or blank, in allocateVmProvisionNode method.");
+					"The privateIp is null or blank, in "
+					+ "allocateVmProvisionNode method.");
 		}
 		String hyper = pn.getAttributes().get(XMMConstants.HYPERVISOR);
 		if (hyper == null || "".equals(hyper)) {
 			throw new Exception(
-					"The hypervisor is null or blank, in allocateVmProvisionNode method.");
+					"The hypervisor is null or blank, in "
+					+ "allocateVmProvisionNode method.");
 		}
 		String im = "";
 		String vmm = "";
@@ -147,13 +155,15 @@ public class VirtualClientImpl implements VirtualClient {
 			vmm = VMM_PRIFX + XMMConstants.HYPERVISOR_EC2;
 		} else {
 			throw new Exception(
-					"Not support virtualization hypervisor type, and it should be xen, kvm, vmware, ec2.");
+					"Not support virtualization hypervisor type, and it "
+					+ "should be xen, kvm, vmware, ec2.");
 		}
 
 		String trans = pn.getTransferway();
 		if (trans == null || "".equals(trans)) {
 			throw new Exception(
-					"The file transfer way of String is null or blank, in allocateVmProvisionNode method.");
+					"The file transfer way of String is null or blank, in"
+					+ " allocateVmProvisionNode method.");
 		}
 		String tm = "";
 		if (trans.equalsIgnoreCase(XMMConstants.FILE_TRANSFER_NFS)) {
@@ -296,7 +306,7 @@ public class VirtualClientImpl implements VirtualClient {
 		 * "/usr/bin/pygrub"
 		 */
 		if ("hvm".equals(bootLoader)) {
-			attOS.put("kernel", hvmLoaderLocation);
+			attOS.put("kernel", HVM_LOADER_LOCATION);
 			// The " attOS.put("root", "sda1")" way is to use kernel and initrd.
 			vmTemplate.newVectorAttribute("OS", attOS);
 
@@ -322,14 +332,15 @@ public class VirtualClientImpl implements VirtualClient {
 			attRAW4Boot.put("data", "boot = 'c'");
 			vmTemplate.newVectorAttribute("RAW", attRAW4Boot);
 
-			Map<String, String> attRAW4DeviceModel = new HashMap<String, String>();
+			Map<String, String> attRAW4DeviceModel = 
+				new HashMap<String, String>();
 			attRAW4DeviceModel.put("type", "xen");
 
 			// Bug fixed here, if the os is 64bit, the device_model is
 			// /usr/lib64/xen/bin/qemu-dm\, and if 32-bit, it's
 			// /usr/lib/xen/bin/qemu-dm\. Bug fixed by Xiaoyi Lu at 2009.10.14.
 			attRAW4DeviceModel.put("data", "device_model = "
-					+ deviceModelLocation);
+					+ DEVICE_MODEL_LOCATION);
 			vmTemplate.newVectorAttribute("RAW", attRAW4DeviceModel);
 
 			// pae = 1 Page Address Extension
@@ -348,7 +359,8 @@ public class VirtualClientImpl implements VirtualClient {
 			attRAW4Apic.put("data", "apic = 1");
 			vmTemplate.newVectorAttribute("RAW", attRAW4Apic);
 			// localtime = 0
-			Map<String, String> attRAW4Localtime = new HashMap<String, String>();
+			Map<String, String> attRAW4Localtime = 
+				new HashMap<String, String>();
 			attRAW4Localtime.put("type", "xen");
 			attRAW4Localtime.put("data", "localtime = 0");
 			vmTemplate.newVectorAttribute("RAW", attRAW4Localtime);
@@ -359,7 +371,7 @@ public class VirtualClientImpl implements VirtualClient {
 			vmTemplate.newVectorAttribute("RAW", attRAW4Sdl);
 		} else {
 			// pygrub loader.
-			attOS.put("bootloader", pygrubLoaderLocation);
+			attOS.put("bootloader", PYGRUB_LOADER_LOCATION);
 			vmTemplate.newVectorAttribute("OS", attOS);
 
 			for (int m = 1; m <= vaFileNames.length; m++) {
@@ -423,12 +435,14 @@ public class VirtualClientImpl implements VirtualClient {
 
 			// TODO VNCController and HeadNode structure
 			String vncport = this.getNextVNCPort4Cluster();
-			Map<String, String> attRAW4VNCDispaly = new HashMap<String, String>();
+			Map<String, String> attRAW4VNCDispaly = 
+				new HashMap<String, String>();
 			attRAW4VNCDispaly.put("type", "xen");
 			attRAW4VNCDispaly.put("data", "vncdisplay=" + vncport);
 			vmTemplate.newVectorAttribute("RAW", attRAW4VNCDispaly);
 
-			Map<String, String> attRAW4VNCUnused = new HashMap<String, String>();
+			Map<String, String> attRAW4VNCUnused = 
+				new HashMap<String, String>();
 			attRAW4VNCUnused.put("type", "xen");
 			attRAW4VNCUnused.put("data", "vncunused=1");
 			vmTemplate.newVectorAttribute("RAW", attRAW4VNCUnused);
@@ -443,7 +457,8 @@ public class VirtualClientImpl implements VirtualClient {
 			attRAW4USB.put("data", "usb=1");
 			vmTemplate.newVectorAttribute("RAW", attRAW4USB);
 
-			Map<String, String> attRAW4USBDevice = new HashMap<String, String>();
+			Map<String, String> attRAW4USBDevice = 
+				new HashMap<String, String>();
 			attRAW4USBDevice.put("type", "xen");
 			attRAW4USBDevice.put("data", "usbdevice = 'tablet'");
 			vmTemplate.newVectorAttribute("RAW", attRAW4USBDevice);
@@ -490,14 +505,15 @@ public class VirtualClientImpl implements VirtualClient {
 		if (vnodels == null || vnodels.isEmpty()) {
 			return "" + port;
 		}
-		HashMap<String, VirtualNode> portset = new HashMap<String, VirtualNode>();
+		HashMap<String, VirtualNode> portset = 
+			new HashMap<String, VirtualNode>();
 		for (int i = 0; i < vnodels.size(); i++) {
 			VirtualNode vHeadNode = vnodels.get(i);
 			// like 5902.
 			String portstr = vHeadNode.getVncPortInParentPhysialNode();
 			if (portstr != null && !"".equals(portstr)) {
 				try {
-					int existport = Integer.parseInt(portstr) - 5900;
+					int existport = Integer.parseInt(portstr) - VNC_PORT;
 					portset.put("" + existport, vHeadNode);
 				} catch (Throwable t) {
 					log.warn("Some head node (" + vHeadNode.getName()
@@ -647,7 +663,7 @@ public class VirtualClientImpl implements VirtualClient {
 						portstr = "590" + portstr;
 					} else if (portstr.length() >= 2) {
 						int port = Integer.parseInt(portstr);
-						port = 5900 + port;
+						port = VNC_PORT + port;
 						portstr = "" + port;
 					}
 				}
@@ -682,8 +698,10 @@ public class VirtualClientImpl implements VirtualClient {
 					+ vnode.getName() + "), the detail msg as: "
 					+ onrc.getErrorMessage());
 		} else {
-			if (newvir.stateStr().equals(VirtualMachine.VM_STATES[3])
-					&& newvir.lcmStateStr().equals(VirtualMachine.LCM_STATE[3])) {
+			if (newvir.stateStr().equals(VirtualMachine
+					.VM_STATES[VirtualMachine.VM_STATE_ACTIVE])
+					&& newvir.lcmStateStr().equals(VirtualMachine
+							.LCM_STATE[VirtualMachine.LCM_STATE_RUNNING])) {
 				vnode.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
 						.toString());
 				return vnode;
@@ -709,11 +727,13 @@ public class VirtualClientImpl implements VirtualClient {
 					+ vnode.getName() + "), the detail msg as: "
 					+ onrc.getErrorMessage());
 		} else {
-			if (newvir.stateStr().equals(VirtualMachine.VM_STATES[4])) {
+			if (newvir.stateStr().equals(VirtualMachine
+					.VM_STATES[VirtualMachine.VM_STATE_STOPPED])) {
 				vnode.setRunningStatus(XMMConstants.MachineRunningState.STOP
 						.toString());
 				return vnode;
-			} else if (newvir.lcmStateStr().equals(VirtualMachine.LCM_STATE[5])) {
+			} else if (newvir.lcmStateStr().equals(VirtualMachine
+					.LCM_STATE[VirtualMachine.LCM_STATE_SAVE_STOP])) {
 				vnode.setRunningStatus(XMMConstants.MachineRunningState.STOPPING
 						.toString());
 				return vnode;
@@ -758,13 +778,14 @@ public class VirtualClientImpl implements VirtualClient {
 							+ vnode.getName() + "), the detail msg as: "
 							+ shonrs.getErrorMessage() + ", it may be lost.");
 					if (isForcibly) {
-						if (VMKiller == null || "".equals(VMKiller)) {
+						if (vmKiller == null || "".equals(vmKiller)) {
 							try {
-								VMKiller = XMMUtil.getVMKillerInCfgFile();
+								vmKiller = XMMUtil.getVMKillerInCfgFile();
 							} catch (Exception e) {
 								String msg = "The virtual node "
 										+ vnode.getName()
-										+ " is shutdown failed, and the vmkiller is not defined.";
+										+ " is shutdown failed, and the "
+										+ "vmkiller is not defined.";
 								log.warn(msg);
 								return;
 								// throw new Exception(msg);
@@ -775,7 +796,7 @@ public class VirtualClientImpl implements VirtualClient {
 						StringBuilder sb = new StringBuilder();
 						// command like vmkiller.sh parrentHostIp
 						// deletedFileName1,deletedFileName2..
-						sb.append(VMKiller);
+						sb.append(vmKiller);
 						sb.append(" " + parentHost + " ");
 						for (int i = 0; i < vaFiles.length - 1; i++) {
 							sb.append(vaFiles[i] + ",");
@@ -792,7 +813,8 @@ public class VirtualClientImpl implements VirtualClient {
 									+ "\" fail, caused by " + e.getMessage());
 							String msg = "The virtual node "
 									+ vnode.getName()
-									+ " is shutdown failed, and the vmkiller executed failed.";
+									+ " is shutdown failed, and the vmkiller"
+									+ " executed failed.";
 							log.warn(msg);
 							return;
 							// throw new Exception(msg);
@@ -856,7 +878,8 @@ public class VirtualClientImpl implements VirtualClient {
 		if (ocid == null || "".equals(ocid)) {
 			log.warn("The partition "
 					+ par.getName()
-					+ "'s info maintain errored, because its cluster id in opennebula is blank or null.");
+					+ "'s info maintain errored, because its cluster id in"
+					+ " opennebula is blank or null.");
 			return;
 		}
 		int cid = -1;
@@ -865,7 +888,8 @@ public class VirtualClientImpl implements VirtualClient {
 		} catch (Exception e) {
 			log.warn("The partition "
 					+ par.getName()
-					+ "'s info maintain errored, because its cluster id in opennebula is not a valid integer.");
+					+ "'s info maintain errored, because its cluster id in"
+					+ " opennebula is not a valid integer.");
 			return;
 		}
 		// cid = 0 is the default partition.
@@ -886,7 +910,8 @@ public class VirtualClientImpl implements VirtualClient {
 		if (ocid == null || "".equals(ocid)) {
 			log.warn("The partition "
 					+ par.getName()
-					+ "'s info maintain errored, because its cluster id in opennebula is blank or null.");
+					+ "'s info maintain errored, because its cluster id in"
+					+ " opennebula is blank or null.");
 			return;
 		}
 		int cid = -1;
@@ -895,7 +920,8 @@ public class VirtualClientImpl implements VirtualClient {
 		} catch (Exception e) {
 			log.warn("The partition "
 					+ par.getName()
-					+ "'s info maintain errored, because its cluster id in opennebula is not a valid integer.");
+					+ "'s info maintain errored, because its cluster id in"
+					+ " opennebula is not a valid integer.");
 			return;
 		}
 		if (cid > 0) {

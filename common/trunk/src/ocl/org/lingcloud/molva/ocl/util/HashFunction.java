@@ -13,7 +13,6 @@
 package org.lingcloud.molva.ocl.util;
 
 import java.net.InetAddress;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,7 +20,6 @@ import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.lingcloud.molva.ocl.persistence.GNodeConstants;
 import org.lingcloud.molva.ocl.persistence.ID;
 
 /**
@@ -58,8 +56,8 @@ public final class HashFunction {
 	/**
 	 * The seed for generating pwd.
 	 */
-	private static final String SEED = "zouyongqiang,luxiaoyi"
-			+ ",xuxiaoliang,linjian@software.ict.ac.cn";
+//	private static final String SEED = "zouyongqiang,luxiaoyi"
+//			+ ",xuxiaoliang,linjian@software.ict.ac.cn";
 
 	/**
 	 * Returns the singleton instance of this class.
@@ -143,67 +141,6 @@ public final class HashFunction {
 			return new ID(messageDigest.digest());
 		}
 
-	}
-
-	/**
-	 * Calculates the password for a given data Key.
-	 * 
-	 * @param entry
-	 *            the given data key.
-	 * @return Password for the given Key.
-	 */
-	public static String getPwd(String entry) {
-		String headPwd = HashFunction.getHashKey(entry).toString();
-		String tailPwd = HashFunction.getHashKey(SEED + headPwd + SEED)
-				.toString();
-		return headPwd + tailPwd;
-	}
-
-	/**
-	 * Determine the given password right or wrong.
-	 * 
-	 * @param pwd
-	 *            the given data key.
-	 * @return boolean.
-	 */
-	public static boolean isPwd(String pwd) {
-		if (pwd == null) {
-			throw new IllegalArgumentException(
-					"Parameter entry must not be null!");
-		}
-		if (pwd.length() != GNodeConstants.PASSMAXLEN) {
-			return false;
-		}
-		String headPwd = pwd.substring(0, GNodeConstants.PASSMAXLEN / 2);
-		String tailPwd = pwd.substring(headPwd.length(),
-				GNodeConstants.PASSMAXLEN);
-		headPwd = HashFunction.getHashKey(SEED + headPwd + SEED).toString();
-		return headPwd.equals(tailPwd);
-	}
-
-	/**
-	 * Calculates the hash value for a given URL.
-	 * 
-	 * @param incomingURL
-	 *            URL of current node which is used to create a pseudo-unique
-	 *            ID.
-	 * @return ID for the given URL.
-	 */
-	public static ID createUniqueSiteID(URL incomingURL) {
-		// create pseudo-unique string
-		String idString = "";
-		idString += incomingURL.toString();
-		// idString.append(random.nextLong() + ":" +
-		// System.currentTimeMillis());
-		final String id = idString.toString();
-
-		// calculate ID
-		// this is done by creating a temporary anonymous class which implements
-		// the Key interface - the variable id has to be final!
-
-		ID resultKey = getHashKey(id);
-
-		return resultKey;
 	}
 
 	/**

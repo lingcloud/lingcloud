@@ -41,7 +41,6 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
  * 
  * @version 1.0.1 2010-07-05<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class VirtualNetworkAC extends AssetController {
 	/**
@@ -52,6 +51,16 @@ public class VirtualNetworkAC extends AssetController {
 	public static final String OPTIONAL_ATTR_PUBLICIP_NUM = "publicIPNum";
 
 	private static boolean isIpReverse = false;
+	
+	private static final int A = 0;
+	private static final int B = 1;
+	private static final int C = 2;
+	private static final int D = 3;
+	private static final int E = 4;
+	private static final int F = 5;
+	private static final int HEX = 16;
+	private static final int MAX_LAST_IP_FIELD = 254;
+	private static final int MAX_IP_FIELD = 255;
 
 	@Override
 	public Asset create(Asset asset) throws Exception {
@@ -95,7 +104,7 @@ public class VirtualNetworkAC extends AssetController {
 			}
 		}
 
-		List nicList = vn.getPrivateIpNics();
+		List<Nic> nicList = vn.getPrivateIpNics();
 		if (nicList != null && nicList.size() > 0) {
 			// FIXME get the max number of nics for the user. In the normal
 			// time, the network size is always bigger than nicList.size.
@@ -113,7 +122,8 @@ public class VirtualNetworkAC extends AssetController {
 		return newvn;
 	}
 
-	private void reservePhysicalNodesByNicList(List nics) throws Exception {
+	private void reservePhysicalNodesByNicList(List<Nic> nics) 
+		throws Exception {
 		List<String> aips = new ArrayList<String>();
 		for (int i = 0; i < nics.size(); i++) {
 			Nic nic = (Nic) nics.get(i);
@@ -127,7 +137,7 @@ public class VirtualNetworkAC extends AssetController {
 		// FIXME From 2010-7-12, we decide to support user to choose some ips to
 		// construct virtual network.
 		// XXX firstly, we satisfy the user requirements;
-		List nics = vn.getPrivateIpNics();
+		List<Nic> nics = vn.getPrivateIpNics();
 		List<Nic> allLeases = new ArrayList<Nic>();
 		for (int i = 0; i < nics.size(); i++) {
 			Nic nic = (Nic) nics.get(i);
@@ -188,7 +198,7 @@ public class VirtualNetworkAC extends AssetController {
 
 		if (allLeases == null || allLeases.size() < vn.getNetworkSize()) {
 			log.warn("Some ip are used, so there is not enough adresses, "
-					+ "the system will try its best to create the virtual network.");
+			+ "the system will try its best to create the virtual network.");
 		}
 		vn.setPrivateIpNics(allLeases);
 		vn.setNetworkSize(allLeases.size());
@@ -216,7 +226,7 @@ public class VirtualNetworkAC extends AssetController {
 		// specific requriements. the network size is a standard value to
 		// allocate nic.
 		VirtualNetwork newvn = this.configVirtualNetwork4VM(vn);
-		List nics = newvn.getPrivateIpNics();
+		List<Nic> nics = newvn.getPrivateIpNics();
 		if (nics != null) {
 			VirtualNetworkManager.triggerNetworkInfoAdd(nics);
 		}
@@ -253,8 +263,8 @@ public class VirtualNetworkAC extends AssetController {
 			throws Exception {
 		// FIXME addtional elastic public ip support, Xiaoyi Lu added at
 		// 2010-7-2.
-		if (VirtualNetworkManager.publicIpEnable) {
-			if (VirtualNetworkManager.publicIpPool.size() > 0) {
+		if (VirtualNetworkManager.isPublicIpEnable()) {
+			if (VirtualNetworkManager.getPublicIpPool().size() > 0) {
 				// FIXME an optional function to support every node has a
 				// public ip.
 				String tag = vn.getAttributes().get(OPTIONAL_ATTR_PUBLICIP_NUM);
@@ -273,14 +283,15 @@ public class VirtualNetworkAC extends AssetController {
 					value = priNics.size();
 				}
 				for (int i = 0; i < value; i++) {
-					String tmpPip = (String) VirtualNetworkManager.publicIpPool
-							.remove(0);
+					String tmpPip = (String) VirtualNetworkManager
+						.getPublicIpPool().remove(0);
 					while (VirtualNetworkManager.isIpUsed(tmpPip)) {
-						log.warn("There is some error occured when maintaineces "
-								+ "the publicIpPool, but ignore this.");
+						log.warn("There is some error occured when "
+								+ "maintaineces the publicIpPool, but"
+								+ " ignore this.");
 						// XXX tmpPip is null or blank will break this loop.
-						tmpPip = (String) VirtualNetworkManager.publicIpPool
-								.remove(0);
+						tmpPip = (String) VirtualNetworkManager
+							.getPublicIpPool().remove(0);
 					}
 					if (tmpPip != null && !"".equals(tmpPip)) {
 						Nic pipnic = new Nic(tmpPip, ip2MacByRAW(tmpPip));
@@ -310,7 +321,7 @@ public class VirtualNetworkAC extends AssetController {
 		// TODO VirtualGateWay should be a data structure.
 		// VirtualGateWay : nicname, ip, mac, host.
 		// VirtualRouter : may also need to be supported.
-		List nics = vn.getPrivateIpNics();
+		List<Nic> nics = vn.getPrivateIpNics();
 		List<Nic> gw = new ArrayList<Nic>();
 		HashMap<String, String> gwcm = new HashMap<String, String>();
 		PhysicalNode thisHost = this.getLocalHostInfo();
@@ -333,13 +344,14 @@ public class VirtualNetworkAC extends AssetController {
 					}
 				}
 				if (!isAdded) {
-					gw.add(VirtualNetworkManager.ipPool.get(gwip));
+					gw.add(VirtualNetworkManager.IP_POOL.get(gwip));
 					if (!gwcm.containsKey(gwip)) {
-						if (VirtualNetworkManager.ipPool.get(gwip).getNicName() != null
-								|| !"".equals(VirtualNetworkManager.ipPool.get(
+						if (VirtualNetworkManager.IP_POOL.get(gwip)
+								.getNicName() != null
+								|| !"".equals(VirtualNetworkManager.IP_POOL.get(
 										gwip).getNicName())) {
 							gwcm.put(gwip, "/sbin/ifconfig "
-									+ VirtualNetworkManager.ipPool.get(gwip)
+									+ VirtualNetworkManager.IP_POOL.get(gwip)
 											.getNicName() + " " + gwip);
 						}
 					}
@@ -366,7 +378,7 @@ public class VirtualNetworkAC extends AssetController {
 				Nic le1 = new Nic();
 				le1.setIp(gwip);
 				le1.setNicName(gwif);
-				List nicls = thisHost.getNics();
+				List<Nic> nicls = thisHost.getNics();
 				for (int j = 0; j < nicls.size(); j++) {
 					Nic ll = (Nic) nicls.get(j);
 					String nicName = ll.getNicName();
@@ -417,7 +429,7 @@ public class VirtualNetworkAC extends AssetController {
 
 	private String getVirtualGWInterface(PhysicalNode hi) throws Exception {
 		try {
-			List nics = hi.getNics();
+			List<Nic> nics = hi.getNics();
 			List<String> vgwByAlias = new ArrayList<String>();
 			List<String> ethif = new ArrayList<String>();
 			for (int j = 0; j < nics.size(); j++) {
@@ -477,15 +489,16 @@ public class VirtualNetworkAC extends AssetController {
 		// like split("\\."), split("\\|"), split("\\+"), split("\\*").
 		// Fixed by Xiaoyi Lu at 2009.10.07.
 		String[] ipsubField = vn.getHeadNodeIp().split("\\.");
-		int subFieldc = Integer.parseInt(ipsubField[2]);
-		int subFieldd = Integer.parseInt(ipsubField[3]);
+		
+		int subFieldc = Integer.parseInt(ipsubField[C]);
+		int subFieldd = Integer.parseInt(ipsubField[D]);
 		// FIXME, in the every ip section, the 254 num is reserved as the
 		// virtual gateway of this section. And, another condition is there is
 		// at least one node in the same section of headnode, so the last field
 		// should less than 253.
-		if (subFieldd > 252) {
-			throw new Exception(
-					"Please make sure the last field of head node ip less than 253.");
+		if (subFieldd >= MAX_LAST_IP_FIELD - 1) {
+			throw new Exception("Please make sure the last field of head node"
+					+ " ip less than 253.");
 		}
 		// TODO, now only support master-slave and vm mode, the secmaster mode
 		// will be support later.
@@ -531,8 +544,9 @@ public class VirtualNetworkAC extends AssetController {
 			List<Nic> allLeases = this.generateNicListByIps(vn.getHeadNodeIp(),
 					slaveIps);
 			if (allLeases == null || allLeases.size() < vn.getNetworkSize()) {
-				log.warn("Some ip or mac addresses are used, so there is not enough adresses, "
-						+ "the system will try its best to create the virtual network.");
+				log.warn("Some ip or mac addresses are used, so there is not "
+						+ "enough adresses, the system will try its best to "
+						+ "create the virtual network.");
 			}
 			vn.setPrivateIpNics(allLeases);
 			vn.setNetworkSize(allLeases.size());
@@ -547,8 +561,9 @@ public class VirtualNetworkAC extends AssetController {
 		List<Nic> allLeases = this.generateNicListByIps(vn.getHeadNodeIp(),
 				slaveIps);
 		if (allLeases == null || allLeases.size() < vn.getNetworkSize()) {
-			log.warn("Some ip or mac addresses are used, so there is not enough adresses, "
-					+ "the system will try its best to create the virtual network.");
+			log.warn("Some ip or mac addresses are used, so there is not "
+					+ "enough adresses, the system will try its best to "
+					+ "create the virtual network.");
 		}
 		vn.setPrivateIpNics(allLeases);
 
@@ -560,15 +575,15 @@ public class VirtualNetworkAC extends AssetController {
 	private List<String> generateAllSlaveIps(String firstSlaveNodeIp,
 			VirtualNetwork vn) {
 		String[] fsnips = firstSlaveNodeIp.split("\\.");
-		int fsnipc = Integer.parseInt(fsnips[2]);
-		int fsnipd = Integer.parseInt(fsnips[3]);
+		int fsnipc = Integer.parseInt(fsnips[C]);
+		int fsnipd = Integer.parseInt(fsnips[D]);
 		List<String> slaveIps = new ArrayList<String>();
 		slaveIps.add(firstSlaveNodeIp);
 		// XXX, except headnode and firstslave node ip addresses.
 		int leftSize = vn.getNetworkSize() - 2;
 		// slaves ips generation.
 		// FIXME, firstly, satify user requirement.
-		List nics = vn.getPrivateIpNics();
+		List<Nic> nics = vn.getPrivateIpNics();
 		for (int m = 0; m < nics.size(); m++) {
 			Nic tmpnic = (Nic) nics.get(m);
 			String tmpip = tmpnic.getIp();
@@ -591,9 +606,9 @@ public class VirtualNetworkAC extends AssetController {
 		// FIXME, secondly, generate automatically.
 		int nextTryNodeIpc = 0;
 		int nextTryNodeIpd = 0;
-		if (fsnipd == 253) {
+		if (fsnipd >= MAX_LAST_IP_FIELD - 1) {
 			nextTryNodeIpc = fsnipc + 1;
-			if (nextTryNodeIpc > 255) {
+			if (nextTryNodeIpc > MAX_IP_FIELD) {
 				nextTryNodeIpc = 0;
 			}
 			nextTryNodeIpd = 1;
@@ -608,16 +623,16 @@ public class VirtualNetworkAC extends AssetController {
 		// so the ip pool in memory doesnot contain the record of headnode and
 		// previous allocated slave nodes ip addresses. So the try slave ips may
 		// have the same ip of the exist ips, we must filter them.
-		List<String> tmp_slaveIps = this.trySlaveIps(vn.getNetworkSize(),
+		List<String> tmpSlaveIps = this.trySlaveIps(vn.getNetworkSize(),
 				fsnips[0] + "." + fsnips[1] + "." + nextTryNodeIpc + "."
 						+ nextTryNodeIpd);
-		if (tmp_slaveIps == null || tmp_slaveIps.isEmpty()) {
+		if (tmpSlaveIps == null || tmpSlaveIps.isEmpty()) {
 			return slaveIps;
 		} else {
 			boolean filterTag = false;
-			for (int i = 0; i < tmp_slaveIps.size(); i++) {
+			for (int i = 0; i < tmpSlaveIps.size(); i++) {
 				filterTag = false;
-				String tmip = tmp_slaveIps.get(i);
+				String tmip = tmpSlaveIps.get(i);
 				if (vn.getHeadNodeIp().equals(tmip)) {
 					continue;
 				}
@@ -645,8 +660,8 @@ public class VirtualNetworkAC extends AssetController {
 	private String getMacFromIPInCandD(String nodeIp) {
 		// a.b.c.d -> MacC:MacD
 		String[] nips = nodeIp.split("\\.");
-		int nipc = Integer.parseInt(nips[2]);
-		int nipd = Integer.parseInt(nips[3]);
+		int nipc = Integer.parseInt(nips[C]);
+		int nipd = Integer.parseInt(nips[D]);
 		String nipcMac = getValidMacField(Integer.toHexString(nipc));
 		String nipdMac = getValidMacField(Integer.toHexString(nipd));
 		return nipcMac + ":" + nipdMac;
@@ -654,16 +669,16 @@ public class VirtualNetworkAC extends AssetController {
 
 	private static String ip2MacByRAW(String ip) {
 		String[] nips = ip.split("\\.");
-		int nipa = Integer.parseInt(nips[0]);
-		int nipb = Integer.parseInt(nips[1]);
-		int nipc = Integer.parseInt(nips[2]);
-		int nipd = Integer.parseInt(nips[3]);
+		int nipa = Integer.parseInt(nips[A]);
+		int nipb = Integer.parseInt(nips[B]);
+		int nipc = Integer.parseInt(nips[D]);
+		int nipd = Integer.parseInt(nips[D]);
 		String nipaMac = getValidMacField(Integer.toHexString(nipa));
 		String nipbMac = getValidMacField(Integer.toHexString(nipb));
 		String nipcMac = getValidMacField(Integer.toHexString(nipc));
 		String nipdMac = getValidMacField(Integer.toHexString(nipd));
-		String mac = XMMConstants.MAC_PREFIX + ":" + nipaMac + ":"
-				+ nipbMac + ":" + nipcMac + ":" + nipdMac;
+		String mac = XMMConstants.MAC_PREFIX + ":" + nipaMac + ":" + nipbMac
+				+ ":" + nipcMac + ":" + nipdMac;
 
 		return mac;
 	}
@@ -716,13 +731,14 @@ public class VirtualNetworkAC extends AssetController {
 		String fsnip2mac = getMacFromIPInCandD(firstNodeIp);
 		macsb.append(fsnip2mac.split(":")[1]);
 		macsb.append(":00");
-		String net_num_mac = getValidMacField(Integer.toHexString(slaveLeases
+		String netNumMac = getValidMacField(Integer.toHexString(slaveLeases
 				.size() + 1));
-		// net_num_mac may be only two chars. 00:E2
-		if (net_num_mac.length() < 5) {
-			net_num_mac = "00:" + net_num_mac;
+		// netNumMac may be only two chars. 00:E2
+		final int minNetNumMac = 5;
+		if (netNumMac.length() < minNetNumMac) {
+			netNumMac = "00:" + netNumMac;
 		}
-		macsb.append(":" + net_num_mac);
+		macsb.append(":" + netNumMac);
 		macsb.append(":" + headNodeIp2Mac);
 		Nic hnls = new Nic(headnodeip, macsb.toString());
 		allLeases.add(hnls);
@@ -738,7 +754,7 @@ public class VirtualNetworkAC extends AssetController {
 		String[] hips = headnodeip.split("\\.");
 		int ipc = Integer.parseInt(hips[2]);
 		// FIXME, we first choose the user selected ip address.
-		List nics = vn.getPrivateIpNics();
+		List<Nic> nics = vn.getPrivateIpNics();
 		for (int k = 0; k < nics.size(); k++) {
 			Nic nic = (Nic) nics.get(k);
 			if (nic.getIp().equals(headnodeip)) {
@@ -755,9 +771,10 @@ public class VirtualNetworkAC extends AssetController {
 		}
 
 		// FIXME, secondly, we generate a proper ip for the user.
-		int ipd = Integer.parseInt(hips[3]);
+		int ipd = Integer.parseInt(hips[D]);
 		int i = 0;
-		for (i = ipd + 1; i < 254; i++) {
+
+		for (i = ipd + 1; i < MAX_LAST_IP_FIELD; i++) {
 			String fsnip = hips[0] + "." + hips[1] + "." + hips[2] + "." + i;
 			if (VirtualNetworkManager.isIpUsed(fsnip)) {
 				// ignore error, go to search the valid ip in the same section
@@ -766,7 +783,7 @@ public class VirtualNetworkAC extends AssetController {
 			}
 			return fsnip;
 		}
-		if (i == 254) {
+		if (i == MAX_LAST_IP_FIELD) {
 			// In the bigger end of the ip section, there is no any un-used ip
 			// to assign, so search the smaller end.
 			for (i = 1; i < ipd; i++) {
@@ -784,13 +801,14 @@ public class VirtualNetworkAC extends AssetController {
 	private List<String> trySlaveIps(int slaveNodeNum, String trySlaveNodeIp) {
 		List<String> result = new ArrayList<String>();
 		String[] fsnips = trySlaveNodeIp.split("\\.");
-		int fsnipc = Integer.parseInt(fsnips[2]);
-		int fsnipd = Integer.parseInt(fsnips[3]);
+		int fsnipc = Integer.parseInt(fsnips[C]);
+		int fsnipd = Integer.parseInt(fsnips[D]);
 		int nextIpd = 0;
-		for (nextIpd = fsnipd; nextIpd < 254; nextIpd++) {
+		
+		for (nextIpd = fsnipd; nextIpd < MAX_LAST_IP_FIELD; nextIpd++) {
 			// generate next ip address;
-			String nextSlaveNodeip = XMMConstants.IP_PREFIX + fsnips[2]
-					+ "." + nextIpd;
+			String nextSlaveNodeip = XMMConstants.IP_PREFIX + fsnips[2] + "."
+					+ nextIpd;
 			// check ip is used?
 			if (VirtualNetworkManager.isIpUsed(nextSlaveNodeip)) {
 				// go on search.
@@ -802,13 +820,14 @@ public class VirtualNetworkAC extends AssetController {
 				return result;
 			}
 		}
-		if (nextIpd == 254) {
+		if (nextIpd == MAX_LAST_IP_FIELD) {
 			int nextIpc = fsnipc + 1;
-			if (nextIpc > 255) {
+			if (nextIpc > MAX_IP_FIELD) {
 				// FIXME Bug fixed here, we need to check there isn't enough ip
 				// space case. Xiaoyi Lu fixed at 2009.09.27.
 				if (isIpReverse) {
-					log.warn("There is not enough free ip address to allocate.");
+					log.warn("There is not enough free ip address to "
+							+ "allocate.");
 					// FIXME because when the system running, other ip resource
 					// will be released.
 					isIpReverse = false;
@@ -953,7 +972,7 @@ public class VirtualNetworkAC extends AssetController {
 		// * If an error occurred, then the exception will be thrown.
 		// */
 		// vc.virtualNetworkFree(vn);
-		List nics = vn.getPrivateIpNics();
+		List<Nic> nics = vn.getPrivateIpNics();
 		for (int i = 0; i < nics.size(); i++) {
 			Nic le = (Nic) nics.get(i);
 			VirtualNetworkManager.triggerIpPoolRemove(le);
@@ -961,16 +980,17 @@ public class VirtualNetworkAC extends AssetController {
 		}
 		// FIXME support addtional public ip mechanism, Xiaoyi Lu added at
 		// 2009-12-22.
-		if (VirtualNetworkManager.publicIpEnable) {
+		if (VirtualNetworkManager.isPublicIpEnable()) {
 			HashMap<String, Nic> pipnic = vn.getPublicIpNics();
 			if (pipnic != null) {
-				Iterator it = pipnic.values().iterator();
+				Iterator<Nic> it = pipnic.values().iterator();
 				while (it.hasNext()) {
 					Nic nic = (Nic) it.next();
 					VirtualNetworkManager.triggerIpPoolRemove(nic);
 					VirtualNetworkManager.triggerMacPoolRemove(nic);
 					if (nic.getIp() != null && !"".equals(nic.getIp())) {
-						VirtualNetworkManager.publicIpPool.add(nic.getIp());
+						VirtualNetworkManager.getPublicIpPool()
+							.add(nic.getIp());
 					}
 				}
 			}
@@ -1039,7 +1059,8 @@ public class VirtualNetworkAC extends AssetController {
 		return result;
 	}
 
-	private void reservePhysicalNodesByIpList(List aips) throws Exception {
+	private void reservePhysicalNodesByIpList(List<String> aips) 
+		throws Exception {
 		String[] searchConditions = new String[] { "name" };
 		String[] operators = new String[] { "=" };
 		for (int i = 0; i < aips.size(); i++) {
@@ -1106,7 +1127,7 @@ public class VirtualNetworkAC extends AssetController {
 	private VirtualNetwork handlePublicIpForNewVM(VirtualNetwork vn,
 			String newip, HashMap<String, String> attributes) {
 		try {
-			if (VirtualNetworkManager.publicIpEnable) {
+			if (VirtualNetworkManager.isPublicIpEnable()) {
 				String piptag = attributes
 						.get(VirtualNetworkAC.OPTIONAL_ATTR_PUBLICIP_NUM);
 				if (piptag == null || "".equals(piptag)) {
@@ -1115,14 +1136,15 @@ public class VirtualNetworkAC extends AssetController {
 				int num = Integer.parseInt(piptag);
 				if (num > 0) {
 					// see any num which is bigger than zero as 1;
-					if (VirtualNetworkManager.publicIpPool.size() > 0) {
-						String tmpPip = (String) VirtualNetworkManager.publicIpPool
-								.remove(0);
+					if (VirtualNetworkManager.getPublicIpPool().size() > 0) {
+						String tmpPip = (String) VirtualNetworkManager
+							.getPublicIpPool().remove(0);
 						while (VirtualNetworkManager.isIpUsed(tmpPip)) {
-							log.warn("There is some error occured when maintaineces "
-									+ "the publicIpPool, but ignore this.");
-							tmpPip = (String) VirtualNetworkManager.publicIpPool
-									.remove(0);
+							log.warn("There is some error occured when "
+									+ "maintaineces the publicIpPool, "
+									+ "but ignore this.");
+							tmpPip = (String) VirtualNetworkManager
+								.getPublicIpPool().remove(0);
 							// XXX tmpPip is null or blank will break this
 							// loop.
 						}
@@ -1135,7 +1157,8 @@ public class VirtualNetworkAC extends AssetController {
 							VirtualNetworkManager.triggerMacPoolAdd(pipnic);
 							log.info("Allocate a new public ip " + tmpPip
 									+ " for the new node " + newip
-									+ " in the virtual network " + vn.getName());
+									+ " in the virtual network " 
+									+ vn.getName());
 						}
 					} else {
 						return vn;
@@ -1161,8 +1184,8 @@ public class VirtualNetworkAC extends AssetController {
 				}
 			}
 		} catch (Exception e) {
-			String msg = "Error occurred when handle "
-					+ "public ip for the new node,due to " + e.toString();
+			//String msg = "Error occurred when handle "
+			//		+ "public ip for the new node,due to " + e.toString();
 			log.warn(e.toString());
 			// Ignore this error.
 		}
@@ -1193,7 +1216,7 @@ public class VirtualNetworkAC extends AssetController {
 
 	private VirtualNetwork modifyMacOfPrivateIpNic(String targetNicNewMac,
 			Nic targetNic, VirtualNetwork retvn) {
-		List nics = retvn.getPrivateIpNics();
+		List<Nic> nics = retvn.getPrivateIpNics();
 		for (int i = nics.size() - 1; i >= 0; i--) {
 			Nic nic = (Nic) nics.get(i);
 			if (nic.getIp().equals(targetNic.getIp())) {
@@ -1209,7 +1232,7 @@ public class VirtualNetworkAC extends AssetController {
 	}
 
 	private Nic findLastNic(VirtualNetwork vn) {
-		List alist = vn.getPrivateIpNics();
+		List<Nic> alist = vn.getPrivateIpNics();
 		String mac = this.getMacFromIPInCandD(vn.getHeadNodeIp());
 		String[] macs = mac.split(":");
 		for (int i = alist.size() - 1; i >= 0; i--) {
@@ -1221,8 +1244,8 @@ public class VirtualNetworkAC extends AssetController {
 			}
 			String[] lmacs = lmac.split(":");
 			if (lmacs.length == XMMConstants.MAC_LENGTH) {
-				if (lmacs[0].equals(macs[0]) && lmacs[1].equals(macs[1])) {
-					if (lmacs[2].equals(macs[0]) && lmacs[3].equals(macs[1])) {
+				if (lmacs[A].equals(macs[A]) && lmacs[B].equals(macs[B])) {
+					if (lmacs[C].equals(macs[A]) && lmacs[D].equals(macs[B])) {
 						return nic;
 					}
 				}
@@ -1242,12 +1265,12 @@ public class VirtualNetworkAC extends AssetController {
 			String newmac = headMacSuffix + ":" + headMacSuffix + ":"
 					+ this.getMacFromIPInCandD(fip);
 			if (VirtualNetworkManager.isMacUsed(newmac)) {
-				throw new Exception(
-						"This new node is added failed, due to the mac is used already.");
+				throw new Exception("This new node is added failed, "
+						+ "due to the mac is used already.");
 			}
 			nic.setMac(newmac);
 		}
-		List alist = vn.getPrivateIpNics();
+		List<Nic> alist = vn.getPrivateIpNics();
 		alist.add(nic);
 		retvn.setPrivateIpNics(alist);
 		retvn.setNetworkSize(retvn.getPrivateIpNics().size());
@@ -1259,14 +1282,14 @@ public class VirtualNetworkAC extends AssetController {
 		// FIXME, the slave node should in the same section of the head
 		// node preferably.
 		String[] hips = headNodeIp.split("\\.");
-		int ipc = Integer.parseInt(hips[2]);
+		// int ipc = Integer.parseInt(hips[2]);
 		// FIXME we generate a proper ip for the user.
-		int ipd = Integer.parseInt(hips[3]);
+		int ipd = Integer.parseInt(hips[D]);
 		int i = 0;
 		List<String> aips = new ArrayList<String>();
 		// FIXME firstly, find the ip in the headnode ip same section.
 		// Other policy will be implemented later.
-		for (i = ipd + 1; i < 254; i++) {
+		for (i = ipd + 1; i < MAX_LAST_IP_FIELD; i++) {
 			String fsnip = hips[0] + "." + hips[1] + "." + hips[2] + "." + i;
 			if (VirtualNetworkManager.isIpUsed(fsnip)) {
 				// ignore error, go to search the valid ip in the same
@@ -1282,7 +1305,7 @@ public class VirtualNetworkAC extends AssetController {
 				return aips;
 			}
 		}
-		if (i == 254) {
+		if (i == MAX_LAST_IP_FIELD) {
 			// In the bigger end of the ip section, there is no any un-used
 			// ip to assign, so search the smaller end.
 			for (i = 1; i < ipd; i++) {
@@ -1311,11 +1334,11 @@ public class VirtualNetworkAC extends AssetController {
 					throw new Exception(
 							"No available ip to be allocated for new node.");
 				}
-				int hc = Math
-						.abs(rand.nextInt((int) System.currentTimeMillis())) % 255;
+				int hc = Math.abs(rand.nextInt(
+						(int) System.currentTimeMillis())) % MAX_IP_FIELD;
 				// avoid zero.
-				int hd = Math
-						.abs(rand.nextInt((int) System.currentTimeMillis())) % 252 + 1;
+				int hd = Math.abs(rand.nextInt((int) System
+						.currentTimeMillis())) % (MAX_LAST_IP_FIELD - 2) + 1;
 				String fsnip = hips[0] + "." + hips[1] + "." + hc + "." + hd;
 				if (VirtualNetworkManager.isIpUsed(fsnip)) {
 					j--;
@@ -1386,7 +1409,7 @@ public class VirtualNetworkAC extends AssetController {
 			}
 			Nic nic = this.getNicByIpFromVN(vn, privateIp);
 			if (nic == null) {
-				throw new Exception("The node " + nic.getIp()
+				throw new Exception("The node " + privateIp
 						+ " is not exist.");
 			}
 			anics.add(nic);
@@ -1413,10 +1436,10 @@ public class VirtualNetworkAC extends AssetController {
 				break;
 			}
 		}
-		if (isForVM) {
+		//if (isForVM) {
 			// no thing to do. left the reconfig work in the reconfigV4RemoveNic
 			// method.
-		}
+		//}
 		retvn.setPrivateIpNics(nics);
 		retvn.setNetworkSize(retvn.getPrivateIpNics().size());
 		return retvn;
@@ -1493,7 +1516,7 @@ public class VirtualNetworkAC extends AssetController {
 			Nic pubnic = pubnics.remove(removeip);
 			VirtualNetworkManager.triggerIpPoolRemove(pubnic);
 			VirtualNetworkManager.triggerMacPoolRemove(pubnic);
-			VirtualNetworkManager.publicIpPool.add(pubnic.getIp());
+			VirtualNetworkManager.getPublicIpPool().add(pubnic.getIp());
 			HashMap<String, String> map = vn.getAttributes();
 			String tag = map.get(VirtualNetworkAC.OPTIONAL_ATTR_PUBLICIP_NUM);
 			if (tag != null && !"".equals(tag)) {
@@ -1506,6 +1529,7 @@ public class VirtualNetworkAC extends AssetController {
 					map.put(VirtualNetworkAC.OPTIONAL_ATTR_PUBLICIP_NUM, ""
 							+ vnpipnumtag);
 				} catch (Exception e) {
+					log.error(e.getMessage());
 					// ignore this error.
 				}
 			}
@@ -1530,13 +1554,14 @@ public class VirtualNetworkAC extends AssetController {
 		int size = ret.getNetworkSize();
 		Nic hnnic = this.getHeadNodeNic(vn);
 		String[] hnmacs = hnnic.getMac().split(":");
-		String net_num_mac = getValidMacField(Integer.toHexString(size));
+		String netNumMac = getValidMacField(Integer.toHexString(size));
 		// net_num_mac may be only two chars. 00:E2
-		if (net_num_mac.length() < 5) {
-			net_num_mac = "00:" + net_num_mac;
+		final int minNetNumMac = 5;
+		if (netNumMac.length() < minNetNumMac) {
+			netNumMac = "00:" + netNumMac;
 		}
-		String hnmac = hnmacs[0] + ":" + hnmacs[1] + ":" + net_num_mac + ":"
-				+ hnmacs[4] + ":" + hnmacs[5];
+		String hnmac = hnmacs[A] + ":" + hnmacs[B] + ":" + netNumMac + ":"
+				+ hnmacs[E] + ":" + hnmacs[F];
 		// As common case, the follow situation should not be occurred.
 		if (VirtualNetworkManager.isMacUsed(hnmac)) {
 			log.fatal("The head node mac address can not be modified now.");
@@ -1615,9 +1640,9 @@ public class VirtualNetworkAC extends AssetController {
 				}
 				String[] hnmacs = hnic.getMac().split(":");
 				String[] anafsnmacs = anafsn.getMac().split(":");
-				String newmac = anafsnmacs[5] + ":" + hnmacs[1] + ":"
-						+ hnmacs[2] + ":" + hnmacs[3] + ":" + hnmacs[4] + ":"
-						+ hnmacs[5];
+				String newmac = anafsnmacs[F] + ":" + hnmacs[B] + ":"
+						+ hnmacs[C] + ":" + hnmacs[D] + ":" + hnmacs[E] + ":"
+						+ hnmacs[F];
 				if (VirtualNetworkManager.isMacUsed(newmac)) {
 					log.fatal("Due to the new mac address " + newmac
 							+ " of head node is used, so the node "
@@ -1642,16 +1667,16 @@ public class VirtualNetworkAC extends AssetController {
 			Nic tmpnic = nics.get(i);
 			String tmpmac = tmpnic.getMac();
 			String[] tmpmacs = tmpmac.split(":");
-			String tmpmaccd = tmpmacs[2] + ":" + tmpmacs[3];
+			String tmpmaccd = tmpmacs[C] + ":" + tmpmacs[D];
 			// this nic is the removed nic's forerunner.
 			// change the mac address for this nic to point the removed nic's
 			// next nic.
 			if (maccd.equals(tmpmaccd)) {
-				tmpmacs[2] = nextmacs[2];
-				tmpmacs[3] = nextmacs[3];
+				tmpmacs[C] = nextmacs[C];
+				tmpmacs[D] = nextmacs[D];
 				VirtualNetworkManager.triggerMacPoolRemove(tmpnic);
-				tmpmac = tmpmacs[0] + ":" + tmpmacs[1] + tmpmacs[2]
-						+ tmpmacs[3] + tmpmacs[4] + tmpmacs[5];
+				tmpmac = tmpmacs[A] + ":" + tmpmacs[B] + tmpmacs[C]
+						+ tmpmacs[D] + tmpmacs[E] + tmpmacs[F];
 				tmpnic.setMac(tmpmac);
 				nics.remove(i);
 				// keep the order is preferably.
@@ -1714,7 +1739,8 @@ public class VirtualNetworkAC extends AssetController {
 			if (ip.equals(vn.getHeadNodeIp())) {
 				String headmac = nics.get(i).getMac();
 				String ipdinmac = headmac.split(":")[0];
-				String tmpip = Integer.toString(Integer.parseInt(ipdinmac, 16));
+				String tmpip = Integer.toString(Integer.parseInt(
+						ipdinmac, HEX));
 				firstSlaveIp = vn.getHeadNodeIp().substring(0,
 						vn.getHeadNodeIp().lastIndexOf("."))
 						+ "." + tmpip;
@@ -1757,7 +1783,8 @@ public class VirtualNetworkAC extends AssetController {
 		return asset;
 	}
 
-	public double calculatePrice(Asset asset, HashMap params) throws Exception {
+	public double calculatePrice(Asset asset, HashMap<String, String> params)
+			throws Exception {
 		return asset.getPrice();
 	}
 

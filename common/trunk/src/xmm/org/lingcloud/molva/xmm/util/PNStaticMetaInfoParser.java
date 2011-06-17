@@ -26,7 +26,6 @@ import org.lingcloud.molva.xmm.pojos.Nic;
  * 
  * @version 1.0.1 2010-5-31<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class PNStaticMetaInfoParser {
 	/**
@@ -35,20 +34,20 @@ public class PNStaticMetaInfoParser {
 	private static Log log = LogFactory.getLog(PNStaticMetaInfoParser.class);
 
 	private String metaInfo;
-	
-	private float CPUSPEED;
-	
-	private int CPUNUM;
 
-	private String ARCH;
-	
-	private int MEMTOTAL;
+	private float cpuSpeed;
 
-	private String MODELNAME;
+	private int cpuNum;
 
-	private String HOSTNAME;
+	private String arch;
 
-	private List Nics;
+	private int memTotal;
+
+	private String modelName;
+
+	private String hostname;
+
+	private List<Nic> nics;
 
 	public PNStaticMetaInfoParser(String stdout) {
 		this.metaInfo = stdout.trim();
@@ -57,17 +56,26 @@ public class PNStaticMetaInfoParser {
 
 	private void parse() {
 		if (metaInfo == null || "".equals(metaInfo)) {
-			this.CPUSPEED = 0;
-			this.CPUNUM = 0;
-			this.ARCH = "";
-			this.MEMTOTAL = 0;
-			this.MODELNAME = "";
-			this.HOSTNAME = "";
-			this.Nics = null;
+			this.cpuSpeed = 0;
+			this.cpuNum = 0;
+			this.arch = "";
+			this.memTotal = 0;
+			this.modelName = "";
+			this.hostname = "";
+			this.nics = null;
 			return;
 		}
 		String[] ss = this.metaInfo.split(";");
 		System.out.println(metaInfo);
+		final int paraArch = 0;
+		final int paraModelname = 1;
+		final int paraHostname = 2;
+		final int paraNic = 3;
+		final int paraCpuSpeed = 4;
+		final int paraCpuNum = 5;
+		final int paraMemTotal = 6;
+		final int kilo = 1000;
+		
 		for (int i = 0; i < ss.length; i++) {
 			String[] m = ss[i].split("=");
 			if (m.length < 2) {
@@ -75,47 +83,47 @@ public class PNStaticMetaInfoParser {
 			}
 			try {
 				switch (i) {
-				case 0:
-					this.ARCH = m[1];
+				case paraArch:
+					this.arch = m[1];
 					break;
-				case 1:
-					this.MODELNAME = m[1];
+				case paraModelname:
+					this.modelName = m[1];
 					break;
-				case 2:
-					this.HOSTNAME = m[1];
+				case paraHostname:
+					this.hostname = m[1];
 					break;
-				case 3:
-					this.Nics = parseNics(m[1]);
+				case paraNic:
+					this.nics = parseNics(m[1]);
 					break;
-				case 4:
-					this.CPUSPEED = Float.parseFloat(m[1]);
+				case paraCpuSpeed:
+					this.cpuSpeed = Float.parseFloat(m[1]);
 					break;
-				case 5:
-					this.CPUNUM = Integer.parseInt(m[1]);
+				case paraCpuNum:
+					this.cpuNum = Integer.parseInt(m[1]);
 					break;
-				case 6:
-					this.MEMTOTAL = Integer.parseInt(m[1])/1000;
+				case paraMemTotal:
+					this.memTotal = Integer.parseInt(m[1]) / kilo;
 					break;
 				default:
 					break;
 				}
-			}catch(Exception e) {
+			} catch (Exception e) {
 				log.error(e);
 			}
 		}
-		
+
 	}
 
-	private List parseNics(String nicstr) {
+	private List<Nic> parseNics(String nicstr) {
 		if (nicstr != null && !nicstr.equals("")) {
 			String[] nics = nicstr.trim().split(" ");
 			ArrayList<Nic> niclist = new ArrayList<Nic>();
 			for (int j = 0; j < nics.length; j++) {
 				String[] nic = nics[j].split("-");
-				if (nic.length != 3) {
-					log
-							.warn("There are errors when collect hostinfo of nics : "
-									+ nics[j] + ".");
+				final int nicParameters = 3;
+				if (nic.length != nicParameters) {
+					log.warn("There are errors when collect hostinfo of nics : "
+							+ nics[j] + ".");
 					// Ignore this error.
 					continue;
 				} else {
@@ -143,59 +151,59 @@ public class PNStaticMetaInfoParser {
 	}
 
 	public String getARCH() {
-		return ARCH;
+		return arch;
 	}
 
 	public void setARCH(String arch) {
-		ARCH = arch;
+		this.arch = arch;
 	}
 
 	public String getHOSTNAME() {
-		return HOSTNAME;
+		return hostname;
 	}
 
 	public void setHOSTNAME(String hostname) {
-		HOSTNAME = hostname;
+		this.hostname = hostname;
 	}
 
 	public String getMODELNAME() {
-		return MODELNAME;
+		return modelName;
 	}
 
 	public void setMODELNAME(String modelname) {
-		MODELNAME = modelname;
+		modelName = modelname;
 	}
 
-	public List getNics() {
-		return Nics;
+	public List<Nic> getNics() {
+		return nics;
 	}
 
-	public void setNics(List cs) {
-		Nics = cs;
+	public void setNics(List<Nic> cs) {
+		nics = cs;
 	}
-	
+
 	public void setCpuNum(int num) {
-		this.CPUNUM = num;
+		this.cpuNum = num;
 	}
-	
+
 	public int getCpuNum() {
-		return this.CPUNUM;
+		return this.cpuNum;
 	}
-	
+
 	public void setCpuSpeed(float speed) {
-		this.CPUSPEED = speed;
+		this.cpuSpeed = speed;
 	}
-	
+
 	public float getCpuSpeed() {
-		return this.CPUSPEED;
+		return this.cpuSpeed;
 	}
-	
+
 	public void setMem(int mem) {
-		this.MEMTOTAL = mem;
+		this.memTotal = mem;
 	}
-	
+
 	public int getMem() {
-		return this.MEMTOTAL;
+		return this.memTotal;
 	}
 
 }

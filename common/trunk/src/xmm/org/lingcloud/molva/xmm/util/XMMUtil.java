@@ -33,57 +33,62 @@ import org.lingcloud.molva.xmm.pojos.PhysicalNode;
  * 
  * @version 1.0.1 2009-9-18<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class XMMUtil {
-	
+
 	/**
 	 * Molva Web Service Url, get it from conf file.
 	 */
 	private static String molvaServiceUrl = null;
-	
-	static {
-		if (molvaServiceUrl == null) {
-			
-		}
+	private static final String REGX_IP = "((25[0-5]|2[0-4]\\d|1\\d{2}"
+		+ "|[1-9]\\d|\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]\\d|\\d)";
+	private static final int A = 0;
+	@SuppressWarnings("unused")
+	private static final int B = 1;
+	@SuppressWarnings("unused")
+	private static final int C = 2;
+	private static final int D = 3;
+	private static final int BITS_IN_A_BYTE = 8;
+
+	private XMMUtil() {
+
 	}
-	
+
 	public static String getMolvaServiceUrl() {
-		if ( molvaServiceUrl == null) {
+		if (molvaServiceUrl == null) {
 			try {
-				molvaServiceUrl = XMMUtil.getValueInCfgFile(
-						XMMConstants.CONFIG_ITEM_SERVICEURL);
-			}catch (Exception e) {
+				molvaServiceUrl = XMMUtil
+						.getValueInCfgFile(XMMConstants.CONFIG_ITEM_SERVICEURL);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		return molvaServiceUrl;
 	}
-	
+
 	/**
-     * @param string
-     *            The string
-     * @return True if the string is null or ""
-     */
-    public static boolean isEmptyString(final String string){
-        return string == null || string.trim().equals("");
-    }
-    
-    
-    /**
-     * 
-     * @param serverUrl
-     * @return
-     * @throws XMMException
-     */
+	 * @param string
+	 *            The string
+	 * @return True if the string is null or ""
+	 */
+	public static boolean isEmptyString(final String string) {
+		return string == null || string.trim().equals("");
+	}
+
+	/**
+	 * 
+	 * @param serverUrl
+	 * @return
+	 * @throws XMMException
+	 */
 	public static String formVirtualClusterServiceUrl(String serverUrl)
 			throws XMMException {
 		try {
 			ParaChecker.checkNullParameter(serverUrl, "namingUrl");
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw new XMMException(e.getMessage());
 		}
-		
+
 		return serverUrl.replaceAll("naming", "XMM");
 	}
 
@@ -98,7 +103,7 @@ public class XMMUtil {
 		}
 		return value.trim();
 	}
-	
+
 	public static Object callService(String serviceUrl, String operation,
 			Object[] parameters) throws XMMException {
 		try {
@@ -120,7 +125,8 @@ public class XMMUtil {
 	 * @throws Exception
 	 *             get failed with various reasons.
 	 */
-	public static String getVirtualizationServerUrlInCfgFile() throws Exception {
+	public static String getVirtualizationServerUrlInCfgFile() 
+		throws Exception {
 		return getValueInCfgFile("virtualizationServerUrl");
 	}
 
@@ -136,24 +142,25 @@ public class XMMUtil {
 		}
 		ipSection = ipSection.trim();
 		ip = ip.trim();
-		final String REGX_IP = "((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]\\d|\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]\\d|\\d)";
-		final String REGX_IPB = REGX_IP + "\\-" + REGX_IP;
-		if (!ipSection.matches(REGX_IPB) || !ip.matches(REGX_IP))
+		
+		final String regxIPB = REGX_IP + "\\-" + REGX_IP;
+		if (!ipSection.matches(regxIPB) || !ip.matches(REGX_IP)) {
 			return false;
+		}
 		int idx = ipSection.indexOf('-');
 		String[] sips = ipSection.substring(0, idx).split("\\.");
 		String[] sipe = ipSection.substring(idx + 1).split("\\.");
 		String[] sipt = ip.split("\\.");
 		// Bug fixed, a valid ip should not be ended with 0 or 255.
-		if (sipt[3].equals("0") || sipt[3].equals("255")
-				|| sipt[3].equals("254")) {
+		if (sipt[D].equals("0") || sipt[D].equals("255")
+				|| sipt[D].equals("254")) {
 			return false;
 		}
 		long ips = 0L, ipe = 0L, ipt = 0L;
-		for (int i = 0; i < 4; ++i) {
-			ips = ips << 8 | Integer.parseInt(sips[i]);
-			ipe = ipe << 8 | Integer.parseInt(sipe[i]);
-			ipt = ipt << 8 | Integer.parseInt(sipt[i]);
+		for (int i = A; i <= D; ++i) {
+			ips = ips << BITS_IN_A_BYTE | Integer.parseInt(sips[i]);
+			ipe = ipe << BITS_IN_A_BYTE | Integer.parseInt(sipe[i]);
+			ipt = ipt << BITS_IN_A_BYTE | Integer.parseInt(sipt[i]);
 		}
 		if (ips > ipe) {
 			long t = ips;
@@ -185,7 +192,7 @@ public class XMMUtil {
 		child.destroy();
 		return sb.toString();
 	}
-	
+
 	public static String getTestPhysicalNodeCmdInCfgFile() throws Exception {
 		return getValueInCfgFile("testPhysicalNodeCmd");
 	}
@@ -216,17 +223,18 @@ public class XMMUtil {
 		return getValueInCfgFile("monitorConfigCommand");
 	}
 
-	public static ArrayList loadPublicIp() throws Exception {
+	public static ArrayList<String> loadPublicIp() throws Exception {
 		ConfigUtil conf = new ConfigUtil(XMMConstants.CONFIG_FILE_NAME);
 		String pipool = conf.getProperty("publicIpPool", "");
 
 		if (isEmptyString(pipool)) {
-			String msg = "get PublicIpPool from config file failed. The result is null.";
+			String msg = "get PublicIpPool from config file failed. "
+				+ "The result is null.";
 			throw new Exception(new Exception(msg));
 		}
-		ArrayList ayl = new ArrayList();
+		ArrayList<String> ayl = new ArrayList<String>();
 		pipool = pipool.trim();
-		String pis[] = pipool.split(";");
+		String[] pis = pipool.split(";");
 		for (int i = 0; i < pis.length; ++i) {
 			int position = pis[i].trim().indexOf("-");
 			if (position > -1) {
@@ -266,9 +274,8 @@ public class XMMUtil {
 			return;
 		}
 		throw new XMMException("Invalid QuotaKey, it should be [ "
-				+ XMMConstants.QUOTA_CPU + " | "
-				+ XMMConstants.QUOTA_DISK + " | "
-				+ XMMConstants.QUOTA_MEM + " | "
+				+ XMMConstants.QUOTA_CPU + " | " + XMMConstants.QUOTA_DISK
+				+ " | " + XMMConstants.QUOTA_MEM + " | "
 				+ XMMConstants.QUOTA_NETTRAFFIC + " ].");
 	}
 
@@ -291,9 +298,8 @@ public class XMMUtil {
 			return;
 		}
 		throw new XMMException("Invalid PreferKey, it should be [ "
-				+ XMMConstants.PREFER_CPU + " | "
-				+ XMMConstants.PREFER_DISK + " | "
-				+ XMMConstants.PREFER_MEM + " | "
+				+ XMMConstants.PREFER_CPU + " | " + XMMConstants.PREFER_DISK
+				+ " | " + XMMConstants.PREFER_MEM + " | "
 				+ XMMConstants.PREFER_NETTRAFFIC + " ].");
 	}
 
@@ -329,7 +335,7 @@ public class XMMUtil {
 
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		try {
 			System.setProperty("lingcloud.home", ".");
 			String url = XMMUtil.getMonitorConfigCommandInCfgFile();
@@ -348,7 +354,8 @@ public class XMMUtil {
 		return getValueInCfgFile("partitionDriverPath");
 	}
 
-	public static String getStaticMetaInfoCollectorInCfgFile() throws Exception {
+	public static String getStaticMetaInfoCollectorInCfgFile() 
+		throws Exception {
 		return getValueInCfgFile("staticMetaInfoCollector");
 	}
 
@@ -383,15 +390,16 @@ public class XMMUtil {
 	public static String getVMKillerInCfgFile() throws Exception {
 		return getValueInCfgFile("vmKiller");
 	}
-	
+
 	public static boolean isBlankOrNull(String value) {
 		boolean ret = true;
 		ret = (value == null) || (value.trim().length() == 0);
 		return ret;
 	}
-	
+
 	/**
 	 * Validate the input value. Throw exception if is blank or null.
+	 * 
 	 * @param value
 	 * @param desc
 	 * @throws XMMException
@@ -409,9 +417,9 @@ public class XMMUtil {
 			throw new Exception(msg + " should not be null or blank.");
 		}
 		ip = ip.trim();
-		final String REGX_IP = "((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]\\d|\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]\\d|\\d)";
-		if (!ip.matches(REGX_IP))
+		if (!ip.matches(REGX_IP)) {
 			throw new Exception(msg + " is not a valid ip address.");
+		}
 	}
 
 	public static boolean ipIsValid(String ip) throws Exception {
@@ -419,7 +427,6 @@ public class XMMUtil {
 			return false;
 		}
 		ip = ip.trim();
-		final String REGX_IP = "((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]\\d|\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]\\d|\\d)";
 		if (!ip.matches(REGX_IP)) {
 			return false;
 		}
@@ -435,7 +442,7 @@ public class XMMUtil {
 	}
 
 	public static boolean getIsAcEnable() throws Exception {
-		
+
 		String acEnable = getValueInCfgFile("isAcEnable");
 		return acEnable.equalsIgnoreCase("true");
 	}

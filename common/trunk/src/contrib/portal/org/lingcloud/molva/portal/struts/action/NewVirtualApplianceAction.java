@@ -37,7 +37,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class NewVirtualApplianceAction extends NeedLoginAction {
 	/**
@@ -48,7 +47,8 @@ public class NewVirtualApplianceAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			DynaValidatorForm newVirtualAppForm = (DynaValidatorForm) form;
 			if (newVirtualAppForm == null) {
@@ -72,23 +72,24 @@ public class NewVirtualApplianceAction extends NeedLoginAction {
 			String password = (String) newVirtualAppForm.get("password");
 			String description = (String) newVirtualAppForm.get("description");
 			String thispage = (String) newVirtualAppForm.get("thispage");
-			if (accessway == null || accessway.length == 0
+			if (accessway == null
+					|| accessway.length == 0
 					|| XMMPortalUtil.checkParamsBlankOrNull(accessway)
 					|| XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-					name, location, os, memsize, category,
-					 cpuamount, language, loginstyle}) 
-					|| loginstyle.equals(VAMConstants.VA_LOGIN_STYLE_USER_PASS) 
+							name, location, os, memsize, category, cpuamount,
+							language, loginstyle })
+					|| loginstyle.equals(VAMConstants.VA_LOGIN_STYLE_USER_PASS)
 					&& XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-							username, password})) {
+							username, password })) {
 				throw new Exception("Please input the correct parameters of "
-						+ "name, location, os, category, " 
-						+ "accessway, cpu amount, memery, language, " 
+						+ "name, location, os, category, "
+						+ "accessway, cpu amount, memery, language, "
 						+ "loginstyle, username, password!");
 			}
-			
+
 			format = VAMConstants.VAF_FORMAT_DEFAULT;
 			loader = VAMConstants.VA_BOOTLOAD_HVM;
-			
+
 			name = name.trim();
 			location = location.trim();
 			os = os.trim();
@@ -97,15 +98,15 @@ public class NewVirtualApplianceAction extends NeedLoginAction {
 			}
 			osversion = osversion.trim();
 			format = format.trim();
-			
+
 			category = category.trim();
 			loader = loader.trim();
-			
+
 			cpuamount = cpuamount.trim();
 			int amount = Integer.parseInt(cpuamount);
 			memsize = memsize.trim();
 			int memery = Integer.parseInt(memsize);
-			
+
 			language = language.trim();
 			loginstyle = loginstyle.trim();
 			if (username != null) {
@@ -114,7 +115,7 @@ public class NewVirtualApplianceAction extends NeedLoginAction {
 			if (password != null) {
 				password = password.trim();
 			}
-			
+
 			VAMUtil.checkDiskFormat(format);
 			VAMUtil.checkBootLoader(loader);
 			VAMUtil.checkLoginStyle(loginstyle);
@@ -141,7 +142,7 @@ public class NewVirtualApplianceAction extends NeedLoginAction {
 			va.setCpuAmount(amount);
 			va.setMemory(memery);
 			List<String> appl = new ArrayList<String>();
-			if (app != null && !app.equals("")){
+			if (app != null && !app.equals("")) {
 				String[] apps = app.split("\\|");
 				for (int i = 0; i < apps.length; i++) {
 					appl.add(apps[i]);

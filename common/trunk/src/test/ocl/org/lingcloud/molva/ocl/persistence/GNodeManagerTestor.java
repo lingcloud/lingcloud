@@ -83,7 +83,7 @@ public class GNodeManagerTestor extends TestCase {
 			String query = "type=?";
 			Object[] values = new Object[] { GNodeConstants.GNODETYPE_SERVICE };
 
-			List rst = gnm.search(query, values);
+			List<GNode> rst = gnm.search(query, values);
 			log.info("the init size: " + rst.size());
 
 			for (int i = 0; i < rst.size(); ++i) {
@@ -148,7 +148,7 @@ public class GNodeManagerTestor extends TestCase {
 			Object[] values = new Object[] { GNodeConstants.GNODETYPE_SERVICE };
 
 			log.info("before search ...");
-			List rst = gnm.search(query, values);
+			List<GNode> rst = gnm.search(query, values);
 			log.info("after search ...");
 
 			log.info("the search result is : \n");
@@ -173,17 +173,17 @@ public class GNodeManagerTestor extends TestCase {
 			String query = "type=?";
 			Object[] values = new Object[] { GNodeConstants.GNODETYPE_SERVICE };
 
-			List rst = gnm.search(query, values);
+			List<GNode> rst = gnm.search(query, values);
 			log.info("the init size: " + rst.size());
 
 			for (int i = 0; i < rst.size(); ++i) {
 				GNode gn = (GNode) rst.get(i);
 				log.info("delete item " + i + " id = " + gn.getGuid());
-				List removed = gnm.unregister(gn.getGuid());
+				List<GNode> removed = gnm.unregister(gn.getGuid());
 				log.info("delete count : " + removed.size());
 			}
 
-			List finalRst = gnm.search(query, values);
+			List<GNode> finalRst = gnm.search(query, values);
 			assertEquals(finalRst.size(), 0);
 
 		} catch (Exception e) {

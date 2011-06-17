@@ -19,9 +19,12 @@ package org.lingcloud.molva.xmm.util;
  * 
  * @version 1.0.1 2009-9-17<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class XMMConstants {
+	
+	private XMMConstants() {
+		
+	}
 	
 	/**
 	 * lingcloud xmm home path.
@@ -173,6 +176,15 @@ public class XMMConstants {
 
 	public static final String DEFAULT_ACL = "rwx------";
 
+	/**
+	 * 
+	 * <strong>Purpose:</strong><br>
+	 * TODO.
+	 *
+	 * @version 1.0.1 2009-9-17<br>
+	 * @author Xiaoyi Lu<br>
+	 *
+	 */
 	public static enum MachineRunningState {
 		WAIT_DEPLOY, BOOT, RUNNING, SUSPENDED, STOPPING, STOP, SHUTDOWN, ERROR
 	}

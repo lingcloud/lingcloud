@@ -58,7 +58,7 @@ public class PollingTaskManager {
 				if (pollingInterval < INIT_DELAY) {
 					pollingInterval = INIT_DELAY;
 				}
-			}catch (Exception e) {
+			} catch (Exception e) {
 				pollingInterval = DEFAULT_INTERVAL;
 			}
 			

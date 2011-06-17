@@ -35,7 +35,6 @@ import org.lingcloud.molva.xmm.vmc.VirtualClient;
  * 
  * @version 1.0.1 2010-7-25<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class VirtualNodeAC extends AssetController {
 
@@ -74,8 +73,8 @@ public class VirtualNodeAC extends AssetController {
 		VirtualNode vnode = new VirtualNode(asset);
 		String clusterId = vnode.getVirtualClusterID();
 		if (clusterId == null || "".equals(clusterId)) {
-			throw new Exception(
-					"No cluster info in the virtual node, so it can not be polled.");
+			throw new Exception("No cluster info in the virtual node, "
+					+ "so it can not be polled.");
 		}
 
 		try {
@@ -132,7 +131,8 @@ public class VirtualNodeAC extends AssetController {
 		return;
 	}
 
-	public double calculatePrice(Asset asset, HashMap params) throws Exception {
+	public double calculatePrice(Asset asset, 
+			HashMap<String, String> params) throws Exception {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -160,7 +160,7 @@ public class VirtualNodeAC extends AssetController {
 			// FIXME wait for the disk ready.
 			if (VAMConstants.STATE_READY != va.getState()) {
 				tryTimes++;
-				Thread.currentThread().sleep(VirtualNodeAC.SLEEP_TIME);
+				Thread.sleep(VirtualNodeAC.SLEEP_TIME);
 			} else {
 				isReady = true;
 				break;
@@ -175,8 +175,8 @@ public class VirtualNodeAC extends AssetController {
 
 		String clusterId = vnode.getVirtualClusterID();
 		if (clusterId == null || "".equals(clusterId)) {
-			throw new Exception(
-					"No cluster info in the virtual node, so it can not be init.");
+			throw new Exception("No cluster info in the virtual node, "
+					+ "so it can not be init.");
 		}
 
 		try {
@@ -199,8 +199,8 @@ public class VirtualNodeAC extends AssetController {
 		VirtualNode vnode = new VirtualNode(asset);
 		String clusterId = vnode.getVirtualClusterID();
 		if (clusterId == null || "".equals(clusterId)) {
-			throw new Exception(
-					"No cluster info in the virtual node, so it can not be antiinit.");
+			throw new Exception("No cluster info in the virtual node, "
+					+ "so it can not be antiinit.");
 		}
 
 		try {
@@ -227,8 +227,8 @@ public class VirtualNodeAC extends AssetController {
 		VirtualNode vnode = new VirtualNode(asset);
 		String clusterId = vnode.getVirtualClusterID();
 		if (clusterId == null || "".equals(clusterId)) {
-			throw new Exception(
-					"No cluster info in the virtual node, so it can not be provision.");
+			throw new Exception("No cluster info in the virtual node, "
+					+ "so it can not be provision.");
 		}
 
 		int tryTimes = 0;
@@ -248,7 +248,7 @@ public class VirtualNodeAC extends AssetController {
 					return vnodeNew;
 				} else {
 					tryTimes++;
-					Thread.currentThread().sleep(VirtualNodeAC.SLEEP_TIME);
+					Thread.sleep(VirtualNodeAC.SLEEP_TIME);
 				}
 			}
 		} catch (Exception e) {

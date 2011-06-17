@@ -16,7 +16,6 @@ package org.lingcloud.molva.xmm.services;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import org.lingcloud.molva.xmm.util.XMMException;
 import org.lingcloud.molva.xmm.util.XmlUtil;
 import org.lingcloud.molva.xmm.pojos.NodeRequirement;
 import org.lingcloud.molva.xmm.pojos.Partition;
@@ -34,17 +33,16 @@ import org.lingcloud.molva.xmm.pojos.VirtualNode;
  * virtual nodes, networks and so on.
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class XMMImplWrapper {
 
 	/**
-	 * XMMImpl class instance
+	 * XMMImpl class instance.
 	 */
 	private XMMImpl impl = null;
 
 	/**
-	 * Default constructor
+	 * Default constructor.
 	 * @throws Exception
 	 */
 	public XMMImplWrapper() throws Exception {
@@ -76,6 +74,7 @@ public class XMMImplWrapper {
 	 */
 	public String createPartition(String name, String pController,
 			String attributes, String desc) throws Exception {
+		@SuppressWarnings("unchecked")
 		HashMap<String, String> attr = (HashMap<String, String>) XmlUtil
 				.fromXml(attributes);
 		Partition par = impl.createPartition(name, pController, attr, desc);
@@ -159,6 +158,7 @@ public class XMMImplWrapper {
 	public String addPhysicalNode(String partitionId, String privateIp,
 			String publicIp, String pnController, boolean isRedeploy,
 			String attributes, String desc) throws Exception {
+		@SuppressWarnings("unchecked")
 		HashMap<String, String> attr = (HashMap<String, String>) XmlUtil
 				.fromXml(attributes);
 		PhysicalNode pn = impl.addPhysicalNode(partitionId, privateIp,
@@ -167,7 +167,7 @@ public class XMMImplWrapper {
 	}
 
 	/**
-	 * List all partitions
+	 * List all partitions.
 	 * @return
 	 * 			the list of all partitions
 	 * @throws XMMException
@@ -177,7 +177,7 @@ public class XMMImplWrapper {
 	}
 
 	/**
-	 * List a kind of partitions
+	 * List a kind of partitions.
 	 * @param pController
 	 * 			the partition operate controller
 	 * @return
@@ -189,7 +189,7 @@ public class XMMImplWrapper {
 	}
 
 	/**
-	 * List all physical nodes in a partition
+	 * List all physical nodes in a partition.
 	 * @param parid
 	 * 			the partition id
 	 * @return
@@ -201,7 +201,7 @@ public class XMMImplWrapper {
 	}
 
 	/**
-	 * Create the virtual network for a partition
+	 * Create the virtual network for a partition.
 	 * @param partitionId
 	 * 			the partition id
 	 * @param name
@@ -226,6 +226,7 @@ public class XMMImplWrapper {
 			String vnController, int netSize, String headNodeIp,
 			String[] otherNodeIps, String attributes, String desc)
 			throws Exception {
+		@SuppressWarnings("unchecked")
 		HashMap<String, String> attr = (HashMap<String, String>) XmlUtil
 				.fromXml(attributes);
 		VirtualNetwork vn = impl.createVirtualNetwork(partitionId, name,
@@ -234,7 +235,7 @@ public class XMMImplWrapper {
 	}
 
 	/**
-	 * Destroy a virtual network
+	 * Destroy a virtual network.
 	 * @param vnguid
 	 * 			the virtual network id
 	 * @throws XMMException
@@ -244,7 +245,7 @@ public class XMMImplWrapper {
 	}
 
 	/**
-	 * Get a virtual network information
+	 * Get a virtual network information.
 	 * @param guid
 	 * 			the global id of the network
 	 * @return
@@ -283,7 +284,7 @@ public class XMMImplWrapper {
 	}
 
 	/**
-	 * Update a virtual cluster information
+	 * Update a virtual cluster information.
 	 * mainly meta information
 	 * @param vcid
 	 * 			the virtual cluster id
@@ -318,7 +319,7 @@ public class XMMImplWrapper {
 
 	/**
 	 * Update a virtual network,
-	 * mainly the meta information
+	 * mainly the meta information.
 	 * @param vnid
 	 * 			the virtual network id
 	 * @param newvn
@@ -335,7 +336,7 @@ public class XMMImplWrapper {
 
 	/**
 	 * Update a Partition,
-	 * mainly the meta information
+	 * mainly the meta information.
 	 * @param parid
 	 * 			the partition id.
 	 * @param newpar
@@ -352,7 +353,7 @@ public class XMMImplWrapper {
 
 	/**
 	 * Update a physical node information
-	 * mainly the meta information
+	 * mainly the meta information.
 	 * @param pnid
 	 * 			the physical node id
 	 * @param newpn
@@ -428,10 +429,12 @@ public class XMMImplWrapper {
 			String nrmapstr, String effectiveTimestr, long duration,
 			String expireTimestr, String attributes, String desc)
 			throws Exception {
-		HashMap<String, NodeRequirement> nrmap = (HashMap<String, NodeRequirement>) XmlUtil
-				.fromXml(nrmapstr);
+		@SuppressWarnings("unchecked")
+		HashMap<String, NodeRequirement> nrmap = 
+			(HashMap<String, NodeRequirement>) XmlUtil.fromXml(nrmapstr);
 		Date effectiveTime = (Date) XmlUtil.fromXml(effectiveTimestr);
 		Date expireTime = (Date) XmlUtil.fromXml(expireTimestr);
+		@SuppressWarnings("unchecked")
 		HashMap<String, String> attr = (HashMap<String, String>) XmlUtil
 				.fromXml(attributes);
 		VirtualCluster vc = impl.createVirtualCluster(parid, name,
@@ -441,7 +444,7 @@ public class XMMImplWrapper {
 	}
 
 	/**
-	 * Start virtual cluster
+	 * Start virtual cluster.
 	 * @param vcid
 	 * 			the virtual cluster id
 	 * @throws XMMException
@@ -488,7 +491,7 @@ public class XMMImplWrapper {
 	}
 
 	/**
-	 * Get a virtual cluster instance
+	 * Get a virtual cluster instance.
 	 * @param guid
 	 * 			the global id of the virtual cluster
 	 * @return

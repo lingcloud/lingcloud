@@ -33,25 +33,39 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.lingcloud.molva.xmm.vam.util.VAMConfig;
 
+/**
+ * 
+ * <strong>Purpose:</strong><br>
+ * TODO.
+ *
+ * @version 1.0.1 2011-6-1<br>
+ * @author Jie Liu <br>
+ *
+ */
 public class FileUploadServlet extends HttpServlet {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static final long FILE_MAX_SIZE = 81920000000L;
+	
+	private static final int SIZE_THRESHOLD = 10240; 
 
 	private Log log = LogFactory.getFactory().getInstance(this.getClass());
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String type = req.getParameter("type");
 		log.info("upload file type" + type);
-		Enumeration e = req.getParameterNames();
+		Enumeration<String> e = req.getParameterNames();
 		String paramName = null;
 		while (e.hasMoreElements()) {
 			paramName = (String) e.nextElement();
-			String values[] = req.getParameterValues(paramName);
+			String[] values = req.getParameterValues(paramName);
 			for (int i = 0; i < values.length; i++) {
 				log.info(values[i].toString());
 			}
@@ -73,18 +87,17 @@ public class FileUploadServlet extends HttpServlet {
 					if (!dir.exists()) {
 						dir.mkdirs();
 					}
-					List fileList = null;
+					List<FileItem> fileList = null;
 					DiskFileItemFactory fac = new DiskFileItemFactory();
 					fac.setRepository(dir);
 					log.info(fac.getRepository());
-					fac.setSizeThreshold(10240);
+					fac.setSizeThreshold(SIZE_THRESHOLD);
 					ServletFileUpload upload = new ServletFileUpload(fac);
 
-					upload.setSizeMax(81920000000l);
+					upload.setSizeMax(FILE_MAX_SIZE);
 					upload.setHeaderEncoding("utf-8");
 					try {
-
-						fileList = upload.parseRequest(req);
+						fileList = (List<FileItem>) upload.parseRequest(req);
 					} catch (FileUploadException ex) {
 						log.info(ex.getMessage());
 						return;

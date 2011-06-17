@@ -24,11 +24,10 @@ import org.lingcloud.molva.xmm.services.PartitionManager;
 
 /**
  * <strong>Purpose:</strong><br>
- * TODO
+ * TODO.
  * 
  * @version 1.0.1 2010-12-5<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn<br>
  */
 
 public abstract class VirtualMachineDeployPolicier {
@@ -86,8 +85,8 @@ public abstract class VirtualMachineDeployPolicier {
 			}
 			HashMap<String, Vector<String>> result = this
 					.generateSpecificPolicy(pnodes, vmip, nr);
-			log.info("Successfully to generate deploy policy for the virtual node "
-					+ vmip);
+			log.info("Successfully to generate deploy policy for the virtual"
+					+ " node " + vmip);
 			return result;
 		} catch (Exception e) {
 			log.error("Error occurred when generate deploy policy"

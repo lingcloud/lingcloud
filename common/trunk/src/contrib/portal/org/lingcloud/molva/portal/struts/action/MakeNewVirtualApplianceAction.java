@@ -37,7 +37,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class MakeNewVirtualApplianceAction extends NeedLoginAction {
 	/**
@@ -48,7 +47,8 @@ public class MakeNewVirtualApplianceAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			DynaValidatorForm newVirtualAppForm = (DynaValidatorForm) form;
 			if (newVirtualAppForm == null) {
@@ -61,22 +61,20 @@ public class MakeNewVirtualApplianceAction extends NeedLoginAction {
 			String osversion = (String) newVirtualAppForm.get("osversion");
 			String memsize = (String) newVirtualAppForm.get("memsize");
 			String diskcapacity = (String) newVirtualAppForm
-										.get("diskcapacity");
+					.get("diskcapacity");
 			String format = (String) newVirtualAppForm.get("format");
 			String loader = (String) newVirtualAppForm.get("loader");
 			String cpuamount = (String) newVirtualAppForm.get("cpuamount");
 			String thispage = (String) newVirtualAppForm.get("thispage");
-			if ( XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-					name, vcd, os, memsize, diskcapacity,
-					cpuamount}) ) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { name, vcd,
+					os, memsize, diskcapacity, cpuamount })) {
 				throw new Exception("Please input the correct parameters of "
-						+ "name, os, memsize, disk capacity, " 
-						+ "cpu amount!");
+						+ "name, os, memsize, disk capacity, " + "cpu amount!");
 			}
-			
+
 			format = VAMConstants.VAF_FORMAT_DEFAULT;
 			loader = VAMConstants.VA_BOOTLOAD_HVM;
-			
+
 			name = name.trim();
 			vcd = vcd.trim();
 			os = os.trim();
@@ -106,22 +104,23 @@ public class MakeNewVirtualApplianceAction extends NeedLoginAction {
 				}
 				this.url = request.getContextPath() + thispage.trim();
 			}
-			log.info("User want to make a new virtual appliance from url : " + url);
+			log.info("User want to make a new virtual appliance from url : "
+					+ url);
 			VirtualApplianceManager vam = VAMUtil.getVAManager();
 			VirtualAppliance va = new VirtualAppliance();
 			va.setVAName(name);
 			va.setCpuAmount(amount);
 			va.setMemory(memery);
-			
+
 			List<String> vcdl = new ArrayList<String>();
 			vcdl.add(vcd);
 			va.setDiscs(vcdl);
 			va.setCapacity(capacity * VAMConstants.GB);
 			va.setBootLoader(loader);
-	
+
 			va.setOs(os, osversion);
 			va.setFormat(format);
-			
+
 			vam.makeAppliance(va, null, memery);
 			log.info("A virtual appliance with the name " + va.getVAName()
 					+ " is being made successfully.");

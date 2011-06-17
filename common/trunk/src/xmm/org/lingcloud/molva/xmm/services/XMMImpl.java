@@ -41,7 +41,6 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
  * virtual nodes, networks and so on.
  * @version 1.0.1 2009-9-18<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class XMMImpl {
 
@@ -67,12 +66,6 @@ public class XMMImpl {
 	 * @throws Exception
 	 */
 	public XMMImpl() throws Exception {
-		try {
-
-		} catch (Exception e) {
-			log.error("Can't get a naming url due to " + e);
-			throw new Exception(e);
-		}
 	}
 
 	/**
@@ -121,8 +114,7 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-		}
+		} 
 	}
 
 	/**
@@ -155,8 +147,7 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-		}
+		} 
 	}
 
 	/**
@@ -175,7 +166,8 @@ public class XMMImpl {
 					+ par.getName());
 			return par;
 		} catch (Exception e) {
-			log.error("Failed to view a partition with the id : " + partitionId);
+			log.error("Failed to view a partition with the id : " 
+					+ partitionId);
 			if (e instanceof InvocationTargetException) {
 				InvocationTargetException ite = (InvocationTargetException) e;
 				throw new Exception(new Exception(ite.getTargetException()));
@@ -183,8 +175,7 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-		}
+		} 
 	}
 
 	/**
@@ -206,7 +197,8 @@ public class XMMImpl {
 					+ pn.getName());
 			return pn;
 		} catch (Exception e) {
-			log.error("Failed to refresh a physical node with the id : " + pnid);
+			log.error("Failed to refresh a physical node with the id : " 
+					+ pnid);
 			if (e instanceof InvocationTargetException) {
 				InvocationTargetException ite = (InvocationTargetException) e;
 				throw new Exception(new Exception(ite.getTargetException()));
@@ -214,9 +206,7 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
-		}
+		} 
 	}
 
 	/**
@@ -260,7 +250,8 @@ public class XMMImpl {
 					privateIp.trim(), publicIp, pnController.trim(), isRedploy,
 					attributes, desc);
 			log.info("Successfully add a physical node with the name : "
-					+ pn.getName() + " to the partition " + pn.getPartitionId());
+					+ pn.getName() + " to the partition " 
+					+ pn.getPartitionId());
 			return pn;
 		} catch (Exception e) {
 			log.error("Failed to add a physical node with the ip : "
@@ -272,9 +263,7 @@ public class XMMImpl {
 			throw e;
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
-		}
+		} 
 	}
 
 	/**
@@ -305,13 +294,11 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
-		}
+		} 
 	}
 
 	/**
-	 * List all partitions
+	 * List all partitions.
 	 * @return
 	 * 			the list of all partitions
 	 * @throws XMMException
@@ -331,13 +318,11 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
-		}
+		} 
 	}
 
 	/**
-	 * List a kind of partitions
+	 * List a kind of partitions.
 	 * @param pController
 	 * 			the partition operate controller
 	 * @return
@@ -362,13 +347,11 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
-		}
+		} 
 	}
 
 	/**
-	 * List all physical nodes in a partition
+	 * List all physical nodes in a partition.
 	 * @param parid
 	 * 			the partition id
 	 * @return
@@ -391,13 +374,11 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
-		}
+		} 
 	}
 
 	/**
-	 * Create the virtual network for a partition
+	 * Create the virtual network for a partition.
 	 * @param partitionId
 	 * 			the partition id
 	 * @param name
@@ -431,7 +412,8 @@ public class XMMImpl {
 		try {
 
 			if (netSize <= 0) {
-				throw new Exception("The network size should be bigger than 0.");
+				throw new Exception("The network size should be bigger"
+						+ " than 0.");
 			}
 			// if the head node ip is null, then the VirtualNetworkAC will
 			// choose a proper node as the head node.
@@ -465,14 +447,12 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 		return vn;
 	}
 
 	/**
-	 * Destroy a virtual network
+	 * Destroy a virtual network.
 	 * @param vnguid
 	 * 			the virtual network id
 	 * @throws XMMException
@@ -505,9 +485,7 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
-		}
+		} 
 	}
 
 	/**
@@ -532,7 +510,9 @@ public class XMMImpl {
 	 *            the key is the node's ip address, the value is its
 	 *            requirement. when the key is 'ALL_NODE_SAME_REQUIREMENT_TAG',
 	 *            it means all nodes have the same requirement. So this map has
-	 *            one record at least. required parameter.
+	 *            one record at least. required parameter. finally {
+
+		}
 	 * @param effectiveTime :
 	 *            the time of virtual cluster required to begin to run, but not
 	 *            guarantee exactly. The gap between the expected time and the
@@ -581,7 +561,8 @@ public class XMMImpl {
 		}
 		if (nrmap == null || nrmap.size() < 1) {
 			throw new Exception(
-					"The hashmap of node requirements should have one record at least.");
+					"The hashmap of node requirements should have one "
+					+ "record at least.");
 		}
 
 		if (effectiveTime != null && expireTime != null
@@ -615,22 +596,22 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-			
 		}
 		return vc;
 	}
 
 	/**
 	 * Update a virtual cluster information
-	 * mainly meta information
+	 * mainly meta information.
 	 * @param vcid
 	 * 			the virtual cluster id
 	 * @param newvc
 	 * 			the new virtual cluster instance.
 	 * @return
 	 * 			the updated virtual cluster.
-	 * @throws XMMException
+	 * @throws XMMException finally {
+
+		}
 	 */
 	public VirtualCluster updateVirtualClusterInfo(String vcid,
 			VirtualCluster newvc) throws Exception {
@@ -638,7 +619,8 @@ public class XMMImpl {
 		VirtualCluster vc = null;
 		try {
 
-			VirtualCluster auvc = vcm.view(vcid.trim());
+			// VirtualCluster auvc = 
+			vcm.view(vcid.trim());
 			vc = vcm.updateVirtualClusterInfo(vcid.trim(), newvc);
 			return vc;
 		} catch (Exception e) {
@@ -651,8 +633,6 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
@@ -677,7 +657,8 @@ public class XMMImpl {
 			vn = parm.updateVirtualNodeInfo(vnid.trim(), newvn);
 			return vn;
 		} catch (Exception e) {
-			log.error("Failed to update a virtual node with the guid : " + vnid);
+			log.error("Failed to update a virtual node with the guid : " 
+					+ vnid);
 			if (e instanceof InvocationTargetException) {
 				InvocationTargetException ite = (InvocationTargetException) e;
 				throw new Exception(new Exception(ite.getTargetException()));
@@ -685,14 +666,12 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
 	/**
 	 * Update a virtual network,
-	 * mainly the meta information
+	 * mainly the meta information.
 	 * @param vnid
 	 * 			the virtual network id
 	 * @param newvn
@@ -719,14 +698,12 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
 	/**
 	 * Update a Partition,
-	 * mainly the meta information
+	 * mainly the meta information.
 	 * @param parid
 	 * 			the partition id.
 	 * @param newpar
@@ -752,14 +729,12 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
 	/**
 	 * Update a physical node information
-	 * mainly the meta information
+	 * mainly the meta information.
 	 * @param pnid
 	 * 			the physical node id
 	 * @param newpn
@@ -778,7 +753,8 @@ public class XMMImpl {
 			pn = parm.updatePhysicalNodeInfo(pnid.trim(), newpn);
 			return pn;
 		} catch (Exception e) {
-			log.error("Failed to update a physicalnode with the guid : " + pnid);
+			log.error("Failed to update a physicalnode with the guid : " 
+					+ pnid);
 			if (e instanceof InvocationTargetException) {
 				InvocationTargetException ite = (InvocationTargetException) e;
 				throw new Exception(new Exception(ite.getTargetException()));
@@ -786,13 +762,11 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
 	/**
-	 * Get a virtual cluster instance
+	 * Get a virtual cluster instance.
 	 * @param guid
 	 * 			the global id of the virtual cluster
 	 * @return
@@ -817,13 +791,11 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
 	/**
-	 * Start virtual cluster
+	 * Start virtual cluster.
 	 * @param vcid
 	 * 			the virtual cluster id
 	 * @throws XMMException
@@ -848,8 +820,6 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
@@ -880,8 +850,6 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
@@ -912,9 +880,7 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
-		}
+		} 
 	}
 
 	/**
@@ -948,8 +914,6 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
@@ -968,17 +932,7 @@ public class XMMImpl {
 	 */
 	public List<VirtualNetwork> searchVirtualNetwork(String[] searchConditions,
 			String[] operators, Object[] values) throws Exception {
-		if (searchConditions != null && operators != null && values != null) {
-			if (searchConditions.length != operators.length) {
-				throw new Exception(
-						"The length of search conditions should equal the length of operators.");
-			}
-
-			if (searchConditions.length != values.length) {
-				throw new Exception(
-						"The length of search conditions should equal the length of values.");
-			}
-		}
+		checkSearchCondition(searchConditions, operators, values);
 
 		try {
 
@@ -995,8 +949,23 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
+		} 
+	}
 
+	private void checkSearchCondition(String[] searchConditions,
+			String[] operators, Object[] values) throws Exception {
+		if (searchConditions != null && operators != null && values != null) {
+			if (searchConditions.length != operators.length) {
+				throw new Exception(
+						"The length of search conditions should equal the"
+						+ " length of operators.");
+			}
+
+			if (searchConditions.length != values.length) {
+				throw new Exception(
+						"The length of search conditions should equal the"
+						+ " length of values.");
+			}
 		}
 	}
 
@@ -1015,29 +984,21 @@ public class XMMImpl {
 	 */
 	public List<VirtualCluster> searchVirtualCluster(String[] searchConditions,
 			String[] operators, Object[] values) throws Exception {
-		if (searchConditions != null && operators != null && values != null) {
-			if (searchConditions.length != operators.length) {
-				throw new Exception(
-						"The length of search conditions should equal the length of operators.");
-			}
-
-			if (searchConditions.length != values.length) {
-				throw new Exception(
-						"The length of search conditions should equal the length of values.");
-			}
-		}
+		checkSearchCondition(searchConditions, operators, values);
 
 		try {
 
 			List<VirtualCluster> vclist = vcm.searchVirtualCluster(
 					searchConditions, operators, values);
-			if ( vclist != null) {
-				List<VirtualCluster> newvclist = new ArrayList<VirtualCluster>();
+			if (vclist != null) {
+				List<VirtualCluster> newvclist = 
+					new ArrayList<VirtualCluster>();
 				for (int i = 0; i < vclist.size(); ++i) {
 					VirtualCluster vc = (VirtualCluster) vclist.get(i);
 					try {
 						newvclist.add(vc);
 					} catch (Exception e) {
+						log.error(e.getMessage());
 						// do nothing!
 					}
 				}
@@ -1054,9 +1015,7 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
-		}
+		} 
 	}
 
 	/**
@@ -1074,17 +1033,7 @@ public class XMMImpl {
 	 */
 	public List<PhysicalNode> searchPhysicalNode(String[] searchConditions,
 			String[] operators, Object[] values) throws Exception {
-		if (searchConditions != null && operators != null && values != null) {
-			if (searchConditions.length != operators.length) {
-				throw new Exception(
-						"The length of search conditions should equal the length of operators.");
-			}
-
-			if (searchConditions.length != values.length) {
-				throw new Exception(
-						"The length of search conditions should equal the length of values.");
-			}
-		}
+		checkSearchCondition(searchConditions, operators, values);
 
 		try {
 
@@ -1100,8 +1049,6 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
@@ -1120,17 +1067,7 @@ public class XMMImpl {
 	 */
 	public List<VirtualNode> searchVirtualNode(String[] searchConditions,
 			String[] operators, Object[] values) throws Exception {
-		if (searchConditions != null && operators != null && values != null) {
-			if (searchConditions.length != operators.length) {
-				throw new Exception(
-						"The length of search conditions should equal the length of operators.");
-			}
-
-			if (searchConditions.length != values.length) {
-				throw new Exception(
-						"The length of search conditions should equal the length of values.");
-			}
-		}
+		checkSearchCondition(searchConditions, operators, values);
 
 		try {
 
@@ -1146,13 +1083,11 @@ public class XMMImpl {
 			throw new Exception(e);
 		} catch (Throwable t) {
 			throw new Exception(t.toString());
-		} finally {
-
 		}
 	}
 
 	/**
-	 * Get a virtual network information
+	 * Get a virtual network information.
 	 * @param guid
 	 * 			the global id of the network
 	 * @return
@@ -1165,8 +1100,6 @@ public class XMMImpl {
 			return vnm.view(vnid.trim());
 		} catch (Exception e) {
 			throw new Exception(e);
-		} finally {
-
 		}
 	}
 
@@ -1187,8 +1120,6 @@ public class XMMImpl {
 			return parm.viewPhysicalNode(guid.trim());
 		} catch (Exception e) {
 			throw new Exception(e);
-		} finally {
-
 		}
 	}
 
@@ -1207,8 +1138,6 @@ public class XMMImpl {
 			return parm.viewVirtualNode(guid.trim());
 		} catch (Exception e) {
 			throw new Exception(e);
-		} finally {
-
 		}
 	}
 }

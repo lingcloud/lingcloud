@@ -40,7 +40,6 @@ import org.lingcloud.molva.xmm.util.XMMConstants;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class FastNewVirtualClusterAction extends NeedLoginAction {
 	/**
@@ -52,6 +51,116 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 
 	private Date effectiveTime, expireTime;
 
+	private void createVirtualCluster(DynaValidatorForm createClusterForm)
+			throws Exception {
+		String parguid = (String) createClusterForm.get("parguid");
+		String clustername = (String) createClusterForm.get("clustername");
+		String nodeMatchMaker = (String) createClusterForm.get("amm");
+		String tenantId = (String) createClusterForm.get("tenantId");
+		String vntype = (String) createClusterForm.get("vntype");
+		String nodenum = (String) createClusterForm.get("nodenum");
+		String publicIpSupport = (String) createClusterForm
+				.get("publicIpSupport");
+		String vnguid = (String) createClusterForm.get("vnguid");
+		// String osvaguid = (String) fastNewClusterForm.get("osvaguid");
+		String[] pnnodeip = (String[]) createClusterForm.get("pnnodeip");
+		String nodeinfotype = (String) createClusterForm.get("nodeinfotype");
+		String[] nodeip = (String[]) createClusterForm.get("nodeip");
+		String[] vaguid = (String[]) createClusterForm.get("vaguid");
+		String[] cpunum = (String[]) createClusterForm.get("cpunum");
+		String[] memsize = (String[]) createClusterForm.get("memsize");
+		String[] deployPolicy = (String[]) createClusterForm
+				.get("deployPolicy");
+		String[] deployPolicyParam = (String[]) createClusterForm
+				.get("deployPolicyParam");
+		if (deployPolicyParam == null) {
+			log.info("deployPolicyParam is null");
+		} else {
+			log.info(deployPolicyParam.length);
+		}
+		String rentStartTime = (String) createClusterForm.get("effectiveTime");
+		String rentEndTime = (String) createClusterForm.get("expireTime");
+		String desc = (String) createClusterForm.get("desc");
+
+		effectiveTime = null;
+		expireTime = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		this.validateParameters(parguid, clustername, nodeMatchMaker, vntype,
+				nodenum, publicIpSupport, vnguid, pnnodeip, nodeinfotype,
+				nodeip, vaguid, cpunum, memsize, deployPolicy);
+
+		parguid = parguid.trim();
+		clustername = clustername.trim();
+		vntype = vntype.trim();
+		nodeMatchMaker = nodeMatchMaker.trim();
+		rentStartTime = rentStartTime.trim();
+		rentEndTime = rentEndTime.trim();
+		if (!"".equals(rentStartTime)) {
+			effectiveTime = format.parse(rentStartTime);
+		}
+		if (!"".equals(rentEndTime)) {
+			expireTime = format.parse(rentEndTime);
+		}
+
+		if (nodeMatchMaker.equals("VirtualClusterAMM")) {
+			nodeMatchMaker = VirtualClusterAMM.class.getName();
+		} else {
+			log.warn("Not a default node match maker(" + nodeMatchMaker
+					+ ") of new virtual cluster.");
+		}
+		VirtualCluster vc = null;
+		if (publicIpSupport == null || "".equals(publicIpSupport.trim())) {
+			// create vc for pm.
+			if (vntype.equals(XMMPortalUtil.VN_AUTO_CREATE)) {
+				if (pnnodeip == null || pnnodeip.length < 1) {
+					throw new Exception("The physical node"
+							+ " should choose one at least.");
+				}
+				vc = this.createVirtualCluster4PMWithAutoVN(parguid,
+						clustername, nodeMatchMaker, tenantId, pnnodeip, desc);
+			} else if (vntype.equals(XMMPortalUtil.VN_USE_EXIST)) {
+				ParaChecker.checkGuidFormat(vnguid, "virtual network guid");
+				vc = this.createVirtualCluster4PMWithExistVN(parguid,
+						clustername, nodeMatchMaker, tenantId, vnguid, desc);
+			}
+		} else {
+			// create vc for vm.
+			if (vntype.equals(XMMPortalUtil.VN_AUTO_CREATE)) {
+				int nodeNumInt = 0;
+				if (nodenum != null) {
+					try {
+						nodeNumInt = Integer.parseInt(nodenum);
+					} catch (Exception e) {
+						throw new Exception("The node num parameter"
+								+ " should be a valid digital value.");
+					}
+				} else {
+					throw new Exception("The node num is not assigned.");
+				}
+				boolean onlyHeadNodePubIp = false;
+				if (publicIpSupport.equals(XMMPortalUtil.PUBIP_HEADNODE)) {
+					onlyHeadNodePubIp = true;
+				} else if (publicIpSupport.equals(
+						XMMPortalUtil.PUBIP_ALLNODE)) {
+					onlyHeadNodePubIp = false;
+				}
+				vc = this.createVirtualCluster4VMWithAutoVN(parguid,
+						clustername, nodeMatchMaker, tenantId, nodeNumInt,
+						onlyHeadNodePubIp, nodeinfotype, nodeip, vaguid,
+						cpunum, memsize, deployPolicy, deployPolicyParam, desc);
+			} else if (vntype.equals(XMMPortalUtil.VN_USE_EXIST)) {
+				ParaChecker.checkGuidFormat(vnguid, "virtual network guid");
+				vc = this.createVirtualCluster4VMWithExistVN(parguid,
+						clustername, nodeMatchMaker, tenantId, vnguid,
+						nodeinfotype, nodeip, vaguid, cpunum, memsize,
+						deployPolicy, deployPolicyParam, desc);
+			}
+		}
+
+		log.info(" A cluster with the name " + vc.getName()
+				+ " is added successfully and fastly.");
+	}
+
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
@@ -61,47 +170,10 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 				throw new Exception(
 						"The form is submitted failed, please retry: ");
 			}
-			String parguid = (String) fastNewClusterForm.get("parguid");
-			String clustername = (String) fastNewClusterForm.get("clustername");
-			String nodeMatchMaker = (String) fastNewClusterForm.get("amm");
-			String tenantId = (String) fastNewClusterForm.get("tenantId");
-			String vntype = (String) fastNewClusterForm.get("vntype");
-			String nodenum = (String) fastNewClusterForm.get("nodenum");
-			String publicIpSupport = (String) fastNewClusterForm
-					.get("publicIpSupport");
-			String vnguid = (String) fastNewClusterForm.get("vnguid");
-			// String osvaguid = (String) fastNewClusterForm.get("osvaguid");
-			String[] pnnodeip = (String[]) fastNewClusterForm.get("pnnodeip");
-			String nodeinfotype = (String) fastNewClusterForm
-					.get("nodeinfotype");
-			String[] nodeip = (String[]) fastNewClusterForm.get("nodeip");
-			String[] vaguid = (String[]) fastNewClusterForm.get("vaguid");
-			String[] cpunum = (String[]) fastNewClusterForm.get("cpunum");
-			String[] memsize = (String[]) fastNewClusterForm.get("memsize");
-			String[] deployPolicy = (String[]) fastNewClusterForm
-					.get("deployPolicy");
-			String[] deployPolicyParam = (String[]) fastNewClusterForm
-					.get("deployPolicyParam");
-			if (deployPolicyParam == null) {
-				log.info("deployPolicyParam is null");
-			} else {
-				log.info(deployPolicyParam.length);
-			}
-			String rentStartTime = (String) fastNewClusterForm
-					.get("effectiveTime");
-			String rentEndTime = (String) fastNewClusterForm.get("expireTime");
-			String desc = (String) fastNewClusterForm.get("desc");
+
 			String thisPage = (String) fastNewClusterForm.get("thispage");
 			String targetDiv = (String) fastNewClusterForm.get("targetdiv");
-			effectiveTime = null;
-			expireTime = null;
-			SimpleDateFormat format = new SimpleDateFormat(
-					"yyyy-MM-dd HH:mm:ss");
-			this
-					.validateParameters(parguid, clustername, nodeMatchMaker,
-							vntype, nodenum, publicIpSupport, vnguid, pnnodeip,
-							nodeinfotype, nodeip, vaguid, cpunum, memsize,
-							deployPolicy);
+
 			if (thisPage == null || "".equals(thisPage)) {
 				this.url = request.getContextPath()
 						+ "/JSP/viewVirtualCluster.jsp";
@@ -113,84 +185,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 			}
 			log.info("User want to fast new a cluster from url : " + url);
 
-			parguid = parguid.trim();
-			clustername = clustername.trim();
-			vntype = vntype.trim();
-			nodeMatchMaker = nodeMatchMaker.trim();
-			rentStartTime = rentStartTime.trim();
-			rentEndTime = rentEndTime.trim();
-			if ("".equals(rentStartTime)) {
-				// todo nothing
-			} else {
-				effectiveTime = format.parse(rentStartTime);
-			}
-			if ("".equals(rentEndTime)) {
-				// todo nothing
-			} else {
-				expireTime = format.parse(rentEndTime);
-			}
-			if (nodeMatchMaker.equals("VirtualClusterAMM")) {
-				nodeMatchMaker = VirtualClusterAMM.class.getName();
-			} else {
-				log.warn("Not a default node match maker(" + nodeMatchMaker
-						+ ") of new virtual cluster.");
-			}
-			VirtualCluster vc = null;
-			if (publicIpSupport == null || "".equals(publicIpSupport.trim())) {
-				// create vc for pm.
-				if (vntype.equals(XMMPortalUtil.VN_AUTO_CREATE)) {
-					if (pnnodeip == null || pnnodeip.length < 1) {
-						throw new Exception("The physical node"
-								+ " should choose one at least.");
-					}
-					vc = this.createVirtualCluster4PMWithAutoVN(parguid,
-							clustername, nodeMatchMaker, tenantId, pnnodeip,
-							desc);
-				} else if (vntype.equals(XMMPortalUtil.VN_USE_EXIST)) {
-					ParaChecker.checkGuidFormat(vnguid, "virtual network guid");
-					vc = this
-							.createVirtualCluster4PMWithExistVN(parguid,
-									clustername, nodeMatchMaker, tenantId,
-									vnguid, desc);
-				}
-			} else {
-				// create vc for vm.
-				if (vntype.equals(XMMPortalUtil.VN_AUTO_CREATE)) {
-					int nodeNumInt = 0;
-					if (nodenum != null) {
-						try {
-							nodeNumInt = Integer.parseInt(nodenum);
-						} catch (Exception e) {
-							throw new Exception("The node num parameter"
-									+ " should be a valid digital value.");
-						}
-					} else {
-						throw new Exception("The node num is not assigned.");
-					}
-					boolean onlyHeadNodePubIp = false;
-					if (publicIpSupport
-							.equals(XMMPortalUtil.PUBIP_HEADNODE)) {
-						onlyHeadNodePubIp = true;
-					} else if (publicIpSupport
-							.equals(XMMPortalUtil.PUBIP_ALLNODE)) {
-						onlyHeadNodePubIp = false;
-					}
-					vc = this.createVirtualCluster4VMWithAutoVN(parguid,
-							clustername, nodeMatchMaker, tenantId, nodeNumInt,
-							onlyHeadNodePubIp, nodeinfotype, nodeip, vaguid,
-							cpunum, memsize, deployPolicy, deployPolicyParam,
-							desc);
-				} else if (vntype.equals(XMMPortalUtil.VN_USE_EXIST)) {
-					ParaChecker.checkGuidFormat(vnguid, "virtual network guid");
-					vc = this.createVirtualCluster4VMWithExistVN(parguid,
-							clustername, nodeMatchMaker, tenantId, vnguid,
-							nodeinfotype, nodeip, vaguid, cpunum, memsize,
-							deployPolicy, deployPolicyParam, desc);
-				}
-			}
-
-			log.info(" A cluster with the name " + vc.getName()
-					+ " is added successfully and fastly.");
+			createVirtualCluster(fastNewClusterForm);
+			
 			/*
 			 * set object to request so that other pages can use.
 			 */
@@ -223,7 +219,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 			String[] deployPolicy, String[] deployPolicyParam, String desc)
 			throws Exception {
 		XMMClient vxc = XMMPortalUtil.getXMMClient();
-		HashMap<String, NodeRequirement> nrmap = new HashMap<String, NodeRequirement>();
+		HashMap<String, NodeRequirement> nrmap = 
+			new HashMap<String, NodeRequirement>();
 		int indextag = 0;
 		for (int j = 0; j < nodeip.length; j++) {
 			if (nodeip[j].equals(XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG)) {
@@ -237,7 +234,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 			nr.setMemorySize(Integer.parseInt(memsize[indextag]));
 			// Added at 2010-12-17 at Dongguan for vm deploy schedule.
 			nr.setVmDeployPolicer(ONEVMDeployPolicier.class.getName());
-			HashMap<String, String> deployParams = new HashMap<String, String>();
+			HashMap<String, String> deployParams = 
+				new HashMap<String, String>();
 			deployParams.put(deployPolicy[indextag],
 					deployPolicyParam[indextag]);
 			nr.setVmDeployParams(deployParams);
@@ -255,7 +253,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 				nr.setPrivateIP(nodeip[i]);
 				// Added at 2010-12-17 at Dongguan for vm deploy schedule.
 				nr.setVmDeployPolicer(ONEVMDeployPolicier.class.getName());
-				HashMap<String, String> deployParams = new HashMap<String, String>();
+				HashMap<String, String> deployParams = 
+					new HashMap<String, String>();
 				deployParams.put(deployPolicy[i], deployPolicyParam[i]);
 				nr.setVmDeployParams(deployParams);
 				nrmap.put(nodeip[i], nr);
@@ -287,7 +286,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 				indextag = j;
 			}
 		}
-		HashMap<String, NodeRequirement> nrmap = new HashMap<String, NodeRequirement>();
+		HashMap<String, NodeRequirement> nrmap = 
+			new HashMap<String, NodeRequirement>();
 		if (onlyHeadNodePubIp) {
 			pubipnum = 1;
 		} else {
@@ -305,7 +305,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 				}
 				// Added at 2010-12-17 at Dongguan for vm deploy schedule.
 				nr.setVmDeployPolicer(ONEVMDeployPolicier.class.getName());
-				HashMap<String, String> deployParams = new HashMap<String, String>();
+				HashMap<String, String> deployParams = 
+					new HashMap<String, String>();
 				deployParams.put(deployPolicy[indextag],
 						deployPolicyParam[indextag]);
 				nr.setVmDeployParams(deployParams);
@@ -327,7 +328,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 				}
 				// Added at 2010-12-17 at Dongguan for vm deploy schedule.
 				nr.setVmDeployPolicer(ONEVMDeployPolicier.class.getName());
-				HashMap<String, String> deployParams = new HashMap<String, String>();
+				HashMap<String, String> deployParams = 
+					new HashMap<String, String>();
 				deployParams.put(deployPolicy[i], deployPolicyParam[i]);
 				nr.setVmDeployParams(deployParams);
 				nrmap.put(nodeip[i], nr);
@@ -360,7 +362,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 		// HashMap<String, String> attributes,
 		// String desc
 		long begin = System.currentTimeMillis();
-		HashMap<String, NodeRequirement> nrmap = new HashMap<String, NodeRequirement>();
+		HashMap<String, NodeRequirement> nrmap = 
+			new HashMap<String, NodeRequirement>();
 		NodeRequirement nr = new NodeRequirement();
 		nr.setPartitionId(parguid);
 		nrmap.put(XMMConstants.ALL_NODE_SAME_REQUIREMENT_TAG, nr);
@@ -378,7 +381,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 	private VirtualCluster createVirtualCluster4PMWithAutoVN(String parguid,
 			String clustername, String nodeMatchMaker, String tenantId,
 			String[] pnnodeip, String desc) throws Exception {
-		HashMap<String, NodeRequirement> nrmap = new HashMap<String, NodeRequirement>();
+		HashMap<String, NodeRequirement> nrmap = 
+			new HashMap<String, NodeRequirement>();
 		for (int i = 0; i < pnnodeip.length; i++) {
 			NodeRequirement nr = new NodeRequirement();
 			nr.setPartitionId(parguid);

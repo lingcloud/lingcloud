@@ -32,7 +32,6 @@ import org.lingcloud.molva.xmm.pojos.PhysicalNode;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class DeletePhysicalNodeAction extends NeedLoginAction {
 	/**

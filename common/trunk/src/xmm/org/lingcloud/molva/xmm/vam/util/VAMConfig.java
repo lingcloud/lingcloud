@@ -93,9 +93,9 @@ public class VAMConfig {
 	 * 
 	 * @return the language from molva.conf
 	 */
-	public static String getLanguageSetting(){
+	public static String getLanguageSetting() {
 		String lang = (String) properties.get("uiLanguage");
-		if(lang != null && lang != ""){
+		if (lang != null && lang != "") {
 			lang = lang.replace("\"", "");
 		}
 		return lang;

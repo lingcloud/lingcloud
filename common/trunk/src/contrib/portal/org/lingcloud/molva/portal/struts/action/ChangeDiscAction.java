@@ -32,7 +32,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class ChangeDiscAction extends NeedLoginAction {
 	/**
@@ -43,7 +42,8 @@ public class ChangeDiscAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 
 		try {
 
@@ -55,8 +55,8 @@ public class ChangeDiscAction extends NeedLoginAction {
 			String vaguid = (String) changeDiscForm.get("guid");
 			String discGuid = (String) changeDiscForm.get("discguid");
 			String thisPage = (String) changeDiscForm.get("thispage");
-			if (XMMPortalUtil
-					.checkParamsBlankOrNull(new String[] { vaguid, discGuid })) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { vaguid,
+					discGuid })) {
 
 				throw new Exception("Please input the correct parameters of "
 						+ "virtual appliance guid, disc guid");
@@ -83,8 +83,8 @@ public class ChangeDiscAction extends NeedLoginAction {
 				vam.changeDisc(vaguid, null);
 			} else {
 				vam.changeDisc(vaguid, discGuid);
-			} 
-			
+			}
+
 			log.info(" A virtual appliance with the name " + va.getVAName()
 					+ " " + va.getGuid() + " changes disc successfully.");
 			/*

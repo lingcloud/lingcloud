@@ -24,16 +24,15 @@ import org.lingcloud.molva.xmm.deploy.policy.VirtualMachineDeployPolicier;
  * 
  * @version 1.0.1 2010-7-21<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class NodeRequirement implements Serializable {
 
 	private static final long serialVersionUID = -365270509312805185L;
 
 	// XXX this may be unused, only notice me to consider these requirements.
-	public static final String x86_64 = "x86_64";
+	public static final String X86_64 = "x86_64";
 
-	public static final String x86_i386 = "x86_i386";
+	public static final String X86_I386 = "x86_i386";
 
 	// XXX we may support a virtual cluster cross different partitions.
 	private String partitionId;

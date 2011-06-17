@@ -24,38 +24,37 @@ import org.lingcloud.molva.xmm.pojos.VirtualNode;
  * 
  * @version 1.0.1 2009-9-19<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public interface VirtualClient {
 
-	public PhysicalNode allocateVmProvisionNode(PhysicalNode pn)
+	PhysicalNode allocateVmProvisionNode(PhysicalNode pn)
 			throws Exception;
 
-	public void freeVmProvisionNode(PhysicalNode pn) throws Exception;
+	void freeVmProvisionNode(PhysicalNode pn) throws Exception;
 
-	public PhysicalNode getVMProvisionNode(PhysicalNode source)
+	PhysicalNode getVMProvisionNode(PhysicalNode source)
 			throws Exception;
 
-	public VirtualNetwork allocateVirtualNetwork(VirtualNetwork vn)
+	VirtualNetwork allocateVirtualNetwork(VirtualNetwork vn)
 			throws Exception;
 
-	public void freeVirtualNetwork(VirtualNetwork vn) throws Exception;
+	void freeVirtualNetwork(VirtualNetwork vn) throws Exception;
 
-	public VirtualNode allocateVirtualNode(VirtualNode vnode) throws Exception;
+	VirtualNode allocateVirtualNode(VirtualNode vnode) throws Exception;
 
-	public VirtualNode startVirtualNode(VirtualNode vnode) throws Exception;
+	VirtualNode startVirtualNode(VirtualNode vnode) throws Exception;
 
-	public VirtualNode stopVirtualNode(VirtualNode vnode) throws Exception;
+	VirtualNode stopVirtualNode(VirtualNode vnode) throws Exception;
 
-	public void freeVirtualNode(VirtualNode vnode, boolean isForcibly)
+	void freeVirtualNode(VirtualNode vnode, boolean isForcibly)
 			throws Exception;
 
-	public VirtualNode refreshVirtualNode(VirtualNode vnode) throws Exception;
+	VirtualNode refreshVirtualNode(VirtualNode vnode) throws Exception;
 
-	public Partition allocateVMPartition(Partition par) throws Exception;
+	Partition allocateVMPartition(Partition par) throws Exception;
 
-	public void freeVMPartition(Partition par) throws Exception;
+	void freeVMPartition(Partition par) throws Exception;
 
-	public void addVmProvisionNode2Partiton(PhysicalNode newpn, Partition par)
+	void addVmProvisionNode2Partiton(PhysicalNode newpn, Partition par)
 			throws Exception;
 }

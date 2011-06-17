@@ -35,7 +35,6 @@ import org.lingcloud.molva.xmm.vmc.VirtualClient;
  * 
  * @version 1.0.1 2010-5-30<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class PVNPNController extends AssetController {
 	/**
@@ -105,8 +104,8 @@ public class PVNPNController extends AssetController {
 		VirtualClient vc = VirtualManager.getInstance().getVirtualClient();
 		PhysicalNode newpn = vc.allocateVmProvisionNode(pn);
 		if (!newpn.getGuid().equals(pn.getGuid())) {
-			throw new Exception(
-					"The guid cannot be changed when allocate a vm provision node.");
+			throw new Exception("The guid cannot be changed when allocate "
+					+ "a vm provision node.");
 		}
 		try {
 			vc.addVmProvisionNode2Partiton(newpn, par);
@@ -174,8 +173,8 @@ public class PVNPNController extends AssetController {
 	}
 
 	@Override
-	public double calculatePrice(Asset asset, HashMap params) throws Exception {
-		// TODO Auto-generated method stub
+	public double calculatePrice(Asset asset, 
+			HashMap<String, String> params) throws Exception {
 		return 0;
 	}
 
@@ -208,13 +207,13 @@ public class PVNPNController extends AssetController {
 	}
 
 	public void start(Asset asset) {
-		// TODO
-		log.info("The physical node " + asset.getName() + " is started itself.");
+		log.info("The physical node " + asset.getName() 
+				+ " is started itself.");
 	}
 
 	public void stop(Asset asset) {
-		// TODO
-		log.info("The physical node " + asset.getName() + " is stopped itself.");
+		log.info("The physical node " + asset.getName() 
+				+ " is stopped itself.");
 	}
 
 }

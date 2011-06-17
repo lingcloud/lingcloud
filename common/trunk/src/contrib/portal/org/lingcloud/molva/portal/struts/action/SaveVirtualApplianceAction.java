@@ -37,7 +37,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class SaveVirtualApplianceAction extends NeedLoginAction {
 	/**
@@ -48,7 +47,8 @@ public class SaveVirtualApplianceAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			DynaValidatorForm saveVirtualAppForm = (DynaValidatorForm) form;
 			if (saveVirtualAppForm == null) {
@@ -66,24 +66,24 @@ public class SaveVirtualApplianceAction extends NeedLoginAction {
 			String password = (String) saveVirtualAppForm.get("password");
 			String description = (String) saveVirtualAppForm.get("description");
 			String thispage = (String) saveVirtualAppForm.get("thispage");
-			if (accessway == null || accessway.length == 0
+			if (accessway == null
+					|| accessway.length == 0
 					|| XMMPortalUtil.checkParamsBlankOrNull(accessway)
 					|| XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-					 guid, category, language, loginstyle}) 
-					|| loginstyle.equals(VAMConstants.VA_LOGIN_STYLE_USER_PASS) 
+							guid, category, language, loginstyle })
+					|| loginstyle.equals(VAMConstants.VA_LOGIN_STYLE_USER_PASS)
 					&& XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-							username, password})) {
+							username, password })) {
 				throw new Exception("Please input the correct parameters of "
-						+ "guid, category, " 
-						+ "accessway, language, " 
+						+ "guid, category, " + "accessway, language, "
 						+ "loginstyle, username, password!");
 			}
-			
+
 			format = VAMConstants.VAF_FORMAT_DEFAULT;
-			
+
 			format = format.trim();
 			category = category.trim();
-			
+
 			language = language.trim();
 			loginstyle = loginstyle.trim();
 			if (username != null) {
@@ -92,7 +92,7 @@ public class SaveVirtualApplianceAction extends NeedLoginAction {
 			if (password != null) {
 				password = password.trim();
 			}
-			
+
 			VAMUtil.checkDiskFormat(format);
 			VAMUtil.checkLoginStyle(loginstyle);
 			List<String> accessWayList = new ArrayList<String>();
@@ -121,7 +121,7 @@ public class SaveVirtualApplianceAction extends NeedLoginAction {
 					appl.add(apps[i]);
 				}
 			}
-			
+
 			va.setApplications(appl);
 			va.setCategory(category);
 			va.setDescription(description);

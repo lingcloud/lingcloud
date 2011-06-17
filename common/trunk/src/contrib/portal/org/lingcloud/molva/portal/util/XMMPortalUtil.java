@@ -44,7 +44,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.lingcloud.molva.ocl.asset.AssetConstants;
 import org.lingcloud.molva.ocl.persistence.GNodeException;
-import org.lingcloud.molva.ocl.util.GenericValidator;
 import org.lingcloud.molva.ocl.util.StringUtil;
 import org.lingcloud.molva.xmm.client.XMMClient;
 import org.lingcloud.molva.xmm.pojos.Node;
@@ -54,7 +53,6 @@ import org.lingcloud.molva.xmm.pojos.VirtualCluster;
 import org.lingcloud.molva.xmm.pojos.VirtualNode;
 import org.lingcloud.molva.ocl.util.ConfigUtil;
 import org.lingcloud.molva.xmm.util.XMMConstants;
-import org.lingcloud.molva.xmm.util.XMMException;
 
 /**
  * <strong>Purpose:Some methods for portal.</strong><br>
@@ -62,26 +60,30 @@ import org.lingcloud.molva.xmm.util.XMMException;
  * 
  * @version 1.0.1 2009-10-4<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class XMMPortalUtil {
 	private static Log log = LogFactory.getFactory().getInstance(
 			XMMPortalUtil.class);
 
+	@SuppressWarnings("unused")
 	private static String namingUrl;
 
+	@SuppressWarnings("unused")
 	private static String monitorServerUrl = null;
 
+	@SuppressWarnings("unused")
 	private static String userNameSuffix = null;
 
-	private static XMMClient XMMClient = null;
-	
+	private static XMMClient xmmClient = null;
+
+	@SuppressWarnings("unused")
 	private static String defaultGroupId = null;
-	
+
+	@SuppressWarnings("unused")
 	private static String adminGroupId = null;
-	
+
 	private static ResourceBundle resource = null;
-	
+
 	private static Locale locale = new Locale("zh", "CN");
 
 	public static final int OK = 0;
@@ -90,6 +92,7 @@ public class XMMPortalUtil {
 
 	public static final int CRITICAL = 2;
 
+	@SuppressWarnings("unused")
 	private static final int DEFAULT_LINGCLOUD_VNC_PORT = 50001;
 
 	private static final int DEFAULT_VNC_PORT = 5901;
@@ -135,7 +138,7 @@ public class XMMPortalUtil {
 		XMMPortalUtil.namingUrl = namingUrl;
 	}
 
-	public static List<Partition> listAllPartition() throws XMMException, Exception {
+	public static List<Partition> listAllPartition() throws Exception {
 		try {
 			return getXMMClient().listAllPartition();
 		} catch (GNodeException e) {
@@ -152,10 +155,14 @@ public class XMMPortalUtil {
 	}
 
 	public static XMMClient getXMMClient() throws Exception {
-		if (XMMClient == null) {
-			XMMClient = new XMMClient("");
+		if (xmmClient == null) {
+			xmmClient = new XMMClient("");
 		}
-		return XMMClient;
+		return xmmClient;
+	}
+
+	public static boolean isBlankOrNull(String value) {
+		return ((value == null) || (value.trim().length() == 0));
 	}
 
 	public static boolean checkParamsBlankOrNull(String[] params) {
@@ -163,7 +170,7 @@ public class XMMPortalUtil {
 			return true;
 		}
 		for (int i = 0; i < params.length; i++) {
-			if (GenericValidator.isBlankOrNull(params[i])) {
+			if (isBlankOrNull(params[i])) {
 				return true;
 			}
 		}
@@ -200,7 +207,7 @@ public class XMMPortalUtil {
 		}
 		return false;
 	}
-	
+
 	public static String getNginxScriptsLocation() throws Exception {
 		ConfigUtil conf = new ConfigUtil(XMMConstants.CONFIG_FILE_NAME);
 		String suffix = conf.getProperty("NginxScriptsLocation", "");
@@ -224,21 +231,23 @@ public class XMMPortalUtil {
 		}
 		// check public ip is reachable or not, firstly.
 		String[] pubIps = node.getPublicIps();
-		if (pubIps != null || pubIps.length > 0) {
+		if (pubIps != null && pubIps.length > 0) {
 			for (int i = 0; i < pubIps.length; i++) {
 				String pubip = pubIps[i];
-				// For fast error if the ip address is not reachable. the method
-				// of checkPortIsListening is too slow.
-				return pubip + ":" + DEFAULT_RDP_PORT;
+				if (checkPortIsListening(pubip, DEFAULT_RDP_PORT)) {
+					return pubip + ":" + DEFAULT_RDP_PORT;
+				}
 			}
 		}
 
 		// check private ip is reachable or not, secondly.
 		String[] priIps = node.getPrivateIps();
-		if (priIps != null || priIps.length > 0) {
+		if (priIps != null && priIps.length > 0) {
 			for (int i = 0; i < priIps.length; i++) {
 				String priip = priIps[i];
-				return priip + ":" + DEFAULT_RDP_PORT;
+				if (checkPortIsListening(priip, DEFAULT_RDP_PORT)) {
+					return priip + ":" + DEFAULT_RDP_PORT;
+				}
 			}
 		}
 		return null;
@@ -250,7 +259,7 @@ public class XMMPortalUtil {
 		}
 		// check public ip is reachable or not, firstly.
 		String[] pubIps = node.getPublicIps();
-		if (pubIps != null || pubIps.length > 0) {
+		if (pubIps != null && pubIps.length > 0) {
 			for (int i = 0; i < pubIps.length; i++) {
 				String pubip = pubIps[i];
 				// For fast error if the ip address is not reachable. the method
@@ -265,7 +274,7 @@ public class XMMPortalUtil {
 
 		// check private ip is reachable or not, secondly.
 		String[] priIps = node.getPrivateIps();
-		if (priIps != null || priIps.length > 0) {
+		if (priIps != null && priIps.length > 0) {
 			for (int i = 0; i < priIps.length; i++) {
 				String priip = priIps[i];
 				if (checkIpIsReachable(priip)) {
@@ -278,25 +287,28 @@ public class XMMPortalUtil {
 		return null;
 	}
 
-	public static String getProperIpPort4VNC(Node node, String pass, String geometry) {
+	public static String getProperIpPort4VNC(Node node, String pass,
+			String geometry) {
 		if (node == null) {
 			return "";
 		}
-		
+
 		// check public ip is reachable or not, firstly.
 		String[] pubIps = node.getPublicIps();
-		if (pubIps != null || pubIps.length > 0) {
+		if (pubIps != null && pubIps.length > 0) {
 			for (int i = 0; i < pubIps.length; i++) {
 				String pubip = pubIps[i];
 				// For fast error if the ip address is not reachable. the method
 				// of checkPortIsListening is too slow.
 				if (checkIpIsReachable(pubip)) {
-//					if (checkPortIsListening(pubip, DEFAULT_LINGCLOUD_VNC_PORT)) {
-//						//to change here
-//						String result = ClientCode.getPortForVNC(pubip, pass, geometry);
-//						if(!result.equals(""))
-//							return pubip + result;
-//					}
+					// if (checkPortIsListening(pubip,
+					// DEFAULT_LINGCLOUD_VNC_PORT)) {
+					// //to change here
+					// String result = ClientCode.getPortForVNC(pubip, pass,
+					// geometry);
+					// if(!result.equals(""))
+					// return pubip + result;
+					// }
 					if (checkPortIsListening(pubip, DEFAULT_VNC_PORT)) {
 						return pubip + ":" + DEFAULT_VNC_PORT;
 					}
@@ -306,15 +318,17 @@ public class XMMPortalUtil {
 
 		// check private ip is reachable or not, secondly.
 		String[] priIps = node.getPrivateIps();
-		if (priIps != null || priIps.length > 0) {
+		if (priIps != null && priIps.length > 0) {
 			for (int i = 0; i < priIps.length; i++) {
 				String priip = priIps[i];
 				if (checkIpIsReachable(priip)) {
-//					if (checkPortIsListening(priip, DEFAULT_LINGCLOUD_VNC_PORT)) {
-//						String result = ClientCode.getPortForVNC(priip, pass, geometry);
-//						if(!result.equals(""))
-//							return priip + result;						
-//					}
+					// if (checkPortIsListening(priip,
+					// DEFAULT_LINGCLOUD_VNC_PORT)) {
+					// String result = ClientCode.getPortForVNC(priip, pass,
+					// geometry);
+					// if(!result.equals(""))
+					// return priip + result;
+					// }
 					if (checkPortIsListening(priip, DEFAULT_VNC_PORT)) {
 						return priip + ":" + DEFAULT_VNC_PORT;
 					}
@@ -349,7 +363,7 @@ public class XMMPortalUtil {
 					} else {
 						PhysicalNode pn = pnlist.get(0);
 						String[] pubPHIps = pn.getPublicIps();
-						if (pubPHIps != null || pubPHIps.length > 0) {
+						if (pubPHIps != null && pubPHIps.length > 0) {
 							for (int i = 0; i < pubPHIps.length; i++) {
 								String pubip = pubPHIps[i];
 								if (checkIpIsReachable(pubip)) {
@@ -443,21 +457,22 @@ public class XMMPortalUtil {
 		}
 		return vnodes;
 	}
-	
-	public static String getVMhostName(int parid, String vmname){
-		
+
+	public static String getVMhostName(int parid, String vmname) {
+
 		if (vmname == null || "".equals(vmname)) {
 			return null;
 		}
 		try {
 			XMMClient vxc = getXMMClient();
 			List<Partition> pl = vxc.listAllPartition();
-			List<VirtualNode> vnodes = vxc.listVirtualNodeInPartition(pl.get(parid).getGuid());
-		
+			List<VirtualNode> vnodes = vxc.listVirtualNodeInPartition(pl.get(
+					parid).getGuid());
+
 			if (vnodes == null || vnodes.isEmpty()) {
 				return null;
 			}
-			
+
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
@@ -467,15 +482,16 @@ public class XMMPortalUtil {
 				// here we need mapping vnode to a right name in monitor system.
 				String info = vn.getVmInfo();
 				try {
-					org.w3c.dom.Document doc = builder.parse(new ByteArrayInputStream(info
-							.getBytes()));
+					org.w3c.dom.Document doc = builder
+							.parse(new ByteArrayInputStream(info.getBytes()));
 					org.w3c.dom.Node xml = doc.getDocumentElement();
 					String idstr = xpath.evaluate("id".toUpperCase(), xml);
 					if (idstr != null) {
+						@SuppressWarnings("unused")
 						int id = Integer.parseInt(idstr);
-						
-						
-						log.info("the vm of " + vmname + "'s ip is " + vn.getPublicIps()[0]);
+
+						log.info("the vm of " + vmname + "'s ip is "
+								+ vn.getPublicIps()[0]);
 						return vn.getPublicIps()[0];
 					}
 				} catch (Exception e) {
@@ -488,12 +504,12 @@ public class XMMPortalUtil {
 			return null;
 		} catch (Exception e) {
 			return null;
-		} 
-		
+		}
+
 	}
 
-	public static List<PhysicalNode> getPhysicalNodeByUserID(final String userid)
-			throws Exception {
+	public static List<PhysicalNode> getPhysicalNodeByUserID(
+			final String userid) throws Exception {
 		String[] conditions = new String[] { "tenantId" };
 		String[] operations = new String[] { "=" };
 		Object[] values = new Object[] { userid };
@@ -514,70 +530,86 @@ public class XMMPortalUtil {
 		}
 		return pnodes;
 	}
-	
-	public static void  setRB(Locale loc){
-		resource = ResourceBundle.getBundle("org.lingcloud.molva.portal.struts.ApplicationResources", loc);
+
+	public static void setRB(Locale loc) {
+		resource = ResourceBundle.getBundle(
+				"org.lingcloud.molva.portal.struts.ApplicationResources", loc);
 	}
-	
-	private static ResourceBundle getRB(){
-		if(resource == null)
-			resource = ResourceBundle.getBundle("org.lingcloud.molva.portal.struts.ApplicationResources", locale);
+
+	private static ResourceBundle getRB() {
+		if (resource == null) {
+			resource = ResourceBundle.getBundle(
+					"org.lingcloud.molva.portal.struts.ApplicationResources",
+					locale);
+		}
 		return resource;
 	}
-	
-	public static String getMessage(String key){		
-		try{
+
+	public static String getMessage(String key) {
+		try {
 			ResourceBundle resource = getRB();
 			return resource.getString(key);
-		}catch(Exception e){
+		} catch (Exception e) {
 			log.error("can not get local message for the key " + key);
-			return "";			
+			return "";
 		}
 	}
 }
 
+/**
+ * 
+ * <strong>Purpose:</strong><br>
+ * TODO.
+ *
+ * @version 1.0.1 2009-10-4<br>
+ * @author Xiaoyi Lu<br>
+ *
+ */
 class ClientCode {
 	private static Log log = LogFactory.getFactory().getInstance(
 			ClientCode.class);
-	public static int portNo = 50001;
-	public ClientCode(){
-		
-	}
+	public static final int PORT_NO = 50001;
 	
-	public static String getPortForVNC(String ip, String pass, String geometry){
+	private static final int VNC_PORT = 5900;
+
+	private ClientCode() {
+
+	}
+
+	public static String getPortForVNC(String ip, String pass, 
+			String geometry) {
 		String port = "";
 
 		String gPassword = pass;
 		log.info("in clientcode: gusername = " + "");
-		try{
-			port = Wrapper("", gPassword, "", geometry, ip);
-		}catch(Exception e){
+		try {
+			port = wrapper("", gPassword, "", geometry, ip);
+		} catch (Exception e) {
 			return "";
 		}
-		//to adjust whether the port starts with 59
+		// to adjust whether the port starts with 59
 		String tPort = port.substring(1);
-		try{
+		try {
 			int pt = Integer.parseInt(tPort);
-			if(pt < 5900)
-				return ":" + (5900 + pt);
-		}catch(Exception e){
-						
+			if (pt < VNC_PORT) {
+				return ":" + (VNC_PORT + pt);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
 		}
-		
-		
+
 		return port;
 	}
 
 	/*
 	 * Encryption
 	 */
-	public static byte[] senc(String g_password) throws Exception {
+	public static byte[] senc(String gPassword) throws Exception {
 		// Get the key from the file types of
 		String keyDir = System.getProperty("gos.home");
 
 		FileInputStream f = new FileInputStream(keyDir + File.separator
-				+ "conf" + File.separator
-				+ "vnc-wrapper.key");
+				+ "conf" + File.separator + "vnc-wrapper.key");
 		ObjectInputStream b = new ObjectInputStream(f);
 		Key k = (Key) b.readObject();
 
@@ -588,7 +620,7 @@ class ClientCode {
 		cp.init(Cipher.ENCRYPT_MODE, k);
 
 		// Wait and encrypted to ciphertext
-		byte[] ptext = g_password.getBytes("UTF8");
+		byte[] ptext = gPassword.getBytes("UTF8");
 
 		// Implementation of the encryption
 		byte[] ctext = cp.doFinal(ptext);
@@ -596,48 +628,48 @@ class ClientCode {
 		return ctext;
 	}
 
-	public static String reverse(byte[] byte_encryptResult) {
+	public static String reverse(byte[] byteEncryptResult) {
 
 		String str = "";
-		for (int i = 0; i < byte_encryptResult.length; i++) {
-			str += (int) byte_encryptResult[i] + ",";
+		for (int i = 0; i < byteEncryptResult.length; i++) {
+			str += (int) byteEncryptResult[i] + ",";
 		}
 
 		return str;
 	}
 
-	public static String Wrapper(String g_username, String g_password,
+	public static String wrapper(String gUsername, String gPassword,
 			String username, String resolution, String ip) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 		// Modified by Jian Lin, 2010-09-22
 		// Use "" so that user mapping will be done in vnc-wrapper.
 		String vncUsername = "";
-		
-		g_password += "\n";
+
+		gPassword += "\n";
 		// Set the connection address instance, connect local
 		InetAddress addr = InetAddress.getByName(ip);
 
 		// corresponding server port number to 50001
-		Socket socket = new Socket(addr, portNo);
+		Socket socket = new Socket(addr, PORT_NO);
 
 		try {
 
 			// Set IO handle
-			BufferedReader in = new BufferedReader(new InputStreamReader(socket
-					.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					socket.getInputStream()));
 			PrintWriter out = new PrintWriter(new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream())), true);
 
 			// Encrypt g_password
-			byte[] byte_encryptResult = senc(g_password);
+			byte[] byteEncryptResult = senc(gPassword);
 
 			// The byte array into a text stream flow for transmission
-			String str_encryptResult = reverse(byte_encryptResult);
+			String strEncryptResult = reverse(byteEncryptResult);
 
 			// Passing variables (global user name, password, server, user name,
 			// resolution)
-			String str = g_username + "\n" + str_encryptResult + "\n"
+			String str = gUsername + "\n" + strEncryptResult + "\n"
 					+ vncUsername + "\n" + resolution;
 
 			out.println(str);
@@ -647,7 +679,7 @@ class ClientCode {
 			socket.close();
 			return port;
 
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return "";
 		}
 	}

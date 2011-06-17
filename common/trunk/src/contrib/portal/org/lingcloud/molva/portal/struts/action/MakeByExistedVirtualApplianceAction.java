@@ -29,11 +29,11 @@ import org.lingcloud.molva.xmm.vam.util.VAMConstants;
 import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 
 /**
- * <strong>Purpose:To make a virtual appliance using a existed appliance.</strong><br>
+ * <strong>Purpose:To make a virtual appliance using a existed
+ * appliance.</strong><br>
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class MakeByExistedVirtualApplianceAction extends NeedLoginAction {
 	/**
@@ -44,7 +44,8 @@ public class MakeByExistedVirtualApplianceAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			DynaValidatorForm newVirtualAppForm = (DynaValidatorForm) form;
 			if (newVirtualAppForm == null) {
@@ -57,14 +58,14 @@ public class MakeByExistedVirtualApplianceAction extends NeedLoginAction {
 			String format = (String) newVirtualAppForm.get("format");
 			String action = (String) newVirtualAppForm.get("action");
 			String thispage = (String) newVirtualAppForm.get("thispage");
-			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-					name, memsize, appGuid}) ) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { name,
+					memsize, appGuid })) {
 				throw new Exception("Please input the correct parameters of "
 						+ "appliance, name,  memsize!");
 			}
-			
+
 			format = VAMConstants.VAF_FORMAT_DEFAULT;
-			
+
 			appGuid = appGuid.trim();
 			name = name.trim();
 			memsize = memsize.trim();
@@ -81,7 +82,8 @@ public class MakeByExistedVirtualApplianceAction extends NeedLoginAction {
 				}
 				this.url = request.getContextPath() + thispage.trim();
 			}
-			log.info("User want to make a new virtual appliance from url : " + url);
+			log.info("User want to make a new virtual appliance from url : "
+					+ url);
 			VirtualApplianceManager vam = VAMUtil.getVAManager();
 			VirtualAppliance va = new VirtualAppliance();
 			if (action.equals("add")) {
@@ -90,9 +92,10 @@ public class MakeByExistedVirtualApplianceAction extends NeedLoginAction {
 			} else if (action.equals("modify")) {
 				va.setGuid(appGuid);
 			} else {
-				throw new Exception("Please specify the action: add or modify!");
+				throw new Exception("Please specify the action: "
+						+ "add or modify!");
 			}
-		
+
 			va = vam.makeAppliance(va, appGuid, memery);
 			log.info("A virtual appliance with the name " + va.getVAName()
 					+ " is being made successfully.");

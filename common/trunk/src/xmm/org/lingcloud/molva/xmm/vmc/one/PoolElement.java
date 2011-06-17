@@ -36,20 +36,53 @@ import org.w3c.dom.Node;
  */
 public abstract class PoolElement {
 
-	protected static XPath xpath;
+	private static XPath xpath;
 
 	// In order to make sure id >= 0, we init its value as -1.
 	// Xiaoyi added at 2010-12-19, this is a very good and important trick for
 	// fault tolerance.
-	protected int id = -1;
+	private int id = -1;
 
-	protected Node xml;
+	
+
+	private Node xml;
 
 	// This field is added by Xiaoyi Lu for saving one's response message.
 	private String info;
 
-	protected Client client;
+	private Client client;
 
+	
+	/**
+	 * Returns the element's ID.
+	 * 
+	 * @return the element's ID.
+	 */
+	public String getId() {
+		return Integer.toString(id);
+	}
+	
+	public int getID() {
+		return id;
+	}
+
+	/**
+	 * Returns the element's name.
+	 * 
+	 * @return the element's name.
+	 */
+	public String getName() {
+		return xpath("name");
+	}
+	
+	public String getInfo() {
+		return this.info;
+	}
+	
+	public Client getClient() {
+		return client;
+	}
+	
 	/**
 	 * Creates a new PoolElement with the specified attributes.
 	 * 
@@ -90,7 +123,7 @@ public abstract class PoolElement {
 	// Added by Xiaoyi Lu to construct a PoolElement object by oneresponse
 	// message.
 	protected PoolElement(String info, Client client)
-			throws NumberFormatException, XPathExpressionException {
+			throws XPathExpressionException {
 		if (xpath == null) {
 			XPathFactory factory = XPathFactory.newInstance();
 			xpath = factory.newXPath();
@@ -140,23 +173,7 @@ public abstract class PoolElement {
 		}
 	}
 
-	/**
-	 * Returns the element's ID.
-	 * 
-	 * @return the element's ID.
-	 */
-	public String getId() {
-		return Integer.toString(id);
-	}
-
-	/**
-	 * Returns the element's name.
-	 * 
-	 * @return the element's name.
-	 */
-	public String getName() {
-		return xpath("name");
-	}
+	
 
 	/**
 	 * Performs an xpath evaluation for the "state" expression.
@@ -165,8 +182,10 @@ public abstract class PoolElement {
 	 */
 	public int state() {
 		String state = xpath("state");
-
-		return state != null ? Integer.parseInt(state) : -1;
+		if (state != null) {
+			return Integer.parseInt(state);
+		}
+		return -1;
 	}
 
 	/**
@@ -191,7 +210,5 @@ public abstract class PoolElement {
 		return result;
 	}
 
-	public String getInfo() {
-		return this.info;
-	}
+	
 }

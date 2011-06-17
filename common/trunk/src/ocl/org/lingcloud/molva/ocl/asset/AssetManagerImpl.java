@@ -70,43 +70,7 @@ public class AssetManagerImpl {
 	private Asset persistenceAsset(String method, Asset asset) 
 		throws Exception {
 		try {
-			GNode gn = new GNode();
-			gn.setGuid(asset.getGuid());
-			gn.setName(asset.getName());
-			gn.setAcl(asset.getAcl());
-			gn.setGroupID(asset.getGroupId());
-			gn.setOwnerID(asset.getOwnerId());
-			gn.setAddTime(asset.getAddTime());
-			gn.setUpdateTime(asset.getUpdateTime());
-			gn.setRControllerType(AssetConstants.ASSET_RCONTROLLER);
-			gn.setType(GNodeConstants.GNODETYPE_RESOURCE);
-			gn.setDescription(asset.getDescription());
-
-			HashMap<String, String> attributes = asset.getAttributes();
-			if (attributes != null && !attributes.isEmpty()) {
-				Iterator<String> iterator = attributes.keySet().iterator();
-				while (iterator.hasNext()) {
-					String key = iterator.next();
-					String value = attributes.get(key);
-					gn.getAttributes().put("Asset.Attributes." + key, value);
-				}
-			}
-
-			gn.getAttributes().put("Asset.AssetController",
-					asset.getAssetController());
-
-			gn.getAttributes().put("Asset.LeaseId", asset.getLeaseId());
-
-			gn.getAttributes().put("Asset.Price",
-					String.valueOf(asset.getPrice()));
-			gn.getAttributes().put("Asset.Cai", asset.getCai());
-			gn.getAttributes().put("Asset.AssetLeaserId",
-					asset.getAssetLeaserId());
-			gn.getAttributes().put("Asset.AssetState",
-					asset.getAssetState().toString());
-			gn.getAttributes().put("Asset.Type", asset.getType());
-			gn.getAttributes().put("Asset.LastErrorMessage",
-					asset.getLastErrorMessage());
+			GNode gn = asset2GNode(asset);
 
 			if (method.equals("add")) {
 				GNode reg = gnm.register(gn);
@@ -125,6 +89,48 @@ public class AssetManagerImpl {
 			log.error("Persistence Asset Error : " + e.toString());
 			throw e;
 		}
+	}
+	
+	private GNode asset2GNode(Asset asset) {
+		GNode gn = new GNode();
+		gn.setGuid(asset.getGuid());
+		gn.setName(asset.getName());
+		gn.setAcl(asset.getAcl());
+		gn.setGroupID(asset.getGroupId());
+		gn.setOwnerID(asset.getOwnerId());
+		gn.setAddTime(asset.getAddTime());
+		gn.setUpdateTime(asset.getUpdateTime());
+		gn.setRControllerType(AssetConstants.ASSET_RCONTROLLER);
+		gn.setType(GNodeConstants.GNODETYPE_RESOURCE);
+		gn.setDescription(asset.getDescription());
+
+		HashMap<String, String> attributes = asset.getAttributes();
+		if (attributes != null && !attributes.isEmpty()) {
+			Iterator<String> iterator = attributes.keySet().iterator();
+			while (iterator.hasNext()) {
+				String key = iterator.next();
+				String value = attributes.get(key);
+				gn.getAttributes().put("Asset.Attributes." + key, value);
+			}
+		}
+
+		gn.getAttributes().put("Asset.AssetController",
+				asset.getAssetController());
+
+		gn.getAttributes().put("Asset.LeaseId", asset.getLeaseId());
+
+		gn.getAttributes().put("Asset.Price",
+				String.valueOf(asset.getPrice()));
+		gn.getAttributes().put("Asset.Cai", asset.getCai());
+		gn.getAttributes().put("Asset.AssetLeaserId",
+				asset.getAssetLeaserId());
+		gn.getAttributes().put("Asset.AssetState",
+				asset.getAssetState().toString());
+		gn.getAttributes().put("Asset.Type", asset.getType());
+		gn.getAttributes().put("Asset.LastErrorMessage",
+				asset.getLastErrorMessage());
+		
+		return gn;
 	}
 
 	private Asset gnode2Asset(GNode gn) {
@@ -323,7 +329,7 @@ public class AssetManagerImpl {
 					throw e;
 				}
 			}
-			List gnli = gnm.unregister(asset.getGuid());
+			List<GNode> gnli = gnm.unregister(asset.getGuid());
 			Asset removedAsset = this.gnode2Asset((GNode) gnli.get(0));
 			long end = System.currentTimeMillis();
 			log.info("remove an asset " + removedAsset.getGuid()
@@ -505,7 +511,7 @@ public class AssetManagerImpl {
 				newValues[newValues.length - 1] 
 				          = GNodeConstants.GNODETYPE_RESOURCE;
 			}
-			List lst = gnm.search(newCondition, newValues);
+			List<GNode> lst = gnm.search(newCondition, newValues);
 			if (lst == null || lst.size() == 0) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("No assets satisfy the search condition "
@@ -602,7 +608,9 @@ public class AssetManagerImpl {
 	 * @return price
 	 * @throws Exception
 	 */
-	public double calculatePrice(Asset asset, HashMap params) throws Exception {
+	public double calculatePrice(Asset asset, HashMap<String, String> params) 
+		throws Exception {
+		
 		AssetController ac = (AssetController) Class.forName(
 				asset.getAssetController()).newInstance();
 		double price = ac.calculatePrice(asset, params);
@@ -650,7 +658,7 @@ public class AssetManagerImpl {
 	}
 
 	/**
-	 * handle preprocessing.
+	 * handle pre-processing.
 	 * @param assetId
 	 * @param leaseId
 	 * @return
@@ -861,7 +869,7 @@ public class AssetManagerImpl {
 	}
 
 	/**
-	 * handle anti preprocessing.
+	 * handle anti pre-processing.
 	 * @param assetid
 	 * @param leaseId
 	 * @throws Exception

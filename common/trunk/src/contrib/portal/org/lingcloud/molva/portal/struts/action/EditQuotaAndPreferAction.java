@@ -31,7 +31,6 @@ import org.lingcloud.molva.xmm.util.XMMConstants;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class EditQuotaAndPreferAction extends NeedLoginAction {
 	/**
@@ -41,8 +40,10 @@ public class EditQuotaAndPreferAction extends NeedLoginAction {
 
 	private String url;
 
+	@SuppressWarnings("deprecation")
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			DynaValidatorForm editQuotaAndPreferForm = (DynaValidatorForm) form;
 			if (editQuotaAndPreferForm == null) {
@@ -53,10 +54,11 @@ public class EditQuotaAndPreferAction extends NeedLoginAction {
 			String thispage = (String) editQuotaAndPreferForm.get("thispage");
 			String memQuota = (String) editQuotaAndPreferForm.get("memQuota");
 			String memPrefer = (String) editQuotaAndPreferForm.get("memPrefer");
-			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] {
-					userGuid, memQuota, memPrefer })) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { userGuid,
+					memQuota, memPrefer })) {
 				throw new Exception(
-						"Please input the correct parameters of userGuid, memQuota, memPrefer: ");
+						"Please input the correct parameters of userGuid, "
+						+ "memQuota, memPrefer: ");
 			}
 			userGuid = userGuid.trim();
 			memQuota = memQuota.trim();

@@ -16,19 +16,24 @@
 
 package org.lingcloud.molva.xmm.vmc.one;
 
-import org.opennebula.client.*;
-import org.opennebula.client.host.HostPool;
-
 import java.util.ArrayList;
 import javax.xml.xpath.XPathExpressionException;
 import org.lingcloud.molva.xmm.util.XMMUtil;
 import org.lingcloud.molva.xmm.pojos.Nic;
 import org.lingcloud.molva.xmm.pojos.PhysicalNode;
 import org.lingcloud.molva.xmm.util.XMMConstants;
+import org.opennebula.client.Client;
+import org.opennebula.client.OneResponse;
 import org.w3c.dom.Node;
 
+/**
+ * 
+ * <strong>Purpose:</strong><br>
+ * TODO.
+ * 
+ */
 public class Host extends PoolElement {
-	
+
 	private static final String METHOD_PREFIX = "host.";
 
 	private static final String ALLOCATE = METHOD_PREFIX + "allocate";
@@ -41,7 +46,16 @@ public class Host extends PoolElement {
 
 	private static final String[] HOST_STATES = { "INIT", "MONITORING",
 			"MONITORED", "ERROR", "DISABLED" };
+
+	public static final int HOST_STATE_INIT = 0;
+	public static final int HOST_STATE_MONITORING = 1;
+	public static final int HOST_STATE_MONITORED = 2;
+	public static final int HOST_STATE_ERROR = 3;
+	public static final int HOST_STATE_DISABLED = 4;
 	
+	private static final int KILO = 1024;
+	private static final int HUNDRED = 100;
+
 	/**
 	 * Creates a new Host representation.
 	 * 
@@ -64,7 +78,7 @@ public class Host extends PoolElement {
 	 */
 	// Added by Xiaoyi Lu for get hid.
 	public Host(String oneresponse, Client client)
-			throws NumberFormatException, XPathExpressionException {
+			throws XPathExpressionException {
 		super(oneresponse, client);
 	}
 
@@ -80,7 +94,7 @@ public class Host extends PoolElement {
 	// =================================
 
 	/**
-	 * Allocates a new host in OpenNebula
+	 * Allocates a new host in OpenNebula.
 	 * 
 	 * @param client
 	 *            XML-RPC Client.
@@ -113,7 +127,7 @@ public class Host extends PoolElement {
 	 * @return If successful the message contains the string with the
 	 *         information returned by OpenNebula.
 	 */
-	public synchronized static OneResponse info(Client client, int id) {
+	public static synchronized OneResponse info(Client client, int id) {
 		return client.call(INFO, id);
 	}
 
@@ -157,7 +171,7 @@ public class Host extends PoolElement {
 	 * @see Host#info(Client, int)
 	 */
 	public synchronized OneResponse info() {
-		OneResponse response = info(client, id);
+		OneResponse response = info(getClient(), getID());
 		super.processInfo(response);
 		return response;
 	}
@@ -168,7 +182,7 @@ public class Host extends PoolElement {
 	 * @see Host#delete(Client, int)
 	 */
 	public OneResponse delete() {
-		return delete(client, id);
+		return delete(getClient(), getID());
 	}
 
 	/**
@@ -177,7 +191,7 @@ public class Host extends PoolElement {
 	 * @see Host#enable(Client, int, boolean)
 	 */
 	public OneResponse enable(boolean enable) {
-		return enable(client, id, enable);
+		return enable(getClient(), getID(), enable);
 	}
 
 	// =================================
@@ -192,7 +206,10 @@ public class Host extends PoolElement {
 	 */
 	public String stateStr() {
 		int state = state();
-		return state != -1 ? HOST_STATES[state()] : null;
+		if (state != -1) {
+			return HOST_STATES[state()];
+		}
+		return null;
 	}
 
 	/**
@@ -203,16 +220,17 @@ public class Host extends PoolElement {
 	 */
 	public String shortStateStr() {
 		String st = stateStr();
-		if (st == null)
+		if (st == null) {
 			return null;
-		else if (st.equals("ERROR"))
+		} else if (st.equals("ERROR")) {
 			return "err";
-		else if (st.equals("DISABLED"))
+		} else if (st.equals("DISABLED")) {
 			return "off";
-		else
+		} else {
 			return "on";
+		}
 	}
-	
+
 	// Add by Xiaoyi Lu for info mapping between one and molva. Marked at
 	// 2010-09-20.
 	public synchronized PhysicalNode mappingFieldForHostInfo(PhysicalNode pn)
@@ -223,18 +241,22 @@ public class Host extends PoolElement {
 		newpn.setHostInfo(this.getInfo());
 		newpn.setHostName(this.getHostName());
 		String nicstr = this.getNics();
+		final int nicParameters = 3;
+		final int nicName = 0;
+		final int nicMac = 1;
+		final int nicIP = 2;
 		if (nicstr != null && !nicstr.equals("")) {
 			String[] nics = nicstr.trim().split(" ");
 			ArrayList<Nic> niclist = new ArrayList<Nic>();
 			for (int j = 0; j < nics.length; j++) {
 				String[] nic = nics[j].split("-");
-				if (nic.length != 3) {
+				if (nic.length != nicParameters) {
 					// Ignore this error.
 					continue;
 				} else {
-					String name = nic[0].trim();
-					String mac = nic[1].trim();
-					String ip = nic[2].trim();
+					String name = nic[nicName].trim();
+					String mac = nic[nicMac].trim();
+					String ip = nic[nicIP].trim();
 					Nic lease = new Nic();
 					lease.setIp(ip);
 					lease.setMac(mac);
@@ -246,10 +268,10 @@ public class Host extends PoolElement {
 		}
 		newpn.setCpuModal(this.getProcessorModel());
 		newpn.setRunningVms(this.getRunningVMs());
-		newpn.setCpuNum(this.getActualTotalCPU() / 100);
-		newpn.setMemsize((int) this.getActualTotalMemory() / 1024);
-		int acpu = this.getAllocatedCPU() / 100;
-		int amem = this.getAllocatedMemory() / 1024;
+		newpn.setCpuNum(this.getActualTotalCPU() / HUNDRED);
+		newpn.setMemsize((int) this.getActualTotalMemory() / KILO);
+		int acpu = this.getAllocatedCPU() / HUNDRED;
+		int amem = this.getAllocatedMemory() / KILO;
 		if (newpn.getCpuNum() > acpu) {
 			newpn.setFreeCpu(newpn.getCpuNum() - acpu);
 		} else {
@@ -263,17 +285,17 @@ public class Host extends PoolElement {
 		}
 
 		String state = this.stateStr();
-		if (state.equals(HOST_STATES[0]) || state.equals(HOST_STATES[1])) {
+		if (state.equals(HOST_STATES[HOST_STATE_INIT])
+				|| state.equals(HOST_STATES[HOST_STATE_MONITORING])) {
 			newpn.setRunningStatus(XMMConstants.MachineRunningState.BOOT
 					.toString());
-		} else if (state.equals(HOST_STATES[2])) {
+		} else if (state.equals(HOST_STATES[HOST_STATE_MONITORED])) {
 			newpn.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
 					.toString());
-		} else if (state.equals(HOST_STATES[3])) {
+		} else if (state.equals(HOST_STATES[HOST_STATE_ERROR])) {
 			newpn.setRunningStatus(XMMConstants.MachineRunningState.ERROR
 					.toString());
-		} 
-		else if (state.equals(HOST_STATES[4])) {
+		} else if (state.equals(HOST_STATES[HOST_STATE_DISABLED])) {
 			newpn.setRunningStatus(XMMConstants.MachineRunningState.STOP
 					.toString());
 		}
@@ -325,17 +347,26 @@ public class Host extends PoolElement {
 
 	private int getActualTotalMemory() {
 		String atms = xpath("/HOST/TEMPLATE/TOTALMEMORY");
-		return XMMUtil.isBlankOrNull(atms) ? 0 : Integer.parseInt(atms);
+		if (XMMUtil.isBlankOrNull(atms)) {
+			return 0;
+		}
+		return Integer.parseInt(atms);
 	}
 
 	private int getActualTotalCPU() {
 		String atms = xpath("/HOST/TEMPLATE/TOTALCPU");
-		return XMMUtil.isBlankOrNull(atms) ? 0 : Integer.parseInt(atms);
+		if (XMMUtil.isBlankOrNull(atms)) {
+			return 0;
+		}
+		return Integer.parseInt(atms);
 	}
 
 	private int getRunningVMs() {
 		String atms = xpath("/HOST/HOST_SHARE/RUNNING_VMS");
-		return XMMUtil.isBlankOrNull(atms) ? 0 : Integer.parseInt(atms);
+		if (XMMUtil.isBlankOrNull(atms)) {
+			return 0;
+		}
+		return Integer.parseInt(atms);
 	}
 
 	private String getProcessorModel() {
@@ -353,27 +384,44 @@ public class Host extends PoolElement {
 	// modification for ONE 2.0 version. marked at 2010-12-14.
 	private int getAllocatedCPU() {
 		String atms = xpath("/HOST/HOST_SHARE/CPU_USAGE");
-		return XMMUtil.isBlankOrNull(atms) ? 0 : Integer.parseInt(atms);
+		if (XMMUtil.isBlankOrNull(atms)) {
+			return 0;
+		}
+		return Integer.parseInt(atms);
 	}
 
 	private int getAllocatedMemory() {
 		String atms = xpath("/HOST/HOST_SHARE/MEM_USAGE");
-		return XMMUtil.isBlankOrNull(atms) ? 0 : Integer.parseInt(atms);
+		if (XMMUtil.isBlankOrNull(atms)) {
+			return 0;
+		}
+		return Integer.parseInt(atms);
 	}
 
+	@SuppressWarnings("unused")
 	private int getActualFreeCPU() {
 		String atms = xpath("/HOST/TEMPLATE/FREECPU");
-		return XMMUtil.isBlankOrNull(atms) ? 0 : Integer.parseInt(atms);
+		if (XMMUtil.isBlankOrNull(atms)) {
+			return 0;
+		}
+		return Integer.parseInt(atms);
 	}
 
+	@SuppressWarnings("unused")
 	private int getActualFreeMemory() {
 		String atms = xpath("/HOST/TEMPLATE/FREEMEMORY");
-		return XMMUtil.isBlankOrNull(atms) ? 0 : Integer.parseInt(atms);
+		if (XMMUtil.isBlankOrNull(atms)) {
+			return 0;
+		}
+		return Integer.parseInt(atms);
 	}
 
 	private int getCpuSpeed() {
 		String atms = xpath("/HOST/TEMPLATE/CPUSPEED");
-		return XMMUtil.isBlankOrNull(atms) ? 0 : Integer.parseInt(atms);
+		if (XMMUtil.isBlankOrNull(atms)) {
+			return 0;
+		}
+		return Integer.parseInt(atms);
 	}
 
 	private String getArch() {

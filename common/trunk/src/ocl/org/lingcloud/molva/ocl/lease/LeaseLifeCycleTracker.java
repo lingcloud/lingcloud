@@ -48,6 +48,17 @@ public class LeaseLifeCycleTracker implements Runnable {
 		this.leaseId = leaseId;
 		lmi = new LeaseManagerImpl();
 	}
+	
+	private void fail(Lease lease) {
+		lease.setLifecycleState(LeaseLifeCycleState.FAIL);
+		try {
+			// FIXME now, we only left the error handling to users
+			// lazily, they can terminate or delete lease.
+			this.lmi.update(this.leaseId, lease);
+		} catch (Exception e) {
+			log.error(e.toString());
+		}
+	}
 
 	public void run() {
 		Lease lease = null;
@@ -89,12 +100,7 @@ public class LeaseLifeCycleTracker implements Runnable {
 					LeaseLifeCycleMonitor.getInstance().addLeaseMonitoredOnce(
 							lease);
 				} else {
-					lease.setLifecycleState(LeaseLifeCycleState.FAIL);
-					try {
-						this.lmi.update(this.leaseId, lease);
-					} catch (Exception e) {
-						log.error(e.toString());
-					}
+					fail(lease);
 				}
 			} else if (lease.getLifecycleState().equals(
 					LeaseLifeCycleState.NEGOTIATING)) {
@@ -104,17 +110,7 @@ public class LeaseLifeCycleTracker implements Runnable {
 					LeaseLifeCycleMonitor.getInstance().addLeaseMonitoredOnce(
 							lease);
 				} else {
-					lease.setLifecycleState(LeaseLifeCycleState.FAIL);
-					try {
-						this.lmi.update(this.leaseId, lease);
-						// FIXME we define an error handler method
-						// in AssetMatchMaker class, which is invoked to clear
-						// garbage nodes when partial error of many virtual
-						// nodes creation.
-
-					} catch (Exception e) {
-						log.error(e.toString());
-					}
+					fail(lease);
 				}
 			} else if (lease.getLifecycleState().equals(
 					LeaseLifeCycleState.PREPROCESSING)) {
@@ -124,14 +120,7 @@ public class LeaseLifeCycleTracker implements Runnable {
 					LeaseLifeCycleMonitor.getInstance().addLeaseMonitoredOnce(
 							lease);
 				} else {
-					lease.setLifecycleState(LeaseLifeCycleState.FAIL);
-					try {
-						// FIXME now, we only left the error handling to users
-						// lazily, they can terminate or delete lease.
-						this.lmi.update(this.leaseId, lease);
-					} catch (Exception e) {
-						log.error(e.toString());
-					}
+					fail(lease);
 				}
 			} else if (lease.getLifecycleState().equals(
 					LeaseLifeCycleState.READY)) {
@@ -141,15 +130,7 @@ public class LeaseLifeCycleTracker implements Runnable {
 					LeaseLifeCycleMonitor.getInstance().addLeaseMonitoredOnce(
 							lease);
 				} else {
-					lease.setLifecycleState(LeaseLifeCycleState.FAIL);
-					try {
-						// FIXME now, we only left the error handling to users
-						// lazily, they can terminate or delete lease.
-						this.lmi.update(this.leaseId, lease);
-					} catch (Exception e) {
-						log.error(e.toString());
-						// throw e;
-					}
+					fail(lease);
 				}
 			} else if (lease.getLifecycleState().equals(
 					LeaseLifeCycleState.EFFECTIVE)) {
@@ -164,14 +145,7 @@ public class LeaseLifeCycleTracker implements Runnable {
 					LeaseLifeCycleMonitor.getInstance().addLeaseMonitoredOnce(
 							lease);
 				} else {
-					lease.setLifecycleState(LeaseLifeCycleState.FAIL);
-					try {
-						// FIXME now, we only left the error handling to users
-						// lazily, they can terminate or delete lease.
-						this.lmi.update(this.leaseId, lease);
-					} catch (Exception e) {
-						log.error(e.toString());
-					}
+					fail(lease);
 				}
 			} else {
 				log.info("The lease " + lease.getGuid()
@@ -190,12 +164,7 @@ public class LeaseLifeCycleTracker implements Runnable {
 						+ "the lease : " + lease.getGuid() + " due to : "
 						+ t.toString());
 				// TODO Error handle.
-				lease.setLifecycleState(LeaseLifeCycleState.FAIL);
-				try {
-					this.lmi.update(this.leaseId, lease);
-				} catch (Exception e) {
-					log.error(e.toString());
-				}
+				fail(lease);
 			}
 		}
 	}

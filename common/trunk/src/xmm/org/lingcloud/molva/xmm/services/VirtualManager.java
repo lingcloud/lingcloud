@@ -23,7 +23,6 @@ import org.lingcloud.molva.xmm.vmc.VirtualClientImpl;
  * 
  * @version 1.0.1 2009-9-19<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class VirtualManager {
 
@@ -55,6 +54,7 @@ public class VirtualManager {
 			/**
 			 * for other versions.
 			 */
+			userPasswordToken = null;
 		} else {
 			if (userPasswordToken == null) {
 				userPasswordToken = XMMUtil.getUserPasswordToken4ONE();

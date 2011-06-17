@@ -28,7 +28,6 @@ import org.apache.struts.action.ActionMapping;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public abstract class NeedLoginAction extends BaseAction {
 

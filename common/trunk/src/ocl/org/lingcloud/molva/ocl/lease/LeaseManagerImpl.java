@@ -69,13 +69,13 @@ public class LeaseManagerImpl {
 		}
 	}
 
-	public LeaseManagerImpl(String nurl) {
+	public LeaseManagerImpl(String namingUrl) {
 		try {
 			gnm = new GNodeManager();
-			ami = new AssetManagerImpl(nurl);
+			ami = new AssetManagerImpl(namingUrl);
 		} catch (Exception e) {
 			String msg = "Error occurred when construct LeaseManagerImpl " 
-				+ "by url " + nurl + " due to : " + e.toString();
+				+ "by url " + namingUrl + " due to : " + e.toString();
 			log.error(msg);
 			throw new RuntimeException(msg);
 		}
@@ -84,66 +84,7 @@ public class LeaseManagerImpl {
 	private Lease persistenceLease(String method, Lease lease) 
 		throws Exception {
 		try {
-			GNode gn = new GNode();
-			gn.setGuid(lease.getGuid());
-			gn.setName(lease.getName());
-			gn.setAcl(lease.getAcl());
-			gn.setGroupID(lease.getGroupId());
-			gn.setOwnerID(lease.getTenantId());
-			gn.setAddTime(lease.getAddTime());
-			gn.setUpdateTime(lease.getUpdateTime());
-			gn.setRControllerType(LeaseConstants.LEASE_RCONTROLLER);
-			gn.setType(GNodeConstants.GNODETYPE_RESOURCE);
-			gn.setDescription(lease.getDescription());
-			gn.getAttributes().put("Lease.AssetMatchMaker",
-					lease.getAssetMatchMaker());
-
-			gn.getAttributes().put("Lease.Type", lease.getType());
-			gn.getAttributes().put("Lease.EffectiveTime",
-					VoalUtil.dateToString(lease.getEffectiveTime()));
-			gn.getAttributes().put("Lease.ExpireTime",
-					VoalUtil.dateToString(lease.getExpireTime()));
-			gn.getAttributes().put("Lease.LifecycleState",
-					lease.getLifecycleState().toString());
-			gn.getAttributes().put("Lease.Duration",
-					String.valueOf(lease.getDuration()));
-			gn.getAttributes().put("Lease.Preemptible",
-					lease.isPreemptible() ? "true" : "false");
-
-			// TODO here we must consider this problem later, in naming, the
-			// attributes number can not exceed 30 in default, but the following
-			// desin will cause the attr number will increase with the node
-			// number, so it will be bigger than 30 easily. Now the solution is
-			// change the default max length in naming to 512 to solve this
-			// problem, it should be considered carefully later for two aspects:
-			// 1> for the naming, we donot modify it as much as possible; 2> for
-			// the LingCloud, we need to support advanced attribute-based
-			// search. So as the situation of asset persistent method. Xiaoyi Lu
-			// Marked at 2010-09-23.
-			HashMap<String, String> additionalTerms = lease
-					.getAdditionalTerms();
-			if (additionalTerms != null && !additionalTerms.isEmpty()) {
-				Iterator iterator = additionalTerms.keySet().iterator();
-				while (iterator.hasNext()) {
-					String key = (String) iterator.next();
-					String value = (String) additionalTerms.get(key);
-					gn.getAttributes().put("Lease.AdditionalTerms." + key,
-							value);
-				}
-			}
-
-			HashMap<String, String> assetIdMap = lease.getAssetIdAndTypeMap();
-			if (assetIdMap != null && !assetIdMap.isEmpty()) {
-				Iterator iterator = assetIdMap.keySet().iterator();
-				while (iterator.hasNext()) {
-					String key = (String) iterator.next();
-					String value = (String) assetIdMap.get(key);
-					gn.getAttributes().put("Lease.AssetIdMap." + key, value);
-				}
-			}
-
-			gn.getAttributes().put("Lease.LastErrorMessage",
-					lease.getLastErrorMessage());
+			GNode gn = lease2GNode(lease);
 
 			if (method.equals("add")) {
 				GNode reg = gnm.register(gn);
@@ -162,6 +103,74 @@ public class LeaseManagerImpl {
 			log.error("Persistence Lease Error : " + e.toString());
 			throw e;
 		}
+	}
+	
+	private GNode lease2GNode(Lease lease) {
+		GNode gn = new GNode();
+		gn.setGuid(lease.getGuid());
+		gn.setName(lease.getName());
+		gn.setAcl(lease.getAcl());
+		gn.setGroupID(lease.getGroupId());
+		gn.setOwnerID(lease.getTenantId());
+		gn.setAddTime(lease.getAddTime());
+		gn.setUpdateTime(lease.getUpdateTime());
+		gn.setRControllerType(LeaseConstants.LEASE_RCONTROLLER);
+		gn.setType(GNodeConstants.GNODETYPE_RESOURCE);
+		gn.setDescription(lease.getDescription());
+		gn.getAttributes().put("Lease.AssetMatchMaker",
+				lease.getAssetMatchMaker());
+
+		gn.getAttributes().put("Lease.Type", lease.getType());
+		gn.getAttributes().put("Lease.EffectiveTime",
+				VoalUtil.dateToString(lease.getEffectiveTime()));
+		gn.getAttributes().put("Lease.ExpireTime",
+				VoalUtil.dateToString(lease.getExpireTime()));
+		gn.getAttributes().put("Lease.LifecycleState",
+				lease.getLifecycleState().toString());
+		gn.getAttributes().put("Lease.Duration",
+				String.valueOf(lease.getDuration()));
+		String isPreemptible = "false";
+		if (lease.isPreemptible()) {
+			isPreemptible = "true";
+		}
+		gn.getAttributes().put("Lease.Preemptible", isPreemptible);
+
+		// TODO here we must consider this problem later, in naming, the
+		// attributes number can not exceed 30 in default, but the following
+		// desin will cause the attr number will increase with the node
+		// number, so it will be bigger than 30 easily. Now the solution is
+		// change the default max length in naming to 512 to solve this
+		// problem, it should be considered carefully later for two aspects:
+		// 1> for the naming, we donot modify it as much as possible; 2> for
+		// the LingCloud, we need to support advanced attribute-based
+		// search. So as the situation of asset persistent method. Xiaoyi Lu
+		// Marked at 2010-09-23.
+		HashMap<String, String> additionalTerms = lease
+				.getAdditionalTerms();
+		if (additionalTerms != null && !additionalTerms.isEmpty()) {
+			Iterator<String> iterator = additionalTerms.keySet().iterator();
+			while (iterator.hasNext()) {
+				String key = (String) iterator.next();
+				String value = (String) additionalTerms.get(key);
+				gn.getAttributes().put("Lease.AdditionalTerms." + key,
+						value);
+			}
+		}
+
+		HashMap<String, String> assetIdMap = lease.getAssetIdAndTypeMap();
+		if (assetIdMap != null && !assetIdMap.isEmpty()) {
+			Iterator<String> iterator = assetIdMap.keySet().iterator();
+			while (iterator.hasNext()) {
+				String key = (String) iterator.next();
+				String value = (String) assetIdMap.get(key);
+				gn.getAttributes().put("Lease.AssetIdMap." + key, value);
+			}
+		}
+
+		gn.getAttributes().put("Lease.LastErrorMessage",
+				lease.getLastErrorMessage());
+		
+		return gn;
 	}
 
 	private Lease gnode2Lease(GNode gn) {
@@ -205,11 +214,12 @@ public class LeaseManagerImpl {
 		String prstr = (String) gn.getAttributes().get("Lease.Preemptible");
 		ret.setPreemptible(Boolean.valueOf(prstr).booleanValue());
 
-		HashMap attributes = new HashMap<String, String>(gn.getAttributes());
+		HashMap<String, String> attributes = 
+			new HashMap<String, String>(gn.getAttributes());
 		HashMap<String, String> additionalTerms = new HashMap<String, String>();
 		HashMap<String, String> asserIdMap = new HashMap<String, String>();
 		if (attributes != null && !attributes.isEmpty()) {
-			Iterator iterator = attributes.keySet().iterator();
+			Iterator<String> iterator = attributes.keySet().iterator();
 			while (iterator.hasNext()) {
 				String key = (String) iterator.next();
 				String value = (String) attributes.get(key);
@@ -458,7 +468,7 @@ public class LeaseManagerImpl {
 				newValues[newValues.length - 1] 
 				          = GNodeConstants.GNODETYPE_RESOURCE;
 			}
-			List lst = gnm.search(newCondition, newValues);
+			List<GNode> lst = gnm.search(newCondition, newValues);
 			// FIXME add rcontroller type to make a smaller scale search.
 			if (lst == null || lst.size() == 0) {
 				StringBuilder sb = new StringBuilder();
@@ -649,7 +659,7 @@ public class LeaseManagerImpl {
 					// to the LeaseConstants.TERMINATE_LOCK.
 					HashMap<String, String> la = lease.getAssetIdAndTypeMap();
 					if (la != null && !la.isEmpty()) {
-						Iterator iterator = la.keySet().iterator();
+						Iterator<String> iterator = la.keySet().iterator();
 						while (iterator != null && iterator.hasNext()) {
 							String assetid = (String) iterator.next();
 							try {
@@ -672,7 +682,7 @@ public class LeaseManagerImpl {
 					// to the LeaseConstants.TERMINATE_LOCK.
 					HashMap<String, String> la = lease.getAssetIdAndTypeMap();
 					if (la != null && !la.isEmpty()) {
-						Iterator iterator = la.keySet().iterator();
+						Iterator<String> iterator = la.keySet().iterator();
 						while (iterator != null && iterator.hasNext()) {
 							String assetid = (String) iterator.next();
 							try {
@@ -716,7 +726,7 @@ public class LeaseManagerImpl {
 		}
 
 		AssetManagerImpl ami = new AssetManagerImpl();
-		Iterator it = assetIdAndTypeMap.keySet().iterator();
+		Iterator<String> it = assetIdAndTypeMap.keySet().iterator();
 		while (it.hasNext()) {
 			String assetid = (String) it.next();
 			// TODO could be improved by batch unreservation for assets who have
@@ -757,7 +767,7 @@ public class LeaseManagerImpl {
 			if (lease.getLifecycleState().equals(LeaseLifeCycleState.READY)) {
 				HashMap<String, String> la = lease.getAssetIdAndTypeMap();
 				if (la != null && !la.isEmpty()) {
-					Iterator iterator = la.keySet().iterator();
+					Iterator<String> iterator = la.keySet().iterator();
 					while (iterator != null && iterator.hasNext()) {
 						String assetid = (String) iterator.next();
 						try {
@@ -775,7 +785,7 @@ public class LeaseManagerImpl {
 					LeaseLifeCycleState.EFFECTIVE)) {
 				HashMap<String, String> la = lease.getAssetIdAndTypeMap();
 				if (la != null && !la.isEmpty()) {
-					Iterator iterator = la.keySet().iterator();
+					Iterator<String> iterator = la.keySet().iterator();
 					while (iterator != null && iterator.hasNext()) {
 						String assetid = (String) iterator.next();
 						try {

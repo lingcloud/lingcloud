@@ -27,7 +27,6 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
  * 
  * @version 1.0.1 2009-9-15<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class VirtualNetwork extends Asset {
 
@@ -58,7 +57,8 @@ public class VirtualNetwork extends Asset {
 	public VirtualNetwork(Asset asset) {
 		super(asset);
 		if (asset.getAssetController() == null) {
-			String msg = "VirtualNetwork's asset controller should not be null.";
+			String msg = "VirtualNetwork's asset controller "
+				+ "should not be null.";
 			throw new RuntimeException(msg);
 		}
 		if (asset.getType() == null
@@ -135,13 +135,15 @@ public class VirtualNetwork extends Asset {
 	}
 
 	public int getNetworkSize() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				XMMConstants.NETWORK_SIZE)) ? 0 : Integer
-				.parseInt((String) this.getAttributes().get(
-						XMMConstants.NETWORK_SIZE));
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				XMMConstants.NETWORK_SIZE))) {
+			return 0;
+		}
+		
+		return Integer.parseInt((String) this.getAttributes().get(
+				XMMConstants.NETWORK_SIZE));
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setNetworkSize(int size) {
 		this.getAttributes().put(XMMConstants.NETWORK_SIZE, "" + size);
 	}
@@ -149,11 +151,13 @@ public class VirtualNetwork extends Asset {
 	public List<Nic> getPrivateIpNics() {
 		String listr = (String) this.getAttributes().get(
 				XMMConstants.PRIVATE_IP_NICS);
-		List li = (List) XmlUtil.fromXml(listr);
+
+		@SuppressWarnings("unchecked")
+		List<Nic> li = (List<Nic>) XmlUtil.fromXml(listr);
+		
 		return li;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setPrivateIpNics(List<Nic> nics) {
 		String listr = XmlUtil.toXml(nics);
 		this.getAttributes().put(XMMConstants.PRIVATE_IP_NICS, listr);
@@ -163,6 +167,7 @@ public class VirtualNetwork extends Asset {
 		// The key is the private ip address, and the Nic is public nic.
 		String listr = (String) this.getAttributes().get(
 				XMMConstants.PUBLIC_IP_NICS);
+		@SuppressWarnings("unchecked")
 		HashMap<String, Nic> li = (HashMap<String, Nic>) XmlUtil.fromXml(listr);
 		return li;
 	}
@@ -189,10 +194,13 @@ public class VirtualNetwork extends Asset {
 		this.getAttributes().put(XMMConstants.BRIDGE, bridge);
 	}
 
-	public List getVirtualGateWay() {
+	public List<Nic> getVirtualGateWay() {
 		String listr = (String) this.getAttributes().get(
 				XMMConstants.VIRTUAL_GW);
-		List li = (List) XmlUtil.fromXml(listr);
+
+		@SuppressWarnings("unchecked")
+		List<Nic> li = (List<Nic>) XmlUtil.fromXml(listr);
+
 		return li;
 	}
 
@@ -212,6 +220,7 @@ public class VirtualNetwork extends Asset {
 	public HashMap<String, String> getCreateVirtualGateWayCommands() {
 		String mapstr = (String) this.getAttributes().get(
 				XMMConstants.CREATE_VIRTUAL_GW);
+		@SuppressWarnings("unchecked")
 		HashMap<String, String> map = (HashMap<String, String>) XmlUtil
 				.fromXml(mapstr);
 		return map;
@@ -223,10 +232,13 @@ public class VirtualNetwork extends Asset {
 	}
 
 	public boolean isAutoCreate() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				VirtualNetwork.AUTO_CREATE_TAG)) ? false : Boolean
-				.parseBoolean((String) this.getAttributes().get(
-						VirtualNetwork.AUTO_CREATE_TAG));
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				VirtualNetwork.AUTO_CREATE_TAG))) {
+			return false;
+		}
+		
+		return Boolean.parseBoolean((String) this.getAttributes().get(
+				VirtualNetwork.AUTO_CREATE_TAG));
 	}
 
 	public void setAutoCreate(boolean tag) {
@@ -234,10 +246,13 @@ public class VirtualNetwork extends Asset {
 	}
 
 	public boolean isNeedToReserveNode() {
-		return XMMUtil.isBlankOrNull((String) this.getAttributes().get(
-				VirtualNetwork.VN_RESERVE_NODE_TAG)) ? false : Boolean
-				.parseBoolean((String) this.getAttributes().get(
-						VirtualNetwork.VN_RESERVE_NODE_TAG));
+		if (XMMUtil.isBlankOrNull((String) this.getAttributes().get(
+				VirtualNetwork.VN_RESERVE_NODE_TAG))) {
+			return false;
+		}
+		
+		return Boolean.parseBoolean((String) this.getAttributes().get(
+				VirtualNetwork.VN_RESERVE_NODE_TAG));
 	}
 
 	public void setNeedToReserveNode(boolean tag) {

@@ -34,7 +34,6 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class DeleteVirtualApplianceAction extends NeedLoginAction {
 	/**
@@ -45,7 +44,8 @@ public class DeleteVirtualApplianceAction extends NeedLoginAction {
 	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			DynaValidatorForm deleteVAForm = (DynaValidatorForm) form;
 			if (deleteVAForm == null) {
@@ -54,8 +54,7 @@ public class DeleteVirtualApplianceAction extends NeedLoginAction {
 			}
 			String vaguid = (String) deleteVAForm.get("vaguid");
 			String thisPage = (String) deleteVAForm.get("thispage");
-			if (XMMPortalUtil
-					.checkParamsBlankOrNull(new String[] { vaguid })) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { vaguid })) {
 				throw new Exception("Please input the correct parameters of "
 						+ "virtual appliance guid: ");
 			}
@@ -76,8 +75,8 @@ public class DeleteVirtualApplianceAction extends NeedLoginAction {
 			VirtualApplianceManager vam = VAMUtil.getVAManager();
 			VirtualAppliance va = vam.queryAppliance(vaguid);
 			vam.removeAppliance(vaguid);
-			log.info(" A virtual appliance with the name " + va.getVAName() + " "
-					+ va.getGuid() + " is removed successfully.");
+			log.info(" A virtual appliance with the name " + va.getVAName()
+					+ " " + va.getGuid() + " is removed successfully.");
 			/*
 			 * set object to request so that other pages can use.
 			 */

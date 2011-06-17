@@ -374,7 +374,7 @@ public class GNodeManager {
 	 * @throws Exception
 	 *             All kinds of exceptions.
 	 */
-	public List unregister(String guid) throws Exception {
+	public List<GNode> unregister(String guid) throws Exception {
 		long begin = System.currentTimeMillis();
 		try {
 			ID.getIDfromHexString(guid);
@@ -386,11 +386,10 @@ public class GNodeManager {
 
 		GNode gn = locate(guid);
 		if (gn == null) {
-			return new ArrayList();
+			return new ArrayList<GNode>();
 		}
 
-		
-		List removed = localUnregister(guid, true);
+		List<GNode> removed = localUnregister(guid, true);
 
 		long end = System.currentTimeMillis();
 		log.info("unregister local " + guid + " count " + removed.size()
@@ -413,10 +412,10 @@ public class GNodeManager {
 	 * @throws Exception
 	 *             all kinds of exception.
 	 */
-	private List localUnregister(String guid, boolean isActive)
+	private List<GNode> localUnregister(String guid, boolean isActive)
 			throws Exception {
 		GNode gn = locate(guid);
-		List removed = new ArrayList();
+		List<GNode> removed = new ArrayList<GNode>();
 		if (gn == null) {
 			return removed;
 		}
@@ -428,10 +427,10 @@ public class GNodeManager {
 					.openSession();
 			tx = session.beginTransaction();
 
-			Query query = session
-					.createQuery("select gn from GNode gn "
-							+ "where gn.originGNodeInfo.guid = ?");
+			Query query = session.createQuery("select gn from GNode gn "
+					+ "where gn.originGNodeInfo.guid = ?");
 			query.setParameter(0, gn.getGuid());
+			@SuppressWarnings("rawtypes")
 			List links = query.list();
 
 			// first delete all the links.
@@ -475,19 +474,20 @@ public class GNodeManager {
 	 * To get all qualified GNode.
 	 * 
 	 * @param searchCondition
-	 *          search conditions in the form of Hibernate Query Language.
-	 *          Some exampels are:<br>
-	 *          Example 1:<br>
-	 *          type=? and acl=? and version>? and attributes['keyword']=? and
-	 *          attributes['serviceCategory']=? and attributes['attr\"2']=? <br>
-	 *          Example 2:<br>
-	 *          type=? and acl=? or version>?<br>
-	 *          Caution!!! For those fields are ambitious, should and gn. or
-	 *          gi. to indicate which Part of the GNode is needed. gn is the
-	 *          part that all GNode will have, gi will be the part that link
-	 *          to an origin GNode.<br>
-	 *          Example 3: <br>
-	 *          type=? and gi.guid=?
+	 *            search conditions in the form of Hibernate Query Language.
+	 *            Some exampels are:<br>
+	 *            Example 1:<br>
+	 *            type=? and acl=? and version>? and attributes['keyword']=? and
+	 *            attributes['serviceCategory']=? 
+	 *            and attributes['attr\"2']=? <br>
+	 *            Example 2:<br>
+	 *            type=? and acl=? or version>?<br>
+	 *            Caution!!! For those fields are ambitious, should and gn. or
+	 *            gi. to indicate which Part of the GNode is needed. gn is the
+	 *            part that all GNode will have, gi will be the part that link
+	 *            to an origin GNode.<br>
+	 *            Example 3: <br>
+	 *            type=? and gi.guid=?
 	 * @param values
 	 *            the corresponding values according to the ? in
 	 *            searchCondition. It's should be basic data type, such as
@@ -496,7 +496,7 @@ public class GNodeManager {
 	 * @throws Exception
 	 *             network exceptions and others.
 	 */
-	public List search(String searchCondition, Object[] values)
+	public List<GNode> search(String searchCondition, Object[] values)
 			throws Exception {
 		long begin = System.currentTimeMillis();
 		Session session = null;
@@ -535,12 +535,13 @@ public class GNodeManager {
 				}
 			}
 
+			@SuppressWarnings("rawtypes")
 			List rst = query.list();
 
 			tx.commit();
 
 			// extract the GNode.
-			List result = new ArrayList();
+			List<GNode> result = new ArrayList<GNode>();
 			for (int i = 0; i < rst.size(); ++i) {
 				// FIXME
 				GNode info = (GNode) ((Object[]) rst.get(i))[0];

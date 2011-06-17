@@ -30,7 +30,6 @@ import org.lingcloud.molva.xmm.client.XMMClient;
  * 
  * @version 1.0.1 2009-10-6<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class DeletePartitionAction extends NeedLoginAction {
 	/**
@@ -51,8 +50,8 @@ public class DeletePartitionAction extends NeedLoginAction {
 			}
 			String parguid = (String) deleteParForm.get("parguid");
 			String thisPage = (String) deleteParForm.get("thispage");
-			if (XMMPortalUtil
-					.checkParamsBlankOrNull(new String[] { parguid })) {
+			if (XMMPortalUtil.checkParamsBlankOrNull(
+					new String[] { parguid })) {
 				throw new Exception("Please input the correct parameters of "
 						+ "partition guid: ");
 			}

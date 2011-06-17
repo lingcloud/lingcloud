@@ -318,7 +318,7 @@ public class GNode implements Placeable, Serializable, Cloneable {
 	 * 
 	 * @return extension part.
 	 */
-	public Map getAttributes() {
+	public Map<String, String> getAttributes() {
 		return originGNodeInfo.getAttributes();
 	}
 
@@ -328,7 +328,7 @@ public class GNode implements Placeable, Serializable, Cloneable {
 	 * @param attributes
 	 *            extension part.
 	 */
-	public void setAttributes(Map attributes) {
+	public void setAttributes(Map<String, String> attributes) {
 		originGNodeInfo.setAttributes(attributes);
 	}
 

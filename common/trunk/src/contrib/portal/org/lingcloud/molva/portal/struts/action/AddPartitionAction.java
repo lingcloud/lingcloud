@@ -34,7 +34,6 @@ import org.lingcloud.molva.xmm.pojos.Partition;
  * 
  * @version 1.0.1 2010-6-1<br>
  * @author Xiaoyi Lu<br>
- * @email luxiaoyi@software.ict.ac.cn
  */
 public class AddPartitionAction extends NeedLoginAction {
 	/**
