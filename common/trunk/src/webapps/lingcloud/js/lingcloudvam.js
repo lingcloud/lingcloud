@@ -355,6 +355,24 @@ addValue = function(valueid, valuesid) {
 	value.value = "";
 }
 
+addValueFromSelect = function(valueid, valuesid) {
+	var valueSelect = document.getElementById(valueid);
+	var values = document.getElementById(valuesid);
+	var optionSelected = valueSelect.options[valueSelect.selectedIndex];
+
+	if (optionSelected.text.trim() === "") {
+		return;
+	}
+	
+	values.value = values.value.trim();
+	if (values.value === "") {
+		values.value = values.value + optionSelected.text.trim();
+	} else {
+		values.value = values.value + '|' + optionSelected.text.trim();
+	}
+	//value.text = "";
+}
+
 clearValues = function(valuesid) {
 	var valuesid = document.getElementById(valuesid);
 	valuesid.value = "";
@@ -658,7 +676,7 @@ showDialogForModifyAppliance = function (basePath, guid) {
     str += "<tr><td>"+lingcloud.Appliance.modifyAppliance.access+":</td><td><input type='checkbox' name='accessway' value='SSH' id='SSH'/>SSH<input type='checkbox' name='accessway' value='RDP' id='RDP'/>RDP<input type='checkbox' name='accessway' value='VNC' id='VNC'/>VNC</td>";
     str += "<tr><td>"+lingcloud.Appliance.modifyAppliance.cpu+":&nbsp;</td><td><select name=\"cpuamount\" id='cpuamount'><option value=\"1\">1</option><option value=\"2\">2</option><option value=\"3\">3</option><option value=\"4\">4</option><option value=\"5\">5</option><option value=\"6\">6</option><option value=\"7\">7</option><option value=\"8\">8</option></select></td></tr>";
     str += "<tr><td>"+lingcloud.Appliance.modifyAppliance.mem+":</td><td><select name='memsize' id='memsize'><option value='128'>128MB</option><option value='256'>256MB</option><option value='512'>512MB</option><option value='1024'>1GB</option><option value='2048'>2GB</option><option value='4092'>4GB</option></select></td>";
-    str += "<tr><td>"+lingcloud.Appliance.modifyAppliance.lang+":&nbsp;</td><td><select id=\"lang\"><option>Chinese(simplified)</option><option>Chinese(traditional)</option><option>English</option><option>French</option><option>German</option><option>Italian</option><option>Japanese</option><option>Korean</option><option>Russian</option><option>Spanish</option><option>Other</option></select><a href='javascript:addValue(\"lang\",\"langs\");'>+</a><font color='red'>("+lingcloud.Appliance.newAppliance.clickToAdd+")</font></td></tr><tr><td></td><td><input type='text' readonly='true' id='langs' name='language'><a href='javascript:clearValues(\"langs\");'>" + lingcloud.tip.clear + " </a></td></tr>";
+    str += "<tr><td>"+lingcloud.Appliance.modifyAppliance.lang+":&nbsp;</td><td><select id=\"lang\"><option>Chinese(simplified)</option><option>Chinese(traditional)</option><option>English</option><option>French</option><option>German</option><option>Italian</option><option>Japanese</option><option>Korean</option><option>Russian</option><option>Spanish</option><option>Other</option></select><a href='javascript:addValueFromSelect(\"lang\",\"langs\");'>+</a><font color='red'>("+lingcloud.Appliance.newAppliance.clickToAdd+")</font></td></tr><tr><td></td><td><input type='text' readonly='true' id='langs' name='language'><a href='javascript:clearValues(\"langs\");'>" + lingcloud.tip.clear + " </a></td></tr>";
     str += "<tr style=\"display:none\" ><td>"+lingcloud.Appliance.modifyAppliance.loginStyle+":&nbsp;</td><td><select id='loginstyle' name=\"loginstyle\" onChange=\"checkLoginStyle(this,'userpass')\" ><option value=\"Global User\">Global User</option><option value=\"User and Password\">User and Password</option></select></td></tr>";
     str += "<tbody id='userpass' style=\"display:none\" >";
     str += "<tr><td>"+lingcloud.Appliance.modifyAppliance.user+":&nbsp;</td><td><input type=\"text\" name=\"username\" id='username'/></td></tr>";

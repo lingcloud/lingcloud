@@ -41,7 +41,7 @@ var lingcloud = {
 		screenSize:'\u5C4F\u5E55\u5206\u8fa8\u7387',
 		fullScreen:'\u5168\u5C4F',
 		newPart:{
-			title:'\u65B0\u5EFA\u5206\u533A',			
+			title:'\u521B\u5EFA\u5206\u533A',			
 			type:'\u7C7B\u578B',
 			preInstalledSoft:'\u9884\u88C5\u8F6F\u4EF6',			
 			vmtype:'\u865A\u62DF\u673A\u5206\u533A',
@@ -54,7 +54,7 @@ var lingcloud = {
 			title:'\u9500\u6BC1\u5206\u533A'
 		},
 		addNewPNNode:{
-			title:'\u65B0\u589E\u7269\u7406\u8282\u70B9',
+			title:'\u6dfb\u52a0\u7269\u7406\u8282\u70b9',
 			privateIp:'\u79C1\u6709IP',
 			publicIp:'\u516C\u6709IP'			
 		},
@@ -101,7 +101,7 @@ var lingcloud = {
 			pass:'\u5BC6\u7801'
 		},
 		modifyAppliance:{
-			title:'\u4FEE\u6539\u865A\u62DF\u7535\u5668',
+			title:'\u4fee\u6539\u865a\u62df\u7535\u5668\u4fe1\u606f',
 			clickToAdd:'\u70B9\u6B64\u589E\u52A0',
 			name:'\u7535\u5668\u540D\u79F0',
 			disk:'\u78C1\u76D8',
@@ -187,10 +187,10 @@ var lingcloud = {
 			format:'\u72B6\u6001',
 			detail:'\u8be6\u60c5',
 			more:'\u66F4\u591A',
-			tip4AddAppliance:'\u6DFB\u52A0\u7535\u5668',
-			tip4DelAppliance:'\u5220\u9664\u7535\u5668',
-			tip4UpdateAppliance:'\u66F4\u65B0\u7535\u5668\u4FE1\u606F',
-			tip4UploadAppliance:'\u4E0A\u4F20\u7535\u5668'
+			tip4AddAppliance:'\u6dfb\u52a0\u865a\u62df\u7535\u5668',
+			tip4DelAppliance:'\u5220\u9664\u865a\u62df\u7535\u5668',
+			tip4UpdateAppliance:'\u4fee\u6539\u865a\u62df\u7535\u5668\u4fe1\u606f',
+			tip4UploadAppliance:'\u4e0a\u4f20\u865a\u62df\u7535\u5668'
 		},
 		newVirtualDisc:{
 			title:'\u6dfb\u52a0\u5149\u76d8\u6620\u50cf',
@@ -203,7 +203,7 @@ var lingcloud = {
 			application:'\u5E94\u7528'
 		},
 		modifyVirtualDisc:{
-			title:'\u4FEE\u6539\u5149\u76D8\u6620\u50cf',
+			title:'\u4fee\u6539\u5149\u76d8\u6620\u50cf\u4fe1\u606f',
 			name:'\u5149\u76D8\u540D\u79F0',
 			location:'\u4F4D\u7F6E',
 			format:'\u683C\u5F0F',
