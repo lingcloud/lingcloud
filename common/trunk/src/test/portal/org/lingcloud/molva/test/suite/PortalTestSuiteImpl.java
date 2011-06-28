@@ -17,7 +17,7 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestSuite;
 
 import org.lingcloud.molva.test.ApplianceManagementTester;
-import org.lingcloud.molva.test.PatitionTester;
+import org.lingcloud.molva.test.PartitionTester;
 import org.lingcloud.molva.test.util.TestUtils;
 
 /**
@@ -41,7 +41,7 @@ public class PortalTestSuiteImpl {
     	TestUtils.setBrowser(browser);
         TestSuite suite = new TestSuite("The " + browser + " test suite for LingCloud Portal");
         
-        suite.addTest(new JUnit4TestAdapter(PatitionTester.class));
+        suite.addTest(new JUnit4TestAdapter(PartitionTester.class));
         suite.addTest(new JUnit4TestAdapter(ApplianceManagementTester.class));
         
         return suite;

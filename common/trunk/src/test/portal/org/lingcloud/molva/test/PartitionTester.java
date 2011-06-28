@@ -1,5 +1,5 @@
 /*
- *  @(#)PatitionTester.java 2011-6-25
+ *  @(#)PartitionTester.java 2011-6-25
  *
  *  Copyright (C) 2008-2011,
  *  LingCloud Team,
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * @author Jian Lin<br>
  * 
  */
-public class PatitionTester extends SeleneseTestCase {
+public class PartitionTester extends SeleneseTestCase {
 	@Before
 	public void setUp() throws Exception {
 		selenium = new DefaultSelenium(
@@ -43,7 +43,7 @@ public class PatitionTester extends SeleneseTestCase {
 	}
 
 	@Test
-	public void testVMPatitionAndNode() throws Exception {
+	public void testVMPartitionAndNode() throws Exception {
 		selenium.open("/lingcloud/");
 		selenium.click("link=Infrastructure");
 		selenium.waitForPageToLoad("30000");
@@ -91,7 +91,7 @@ public class PatitionTester extends SeleneseTestCase {
 	}
 
 	@Test
-	public void testGeneralPatitionAndNode() throws Exception {
+	public void testGeneralPartitionAndNode() throws Exception {
 		selenium.open("/lingcloud/");
 		selenium.click("link=Infrastructure");
 		selenium.waitForPageToLoad("30000");
