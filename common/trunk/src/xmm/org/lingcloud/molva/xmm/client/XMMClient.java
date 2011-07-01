@@ -311,6 +311,23 @@ public class XMMClient {
 				"refreshPhysicalNode", new Object[] { pnId });
 		return (PhysicalNode) XmlUtil.fromXml(pnstr);
 	}
+	
+	/**
+	 * Refresh a virtual node
+	 * mainly the runtime information
+	 * get the information and write to 
+	 * the database.
+	 * @param pnId
+	 * 			the virtual node id
+	 * @return
+	 * 			the refreshed virtual node instance with new information
+	 * @throws XMMException
+	 */
+	public VirtualNode refreshVirtualNode(String guid) throws XMMException {
+		String pnstr = (String) XMMUtil.callService(xmmServerUrl,
+				"refreshVirtualNode", new Object[] { guid });
+		return (VirtualNode) XmlUtil.fromXml(pnstr);
+	}
 
 	/**
 	 * Remove a physical node from the system.
@@ -852,6 +869,39 @@ public class XMMClient {
 		return (VirtualNode) XmlUtil.fromXml(vnstr);
 	}
 
+	public VirtualNode startVirtualNode(String guid) throws XMMException {
+		try {
+			ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		}catch (Exception e) {
+			throw new XMMException(e.getMessage());
+		}
+		String vnstr = (String) XMMUtil.callService(xmmServerUrl, "startVirtualNode", new Object[] {guid});
+		
+		return (VirtualNode) XmlUtil.fromXml(vnstr);
+	}
+	
+	public VirtualNode stopVirtualNode(String guid) throws XMMException {
+		try {
+			ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		}catch (Exception e) {
+			throw new XMMException(e.getMessage());
+		}
+		String vnstr = (String) XMMUtil.callService(xmmServerUrl, "stopVirtualNode", new Object[] {guid});
+		
+		return (VirtualNode) XmlUtil.fromXml(vnstr);
+	}
+	
+	public VirtualNode migrateVirtualNode(String guid, String hostGuid) throws XMMException {
+		try {
+			ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		}catch (Exception e) {
+			throw new XMMException(e.getMessage());
+		}
+		String vnstr = (String) XMMUtil.callService(xmmServerUrl, "migrateVirtualNode", new Object[] {guid, hostGuid});
+		
+		return (VirtualNode) XmlUtil.fromXml(vnstr);
+	}
+	
 	/**
 	 * Get physical node instance.
 	 * 

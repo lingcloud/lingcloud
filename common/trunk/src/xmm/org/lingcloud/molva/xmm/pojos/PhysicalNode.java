@@ -13,9 +13,18 @@
 
 package org.lingcloud.molva.xmm.pojos;
 
+import java.io.ByteArrayInputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.lingcloud.molva.ocl.asset.Asset;
 import org.lingcloud.molva.xmm.util.XMMConstants;
 import org.lingcloud.molva.xmm.util.XMMUtil;
+import org.w3c.dom.Document;
 
 /**
  * <strong>Purpose:</strong><br>
@@ -159,5 +168,27 @@ public class PhysicalNode extends Node {
 
 	public String getHostInfo() {
 		return this.getAttributes().get(XMMConstants.HOSTINFO);
+	}
+	
+	public String getHostID() {
+		String result = null;
+
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder();
+			Document doc = builder.parse(new ByteArrayInputStream(this.getHostInfo()
+					.getBytes()));
+			org.w3c.dom.Node xml = doc.getDocumentElement();
+			result = xpath.evaluate("/HOST/ID".toUpperCase(), xml);
+		} catch (Exception e) {
+		}
+
+		return result;
+	}
+	
+	protected static XPath xpath ;
+	static {
+		XPathFactory factory = XPathFactory.newInstance();
+		xpath = factory.newXPath();
 	}
 }

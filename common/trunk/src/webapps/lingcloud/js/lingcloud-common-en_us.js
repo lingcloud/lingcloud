@@ -70,6 +70,17 @@ var lingcloud = {
 			tip4FreeCluster:'Are you sure to destroy the cluster now?',
 			unfoldMacInfo:'Unflod Network Information',
 			foldMacInfo:'Fold Network Information'
+		},
+		virtualNodeOp:{
+			title:'Operate Virtual Node',
+			save:'save this virtual node',
+			stop:'stop this virtual node',
+			start:'start this virtual node',
+			migrate:'migrate this virtual node',
+			migrateTitle:'Migrate Virtual Node',
+			empty:'No Physical Node',
+			destroy:'destroy this virtual node(cannot be undone)',
+			confirmTip:'Are you sure to '
 		}
 	},
 	Appliance:{

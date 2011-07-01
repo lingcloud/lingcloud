@@ -16,6 +16,8 @@ package org.lingcloud.molva.xmm.services;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import org.lingcloud.molva.ocl.util.ParaChecker;
+import org.lingcloud.molva.xmm.util.XMMException;
 import org.lingcloud.molva.xmm.util.XmlUtil;
 import org.lingcloud.molva.xmm.pojos.NodeRequirement;
 import org.lingcloud.molva.xmm.pojos.Partition;
@@ -280,6 +282,53 @@ public class XMMImplWrapper {
 	 */
 	public String viewVirtualNode(String guid) throws Exception {
 		VirtualNode vn = impl.viewVirtualNode(guid);
+		return XmlUtil.toXml(vn);
+	}
+	
+	/**
+	 * Refresh virtual node instance.
+	 * @param guid
+	 * 			the global id of virtual node
+	 * @return
+	 * 			the virtual node
+	 * @throws Exception
+	 */
+	public String refreshVirtualNode(String guid) throws Exception {
+		VirtualNode vn = impl.refreshVirtualNode(guid);
+		return XmlUtil.toXml(vn);
+	}
+	
+	/**
+	 * Start the virtual node.
+	 * @param guid the virtual node's guid
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public String startVirtualNode(String guid) throws Exception {
+		VirtualNode vn = impl.startVirtualNode(guid);
+		return XmlUtil.toXml(vn);
+	}
+	
+	/**
+	 * Stop the virtual node.
+	 * @param guid the virtual node's guid
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public String stopVirtualNode(String guid) throws Exception {
+		VirtualNode vn = impl.stopVirtualNode(guid);
+		return XmlUtil.toXml(vn);
+	}
+	
+	/**
+	 * Migrate the virtual node, if it's running, will live-migrate.
+	 * @param vNodeGuid the virtual node's guid
+	 * @param pNodeGuid the new host's guid
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public String migrateVirtualNode(String vNodeGuid, String pNodeGuid) throws Exception {
+		VirtualNode vn = impl.migrateVirtualNode(vNodeGuid, pNodeGuid);
 		return XmlUtil.toXml(vn);
 	}
 

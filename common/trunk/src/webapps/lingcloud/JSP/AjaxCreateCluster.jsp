@@ -6,8 +6,8 @@
 <%@ page import="org.lingcloud.molva.xmm.vam.pojos.*" %>
 <%@ page import="org.lingcloud.molva.xmm.vam.services.*" %>
 <%@ page import="org.lingcloud.molva.xmm.vam.util.*" %>
-<%@page import="org.apache.commons.logging.Log"%>
-<%@page import="org.apache.commons.logging.LogFactory"%>
+<%@ page import="org.apache.commons.logging.Log"%>
+<%@ page import="org.apache.commons.logging.LogFactory"%>
 <%@ page import="org.lingcloud.molva.xmm.deploy.policy.VirtualMachineDeployPolicier" %>
 <%@ page import="org.lingcloud.molva.xmm.util.XMMConstants" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>

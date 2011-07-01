@@ -33,6 +33,7 @@ import org.lingcloud.molva.xmm.pojos.PhysicalNode;
 import org.lingcloud.molva.xmm.pojos.VirtualCluster;
 import org.lingcloud.molva.xmm.pojos.VirtualNetwork;
 import org.lingcloud.molva.xmm.pojos.VirtualNode;
+import org.lingcloud.molva.xmm.pojos.Node;
 import org.lingcloud.molva.xmm.util.XMMConstants;
 import org.lingcloud.molva.xmm.util.XMMUtil;
 import org.lingcloud.molva.xmm.vam.pojos.VirtualAppliance;
@@ -422,7 +423,32 @@ public class VirtualClusterManager {
 
 	public synchronized VirtualCluster refreshVirtualCluster(String vcid)
 			throws Exception {
-		return null;
+		HashMap<String, String> nodeIdAndType = null;
+		String tenantName = null;
+		List<Node> nodelist = new ArrayList<Node>();
+		VirtualCluster vc = view(vcid);
+		nodeIdAndType = vc.getNodeIdsAndTypes();
+		
+		String[] fields = new String[] { "leaseId" };
+		String[] operators = new String[] { "=" };
+		Object[] values = new Object[] { vcid };
+		XMMImpl xmmImpl = new XMMImpl();
+		if (nodeIdAndType != null && !nodeIdAndType.isEmpty()) {
+			if (nodeIdAndType
+					.containsValue(VirtualNode.class.getName())) {
+				List<VirtualNode> vnodelist = xmmImpl.searchVirtualNode(fields, operators, values);
+				for(int i = 0 ; i < vnodelist.size() ; i++) {
+					xmmImpl.refreshVirtualNode(vnodelist.get(i).getGuid());
+				}
+			} else if (nodeIdAndType.containsValue(PhysicalNode.class
+					.getName())) {
+				List<PhysicalNode> pnodelist  = xmmImpl.searchPhysicalNode(fields, operators, values);
+				for(int i = 0 ; i < pnodelist.size() ; i++) {
+					xmmImpl.refreshPhysicalNode(pnodelist.get(i).getGuid());
+				}
+			}
+		}
+		return vc;
 	}
 
 	public VirtualCluster updateVirtualClusterInfo(String guid,

@@ -1140,4 +1140,80 @@ public class XMMImpl {
 			throw new Exception(e);
 		}
 	}
+	
+	/**
+	 * Refresh virtual node instance.
+	 * @param guid
+	 * 			the global id of virtual node
+	 * @return
+	 * 			the virtual node
+	 * @throws Exception
+	 */
+	public VirtualNode refreshVirtualNode(String guid) throws Exception {
+		ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		try {
+
+			return parm.refreshVirtualNode(guid.trim());
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+
+		}
+	}
+	
+	/**
+	 * Start the virtual node.
+	 * @param guid the virtual node's guid
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public VirtualNode startVirtualNode(String guid) throws Exception {
+		ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		try {
+
+			return parm.startVirtualNode(guid.trim());
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+
+		}
+	}
+	
+	/**
+	 * Stop the virtual node.
+	 * @param guid the virtual node's guid
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public VirtualNode stopVirtualNode(String guid) throws Exception {
+		ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		try {
+
+			return parm.stopVirtualNode(guid.trim());
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+
+		}
+	}
+	
+	/**
+	 * Migrate the virtual node, if it's running, will live-migrate.
+	 * @param guid the virtual node's guid
+	 * @param hostId the new host's id
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public VirtualNode migrateVirtualNode(String vNodeGuid, String pNodeGuid) throws Exception {
+		ParaChecker.checkGuidFormat(vNodeGuid, "virtual node guid");
+		try {
+			PhysicalNode pn = this.viewPhysicalNode(pNodeGuid.trim());
+			return parm.migrateVirtualNode(vNodeGuid.trim(), pn);
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+
+		}
+	}
+	
 }

@@ -707,11 +707,14 @@ public class VirtualClientImpl implements VirtualClient {
 				return vnode;
 			}
 			OneResponse sonrc = newvir.resume();
+			
 			if (sonrc.isError()) {
 				throw new Exception("Error occurred when start the VM("
 						+ vnode.getName() + "), the detail msg as: "
 						+ onrc.getErrorMessage());
 			}
+			vnode.setRunningStatus(XMMConstants.MachineRunningState.BOOT
+					.toString());
 			log.info("The VM(" + vnode.getName() + ") is started.");
 		}
 		return vnode;
@@ -734,7 +737,7 @@ public class VirtualClientImpl implements VirtualClient {
 				return vnode;
 			} else if (newvir.lcmStateStr().equals(VirtualMachine
 					.LCM_STATE[VirtualMachine.LCM_STATE_SAVE_STOP])) {
-				vnode.setRunningStatus(XMMConstants.MachineRunningState.STOPPING
+				vnode.setRunningStatus(XMMConstants.MachineRunningState.STOP
 						.toString());
 				return vnode;
 			}
@@ -744,7 +747,47 @@ public class VirtualClientImpl implements VirtualClient {
 						+ vnode.getName() + "), the detail msg as: "
 						+ onrc.getErrorMessage());
 			}
+			vnode.setRunningStatus(XMMConstants.MachineRunningState.STOPPING
+					.toString());
+			
 			log.info("The VM(" + vnode.getName() + ") is stopped.");
+		}
+		return vnode;
+	}
+	
+	public VirtualNode migrateVirtualNode(VirtualNode vnode, PhysicalNode host) throws Exception {
+		
+		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
+
+		int vid = Integer.parseInt(vir.getId());
+		VirtualMachine newvir = new VirtualMachine(vid, this.client);
+		OneResponse onrc = newvir.info();
+		
+		int hostId = Integer.parseInt(host.getHostID());
+		
+		if (onrc.isError()) {
+			throw new Exception("Error occurred when view the migrating VM("
+					+ vnode.getName() + "), the detail msg as: "
+					+ onrc.getErrorMessage());
+		} else {
+			OneResponse sonrc;				
+			
+			sonrc = newvir.liveMigrate(hostId);
+			
+			if (sonrc.isError()) {
+				log.info("Error occurred when live migrate the VM("
+						+ vnode.getName() + "), the detail msg as: "
+						+ sonrc.getErrorMessage());
+				
+				sonrc = newvir.migrate(hostId);
+			}
+			if (sonrc.isError()) {
+				throw new Exception("Error occurred when migrate the VM("
+						+ vnode.getName() + "), the detail msg as: "
+						+ sonrc.getErrorMessage());
+			}
+				
+			log.info("The VM(" + vnode.getName() + ") is migrated.");
 		}
 		return vnode;
 	}

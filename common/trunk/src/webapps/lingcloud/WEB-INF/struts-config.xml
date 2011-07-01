@@ -150,6 +150,13 @@
 			<form-property name="action" type="java.lang.String"></form-property>
 			<form-property name="thispage" type="java.lang.String"></form-property>
 		</form-bean>
+		<form-bean name="operateVirtualVirtualNodeForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="vNodeGuid" type="java.lang.String"></form-property>
+			<form-property name="action" type="java.lang.String"></form-property>
+			<form-property name="hostId" type="java.lang.String"></form-property>
+			<form-property name="pnName" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
 		<form-bean name="saveVirtualApplianceForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
 			<form-property name="guid" type="java.lang.String"></form-property>
 			<form-property name="format" type="java.lang.String"></form-property>
@@ -294,6 +301,10 @@
 		<action path="/operateVirtualAppliance" type="org.lingcloud.molva.portal.struts.action.OperateVirtualApplianceAction" name="operateVirtualApplianceForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
 			<forward name="success" path="/JSP/ViewMakeVirtualAppliance.jsp" />
 			<forward name="failure" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+		</action>
+		<action path="/operateVirtualNodeAction" type="org.lingcloud.molva.portal.struts.action.OperateVirtualNodeAction" name="operateVirtualVirtualNodeForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
 		</action>
 		<action path="/saveVirtualAppliance" type="org.lingcloud.molva.portal.struts.action.SaveVirtualApplianceAction" name="saveVirtualApplianceForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
 			<forward name="success" path="/JSP/ViewMakeVirtualAppliance.jsp" />

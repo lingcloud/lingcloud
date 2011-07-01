@@ -525,14 +525,105 @@ showPartitionInfo = function (basePath, parid) {
     };
     ajax.send(null);
 };
-showVirtualClusterInfo = function (basePath, virid) {
+
+callbackForOperateVirtualNode = function (result) {
+    if (result) {
+    	try {
+            var form = document.getElementById("operateVirtualVirtualNodeForm");
+            if (form.action.value.trim() === "migrate") {
+                if (form.pnName.value == -1) {
+                	alert(lingcloud.Infrastructure.virtualNodeOp.empty.trim());
+                	return ;
+                }
+            }
+            
+            form.submit();
+    	}catch(e) {
+    		alert(e);
+    	}
+
+    } else {
+    }
+};
+
+showDialogForOperateVirtualNode = function (basePath, action, vNodeGuid, hostId) {
+	var strAction;
+	var title = lingcloud.Infrastructure.virtualNodeOp.title;
+	if (action === "save") {
+		strAction = lingcloud.Infrastructure.virtualNodeOp.save;
+	} else if (action === "stop") {
+		strAction = lingcloud.Infrastructure.virtualNodeOp.stop;
+	} else if (action === "start") {
+		strAction = lingcloud.Infrastructure.virtualNodeOp.start;
+	} else if (action === "migrate") {
+		strAction = lingcloud.Infrastructure.virtualNodeOp.migrate;
+		title = lingcloud.Infrastructure.virtualNodeOp.migrateTitle;
+	} else if (action === "destroy") {
+		strAction = lingcloud.Infrastructure.virtualNodeOp.destroy;
+	}else {
+		return ;
+	}
+	
+    var str = "<form id=\"operateVirtualVirtualNodeForm\" action=\"" 
+    			+ basePath + "operateVirtualNodeAction.do\" method=\"post\">";
+    str += "<input type=\"hidden\" name=\"vNodeGuid\" value=\"" + vNodeGuid + "\" />";
+    str += "<input type=\"hidden\" name=\"action\" value=\"" + action + "\" />";
+    str += "<input type=\"hidden\" name=\"thispage\" value=\"/JSP/ViewVirtualCluster.jsp\" />";
+    if (action == "migrate") {
+    	str += "<script>loadForMigrateTable('" + basePath 
+        		+ "','" + vNodeGuid
+        		+ "', 'migrateDiv')</script>";
+    	str += "<div id=\"migrateDiv\"></div>";
+    	
+    	str += "<input type=\"hidden\" name=\"hostId\" value=\"" + "172.22.1.13" + "\" />";
+    }else {
+    	str += "<table width=\"400px\"><tbody><tr><td>&nbsp;&nbsp;"
+    			+ lingcloud.Appliance.operateAppliance.confirmTip 
+    			+ strAction + "?</td></tr></tbody></table>";
+    }
+    
+    str += "</form>\n";
+    jSubmit(str, title, callbackForOperateVirtualNode);
+    
+};
+
+loadForMigrateTable = function (basePath, vNodeGuid, migrateDiv) {
+    var ajax = initAjax();
+    if (ajax === false || url === null) {
+        return false;
+    }
+    var url = basePath + "JSP/AjaxMigrateVNode.jsp?vNodeGuid="+vNodeGuid;
+    ajax.open("GET", url, true);
+    ajax.onreadystatechange = function () {
+        if (ajax.readyState == 4) {
+            if (ajax.status == 200) {
+				var xmlDoc = ajax.responseText
+				if(xmlDoc == null){
+					return;
+				}
+
+                var div = document.getElementById(migrateDiv);
+                div.innerHTML = xmlDoc;
+                
+            } else {
+                alert(lingcloud.error.responseNotFound + ajax.statusText);
+            }
+        }
+    };
+    ajax.send(null);
+};
+
+showVirtualClusterInfo = function (basePath, virid, refresh) {
 	var tdiv = document.getElementById("asset_info_div");
 	if(tdiv == null){
 		return;
 	}
 	tdiv.innerHTML = "<table id=\"loadingTable4ShowPartitionInfo\" width=\"600px\" height=\"560px\"><tbody><tr><td valign=\"top\" align=\"center\"><img src=" + basePath + "images/table_loading.gif /></td><td valign=\"top\"><br/><br/>&nbsp;&nbsp;Loading Information...</td></tr></tbody></table>";
     var ajax = initAjax();
-    var url = basePath + "JSP/ShowVirtualClusterInfo.jsp?virid=" + virid + "&basePath="+basePath;
+    var url = basePath + "JSP/ShowVirtualClusterInfo.jsp?virid=" + virid + "&basePath="+basePath ;
+    if (refresh != null && refresh != "") {
+    	url += "&refresh=" + refresh;
+    }	
     if (ajax === false || url === null) {
         return false;
     }
@@ -977,8 +1068,11 @@ changeCreateClusterTable = function(basePath, parid, targetDiv, random){
 };
 showDialogForFastCreateCluster = function (basePath) {    
     var str = "<form id=\"fastNewVirtualClusterForm\" action=\"" + basePath + "fastNewVirtualCluster.do\" method=\"post\">";
-    str += "<table id=\"loadingTable\" width=650px><tbody><tr><td><img src=" + basePath + "images/table_loading.gif /></td><td>&nbsp;&nbsp;Loading Information...</td></tr></tbody></table>";
-    str += "<script>loadForCreateCluster('" + basePath + "', 'loadingTable', 'fastNewVirtualClusterTable', 'fastNewVirtualClusterDiv')</script>";
+    str += "<table id=\"loadingTable\" width=650px><tbody><tr><td><img src=" 
+    		+ basePath + "images/table_loading.gif /></td><td>&nbsp;&nbsp;Loading Information...</td></tr></tbody></table>";
+    str += "<script>loadForCreateCluster('" + basePath 
+    		+ "', 'loadingTable', 'fastNewVirtualClusterTable', 'fastNewVirtualClusterDiv')</script>";
+    
     str += "<table id=\"fastNewVirtualClusterTable\" style=\"DISPLAY:none\" ></table></form>";
     jSubmit(str, lingcloud.Infrastructure.clusterOp.createCluster, callbackForFastCreateCluster);
 };
@@ -1116,7 +1210,9 @@ showDialogForStartCluster = function (basePath) {
     str += "<script>var tt_vc = 1, t2_vc; loadForDeletePartition('" + basePath + "','loadingTable4FreeCluster', 'freeVirtualClusterTable',1)</script>";
     str += "<table id=\"freeVirtualClusterTable\" style=\"DISPLAY:none\" width=\"400\" ><tbody>";
     str += "<input type=\"hidden\" name=\"thispage\" value=\"/JSP/viewVirtualCluster.jsp\" />";
-    str += "<tr><td width=\"100\">" + lingcloud.Infrastructure.targetPart + ":&nbsp;</td><td><select id=\"parguid\" name=\"parguid\" onchange=\"loadForFreeCluster('"+basePath+"', 'loadingTable4DestroyVirtualCluster', 'destroyVirtualClusterTable', 'parguid', this);\"></select>&nbsp;&nbsp;*</td></tr>";
+    str += "<tr><td width=\"100\">" + lingcloud.Infrastructure.targetPart 
+    		+ ":&nbsp;</td><td><select id=\"parguid\" name=\"parguid\" onchange=\"loadForFreeCluster('"
+    		+ basePath + "', 'loadingTable4DestroyVirtualCluster', 'destroyVirtualClusterTable', 'parguid', this);\"></select>&nbsp;&nbsp;*</td></tr>";
     str += "</tbody></table>";
     str += "<table id=\"loadingTable4DestroyVirtualCluster\" width=\"400\" style=\"DISPLAY:none\"><tbody><tr><td><img src=" + basePath + "images/table_loading.gif /></td><td>&nbsp;&nbsp;Loading Information...</td></tr></tbody></table>";
     str += "<table id=\"destroyVirtualClusterTable\" style=\"DISPLAY:none\" width=\"400\"><tbody>";
@@ -1124,6 +1220,7 @@ showDialogForStartCluster = function (basePath) {
     str += "</form>\n";
     jSubmit(str, lingcloud.Infrastructure.clusterOp.startCluster, callbackForStartCluster);
 };
+
 loadForFreeCluster = function (basePath, loadingTable, targetTable, parguidSelect, par) {
 
 	var select_parguid = document.getElementById(parguidSelect);

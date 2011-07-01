@@ -34,10 +34,14 @@
 	VirtualCluster tmvc = null;
 	HashMap<String, String> nodeIdAndType = null;
 	String tenantName = null;
+	String refresh = request.getParameter("refresh");
 	List<Node> nodelist = new ArrayList<Node>();
 	Date effectTime = null, expiredTime = null;
 	vxc = XMMPortalUtil.getXMMClient();
 	try {
+		if (refresh != null && !"".equals(virid)) {
+			vxc.refreshVirtualCluster(virid);
+		}
 		tmvc = vxc.viewVirtualCluster(virid);
 		if (tmvc == null) {
 			out.println(XMMPortalUtil
@@ -88,7 +92,7 @@
 			<td align="center">
 			<a
 				title="<bean:message key="org.lingcloud.molva.xmm.refresh"/>"
-				href="#" onclick="<%vxc.refreshVirtualCluster(virid);%>;javascript:showVirtualClusterInfo('<%=basePath%>','<%=virid%>');"><img
+				href="#" onclick="javascript:showVirtualClusterInfo('<%=basePath%>','<%=virid%>', 'refresh');"><img
 				src="<%=basePath%>/images/refresh.png" style="border: medium none;"
 				width="16" height="16" /></a><br />
 			<a
@@ -204,7 +208,7 @@
 			<table border="0" cellspacing=1 width="100%">
 				<tbody>
 					<tr class="actionlog_title">
-						<th width="25" valign="middle" style="display: none;"><bean:message
+						<th width="25" valign="middle"><bean:message
 							key="org.lingcloud.molva.xmm.virtualCluster.operation" /></th>
 						<th width="300" valign="middle"><bean:message
 							key="org.lingcloud.molva.xmm.machine.info" /></th>
@@ -234,13 +238,37 @@
 					%>
 					<!--  div id="<%=node.getGuid()%>_info">-->
 					<tr class="actionlog" id="vcNodeRrd<%=k + 1%>">
-						<td align="center" width="25" style="display: none;"><img
-							src="<%=basePath%>/images/vcstart.png"
-							style="border: medium none;" width="16" height="16" /> <img
-							src="<%=basePath%>/images/vcstop.png"
-							style="border: medium none;" width="16" height="16" /> <img
-							src="<%=basePath%>/images/refresh.png"
-							style="border: medium none;" width="16" height="16" /></td>
+						<td align="center" width="25">
+						
+							<a
+								title="<bean:message key="org.lingcloud.molva.xmm.node.operate.refresh"/>"
+								href="javascript:showVirtualClusterInfo('<%=basePath%>','<%=virid%>', 'refresh');"><img
+								src="<%=basePath%>/images/refresh.png" style="border: medium none;"
+								width="16" height="16" /></a><br />
+							<a
+								title="<bean:message key="org.lingcloud.molva.xmm.node.operate.start"/>"
+								href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','start','<%=node.getGuid()%>');"><img
+								src="<%=basePath%>/images/vcstart.png" style="border: medium none;"
+								width="16" height="16" /></a><br />
+							<a
+								title="<bean:message key="org.lingcloud.molva.xmm.node.operate.stop"/>"
+								href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','stop','<%=node.getGuid()%>');"><img
+								src="<%=basePath%>/images/vcstop.png" style="border: medium none;"
+								width="16" height="16" /></a><br />
+							<!--
+							<a
+								title="<bean:message key="org.lingcloud.molva.xmm.node.operate.destroy"/>"
+								href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','destroy','<%=node.getGuid()%>');"><img
+								src="<%=basePath%>/images/vcdelete.png" style="border: medium none;"
+								width="16" height="16" /></a><br />
+							-->
+							<a
+								title="<bean:message key="org.lingcloud.molva.xmm.node.operate.migrate"/>"
+								href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','migrate','<%=node.getGuid()%>');"><img
+								src="<%=basePath%>/images/migrate.png" style="border: medium none;"
+								width="16" height="16" /></a><br />
+					</td>
+							
 						<td width="200"><img src="<%=mimg%>"
 							style="border: medium none;" width="16" height="16" /> <%=node.getName()%>
 						| <font color="green"> <%

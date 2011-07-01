@@ -36,7 +36,7 @@
 			try {
 				if (nodetype != null) {
 					if (XMMConstants.VIRTUAL_NODE_TYPE.equals(nodetype)) {
-						node = vxc.viewVirtualNode(virid);
+						node = vxc.refreshVirtualNode(virid);
 					} else if (XMMConstants.PHYSICAL_NODE_TYPE
 							.equals(nodetype)) {
 						node = vxc.viewPhysicalNode(virid);
@@ -96,10 +96,33 @@
 		<tr class="actionlog">
 			<td align="center" width="25">
 				<a
-				title="<bean:message key="org.lingcloud.molva.xmm.refresh"/>"
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.refresh"/>"
 				href="javascript:showNodeInfo('<%=basePath%>','<%=virid%>','<%=nodetype%>');"><img
 				src="<%=basePath%>/images/refresh.png" style="border: medium none;"
 				width="16" height="16" /></a><br />
+				<a
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.start"/>"
+				href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','start','<%=virid%>');"><img
+				src="<%=basePath%>/images/vcstart.png" style="border: medium none;"
+				width="16" height="16" /></a><br />
+				<a
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.stop"/>"
+				href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','stop','<%=virid%>');"><img
+				src="<%=basePath%>/images/vcstop.png" style="border: medium none;"
+				width="16" height="16" /></a><br />
+				<!--
+				<a
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.destroy"/>"
+				href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','destroy','<%=virid%>');"><img
+				src="<%=basePath%>/images/vcdelete.png" style="border: medium none;"
+				width="16" height="16" /></a><br />
+				-->
+				<a
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.migrate"/>"
+				href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','migrate','<%=virid%>');"><img
+				src="<%=basePath%>/images/migrate.png" style="border: medium none;"
+				width="16" height="16" /></a><br />
+				
 			</td>
 			<td width="200">
 				<img src="<%=mimg%>" style="border: medium none ;" width="16" height="16" />

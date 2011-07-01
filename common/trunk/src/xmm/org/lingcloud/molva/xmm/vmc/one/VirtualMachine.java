@@ -435,7 +435,13 @@ public class VirtualMachine extends PoolElement {
 		} else if (state.equals(VM_STATES[VM_STATE_SUSPENDED])) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.SUSPENDED
 					.toString());
-		} else {
+		} else if (lcmState.contains("MIGRATE")) {
+			newvi.setRunningStatus(XMMConstants.MachineRunningState.MIGRATING
+					.toString());
+		}else if (lcmState.contains("SAVE")) {
+			newvi.setRunningStatus(XMMConstants.MachineRunningState.SAVING
+					.toString());
+		}else {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.ERROR
 					.toString());
 		}
