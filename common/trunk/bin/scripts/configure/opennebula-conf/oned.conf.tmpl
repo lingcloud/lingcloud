@@ -84,7 +84,7 @@ MAC_PREFIX   = \\"02:00\\"
 #       vd        KVM virtual disk
 #*******************************************************************************
 
-IMAGE_REPOSITORY_PATH = \\"${NFS_MOUNT_DIR}/opennebula/var\\"
+IMAGE_REPOSITORY_PATH = \\"${OPENNEBULA_DIR}/var\\"
 DEFAULT_IMAGE_TYPE    = \\"OS\\"
 DEFAULT_DEVICE_PREFIX = \\"hd\\"
 
@@ -269,7 +269,7 @@ HM_MAD = [
 VM_HOOK = [
     name      = \\"image\\",
     on        = \\"DONE\\",
-    command   = \\"${NFS_MOUNT_DIR}/share/hooks/image.rb\\",
+    command   = \\"${OPENNEBULA_DIR}/share/hooks/image.rb\\",
     arguments = \\"\\$VMID\\" ]
 
 #-------------------------------------------------------------------------------

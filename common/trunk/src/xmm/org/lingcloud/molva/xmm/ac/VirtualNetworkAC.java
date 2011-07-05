@@ -671,7 +671,7 @@ public class VirtualNetworkAC extends AssetController {
 		String[] nips = ip.split("\\.");
 		int nipa = Integer.parseInt(nips[A]);
 		int nipb = Integer.parseInt(nips[B]);
-		int nipc = Integer.parseInt(nips[D]);
+		int nipc = Integer.parseInt(nips[C]);
 		int nipd = Integer.parseInt(nips[D]);
 		String nipaMac = getValidMacField(Integer.toHexString(nipa));
 		String nipbMac = getValidMacField(Integer.toHexString(nipb));
