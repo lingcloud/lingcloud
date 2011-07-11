@@ -14,12 +14,9 @@
 package org.lingcloud.molva.xmm.vam.util;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +27,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.lingcloud.molva.ocl.util.HashFunction;
 import org.lingcloud.molva.xmm.vam.daos.DaoFactory;
 import org.lingcloud.molva.xmm.vam.daos.VirtualApplianceDao;
@@ -50,6 +49,12 @@ public class VAMUtil {
 	private static VAMUtil instance = new VAMUtil();
 
 	private static VirtualApplianceManager vam = null;
+	
+	/**
+	 * The logger for this class.
+	 */
+	private static Log logger = LogFactory.getFactory()
+									.getInstance(VAMUtil.class);
 
 	private VAMUtil() {
 
@@ -79,34 +84,7 @@ public class VAMUtil {
 	 * @param log
 	 */
 	public static void outputLog(String log) {
-		BufferedWriter out = null;
-		try {
-			String buf;
-			SimpleDateFormat time = new SimpleDateFormat(
-					"yyyy-MM-dd HH:mm:ss.SSS");
-			SimpleDateFormat month = new SimpleDateFormat("yyyy.MM");
-			Date now = new Date(System.currentTimeMillis());
-
-			buf = time.format(now) + " - " + log + "\r\n";
-
-			String logPath = VAMConfig.getLogLocation();
-			logPath += "." + month.format(now);
-			createDirectory(logPath);
-
-			out = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(logPath, true)));
-			out.write(buf);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		logger.info(log);
 	}
 
 	/**
