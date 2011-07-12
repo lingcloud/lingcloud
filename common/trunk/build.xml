@@ -305,6 +305,10 @@
 				<include name="xwork-*.jar" />
 			</fileset>
 		</copy>
+		<!-- log4j.properties -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/axis/WEB-INF/classes">
+			<fileset dir="conf" includes="log4j.properties" />
+		</copy>
 	</target>
 
 	<target name="assemble-portal" depends="extract-bin,build-portal">
