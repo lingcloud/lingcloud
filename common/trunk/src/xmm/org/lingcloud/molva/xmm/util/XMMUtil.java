@@ -197,18 +197,6 @@ public class XMMUtil {
 		return getValueInCfgFile("testPhysicalNodeCmd");
 	}
 
-	public static String getLvmLoaderLocationInCfgFile() throws Exception {
-		return getValueInCfgFile("hvmLoaderLocation");
-	}
-
-	public static String getPygrubLoaderLocationInCfgFile() throws Exception {
-		return getValueInCfgFile("pygrubLoaderLocation");
-	}
-
-	public static String getDeviceModelLocationInCfgFile() throws Exception {
-		return getValueInCfgFile("deviceModelLocation");
-	}
-
 	public static boolean getPublicIpEnableInCfgFile() throws Exception {
 		return Boolean.parseBoolean(getValueInCfgFile("publicIpEnable"));
 	}

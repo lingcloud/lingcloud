@@ -182,15 +182,6 @@ public class VAMConfig {
 	}
 
 	/**
-	 * get the log file path.
-	 * 
-	 * @return log file path
-	 */
-	public static String getLogLocation() {
-		return (String) properties.get("logLocation");
-	}
-
-	/**
 	 * get the max support number of snapshot.
 	 * 
 	 * @return max number
