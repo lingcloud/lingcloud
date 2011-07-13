@@ -61,6 +61,12 @@ MAKE_APPLIANCE_HOST=10.0.0.12
 # the public IP pool for virtual appliances being made
 MAKE_APPLIANCE_IP_POOL=10.0.0.231-235
 
+# whether enable access control for portal (true/false)
+ACCESS_CONTROL_ENABLE=true
+
+# the admin group name for for access control
+ACCESS_CONTROL_ADMIN=lingcloudadmin
+
 # Display language of UI (e.g. en, zh)
 UI_LANGUAGE=en
 

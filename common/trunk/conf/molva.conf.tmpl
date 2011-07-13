@@ -28,7 +28,7 @@ virtualizationServerUrl="http\\://${LINGCLOUD_SERVER}\\:2633/RPC2"
 # molva web service URL
 molvaWebServiceUrl="http\\://${LINGCLOUD_SERVER}\\:8080/axis/services/XMM"
  
-# whether enable public IP
+# whether enable public IP (true/false)
 publicIpEnable="true"
 
 # public IP pool
@@ -106,12 +106,18 @@ makeApplianceIpPool="${MAKE_APPLIANCE_IP_POOL}"
 # makeApplianceVM5=appliance-5,02:00:00:01:00:f5|ee:ee:ac:16:01:f5,xenbr0,85
 ${MAKE_APPLIANCE_VM}
 
+# whether enable access control for portal (true/false)
+accessControlEnable=${ACCESS_CONTROL_ENABLE}
+
+# the admin group name for for access control
+accessControlAdminGroup=${ACCESS_CONTROL_ADMIN}
+
 # display language of UI (e.g. en, zh)
 uiLanguage="${UI_LANGUAGE}"
 
 # Monitor is not available in the current version
 #
-# # whether enable monitor cluster
+# # whether enable monitor cluster (true/false)
 # isMonitorClusterEnabled=true
 # 
 # # monitor server url
