@@ -23,11 +23,11 @@ package org.lingcloud.molva.test.util;
  */
 public final class TestConstants {
 
-	public static final String TEST_LINGCLOUD_SERVER = "172.22.1.13";
+	public static final String TEST_LINGCLOUD_SERVER = "10.0.0.10";
 
-	public static final String TEST_XEN_SERVER = "172.22.1.13";
+	public static final String TEST_XEN_SERVER = "10.0.0.10";
 
-	public static final String TEST_COMMON_SERVER = "172.22.1.12";
+	public static final String TEST_COMMON_SERVER = "10.0.0.10";
 	
 	public static final String TEST_LINGCLOUD_PORTAL_URL = 
 		"http://" + TEST_LINGCLOUD_SERVER + ":8080/";
