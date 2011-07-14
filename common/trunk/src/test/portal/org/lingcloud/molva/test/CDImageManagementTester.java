@@ -1,3 +1,16 @@
+/*
+ *  @(#)CDImageManagementTester 2011-7-13
+ *
+ *  Copyright (C) 2008-2011,
+ *  LingCloud Team,
+ *  Institute of Computing Technology,
+ *  Chinese Academy of Sciences.
+ *  P.O.Box 2704, 100190, Beijing, China.
+ *
+ *  http://lingcloud.org
+ *  
+ */
+
 package org.lingcloud.molva.test;
 
 import com.thoughtworks.selenium.*;
@@ -9,6 +22,14 @@ import org.lingcloud.molva.test.util.TestConstants;
 import org.lingcloud.molva.test.util.TestUtils;
 
 
+/**
+ * <strong>Purpose:</strong><br>
+ * The tester class.
+ * 
+ * @version 1.0.0 2011-7-13<br>
+ * @author Maosen Sun<br>
+ * 
+ */
 public class CDImageManagementTester extends SeleneseTestCase {	
 	@Before
 	public void setUp() throws Exception {
@@ -19,7 +40,9 @@ public class CDImageManagementTester extends SeleneseTestCase {
 				TestConstants.TEST_LINGCLOUD_PORTAL_URL);
 		selenium.setSpeed(TestConstants.SELENIUM_SPEED);
 		selenium.start();
+		selenium.windowMaximize();
 	}
+	
 	@Test
 	public void testCDImageManagement() throws  Exception{
 		selenium.open("/lingcloud/JSP/ViewVirtualDisc.jsp#");

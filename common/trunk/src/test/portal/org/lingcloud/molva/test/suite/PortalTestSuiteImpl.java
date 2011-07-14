@@ -43,11 +43,9 @@ public class PortalTestSuiteImpl {
     	
     	TestUtils.setBrowser(browser);
         TestSuite suite = new TestSuite("The " + browser + " test suite for LingCloud Portal");
-      //  suite.addTest(new JUnit4TestAdapter(CDImageManagementTester.class));
-       // suite.addTest(new JUnit4TestAdapter(PartitionTester.class));
-       // suite.addTest(new JUnit4TestAdapter(ApplianceManagementTester.class));
-        suite.addTest(new JUnit4TestAdapter(AllDeployTester.class));
-        suite.addTest(new JUnit4TestAdapter(AllUndeployTester.class));
+        suite.addTest(new JUnit4TestAdapter(CDImageManagementTester.class));
+        suite.addTest(new JUnit4TestAdapter(ApplianceManagementTester.class));
+        suite.addTest(new JUnit4TestAdapter(PartitionTester.class));
         return suite;
     }
     

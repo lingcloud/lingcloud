@@ -39,6 +39,7 @@ public class ApplianceManagementTester extends SeleneseTestCase {
 				TestConstants.TEST_LINGCLOUD_PORTAL_URL);
 		selenium.setSpeed(TestConstants.SELENIUM_SPEED);
 		selenium.start();
+		selenium.windowMaximize();
 	}
 
 	@Test
@@ -103,8 +104,6 @@ public class ApplianceManagementTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("appliance2"));
 		verifyTrue(selenium.isTextPresent("Linux ubuntu"));
 		selenium.click("css=a[title=Detail] > img");
-		//verifyTrue(selenium.isTextPresent("ddl"));
-		//verifyTrue(selenium.isTextPresent("winq"));
 		selenium.click("popup_cancel");
 		selenium.click("css=a[title=Refresh] > img");
 		selenium.click("css=a[title=Refresh] > img");

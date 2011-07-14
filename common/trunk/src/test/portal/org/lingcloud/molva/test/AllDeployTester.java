@@ -13,7 +13,6 @@
 
 package org.lingcloud.molva.test;
 
-
 import com.thoughtworks.selenium.*;
 import org.junit.After;
 import org.junit.Before;
@@ -134,7 +133,6 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.select("os", "label=Windows");
 		selenium.type("osversion", "xp");
 		selenium.type("oneapp", "application2");
-		//selenium.click("//table[@id='newVirtualApplianceTable']/tbody/tr[6]/td[2]/a");
 		selenium.click("//table[@id='newVirtualApplianceTable']/tbody/tr[6]/td[2]/a");
 		selenium.click("//input[@name='accessway' and @value='VNC']");
 		selenium.select("cpuamount", "label=2");
@@ -353,14 +351,9 @@ public class AllDeployTester extends SeleneseTestCase {
 
 	}
 
-
-	
 	@After
 	public void tearDown() throws Exception {
 		selenium.stop();
 	}
 
 }
-
-
-

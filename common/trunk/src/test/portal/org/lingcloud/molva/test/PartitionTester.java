@@ -40,6 +40,7 @@ public class PartitionTester extends SeleneseTestCase {
 				TestConstants.TEST_LINGCLOUD_PORTAL_URL);
 		selenium.setSpeed(TestConstants.SELENIUM_SPEED);
 		selenium.start();
+		selenium.windowMaximize();
 	}
 
 	@Test
@@ -49,7 +50,6 @@ public class PartitionTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		// Add a VM partition
 		selenium.click("css=td:nth(2) > a > img");
-		//selenium.click("//img[contains(@src,'http://172.22.1.11:8080/lingcloud/images/add.png')]");
 		selenium.click("nodetype");
 		selenium.type("name", "node1");
 		selenium.type("preInstalledSoft", "soft1");

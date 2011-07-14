@@ -131,7 +131,6 @@ public class AllUndeployTester extends SeleneseTestCase {
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("css=a[title=Refresh] > img");
-		//selenium.isAlertPresent();
 		selenium.waitForPageToLoad("30000");
 		verifyFalse(selenium.isTextPresent("appliance1"));
 	}
