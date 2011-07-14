@@ -48,6 +48,7 @@ public class CDImageManagementTester extends SeleneseTestCase {
 		selenium.open("/lingcloud/JSP/ViewVirtualDisc.jsp#");
 		selenium.click("link=Virtual Appliance");
 		selenium.waitForPageToLoad("30000");
+		// add image
 		selenium.click("css=li.current");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[5]/a/img");
 		selenium.waitForPageToLoad("30000");
@@ -76,6 +77,7 @@ public class CDImageManagementTester extends SeleneseTestCase {
 				break;
 		}
 		verifyTrue(selenium.isTextPresent("Ready"));
+		// modify the image
 		selenium.click("css=a[title=Update CD Image] > img");
 		selenium.type("discname", "disk1");
 		selenium.select("format", "label=iso");
@@ -88,12 +90,14 @@ public class CDImageManagementTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("Operating System"));
 		verifyTrue(selenium.isTextPresent("Windows xp"));
 		verifyTrue(selenium.isTextPresent("Ready"));
+		// delete image
 		selenium.click("css=a[title=Delete CD Image] > img");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		verifyTrue(selenium.isTextPresent("Deleting"));
 		selenium.click("css=a[title=Refresh] > img");
 		selenium.waitForPageToLoad("30000");
+		verifyFalse(selenium.isTextPresent("disk1"));
 
 	}
 	

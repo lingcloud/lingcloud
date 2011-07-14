@@ -111,7 +111,7 @@ public class ApplianceManagementTester extends SeleneseTestCase {
 		// Delete the appliance
 		selenium.click("css=a[title=Delete Appliance] > img");
 		selenium.click("popup_ok");
-
+		verifyFalse(selenium.isTextPresent("appliance2"));
     }  
 	@After
 	public void tearDown() throws Exception {
