@@ -17,17 +17,17 @@ package org.lingcloud.molva.test.util;
  * <strong>Purpose:</strong><br>
  * The constants for LingCloud Portal test.
  * 
- * @version 1.0.0 2011-6-23<br>
+ * @version 1.0.0 2011-6-23<br>	
  * @author Jian Lin<br>
  * 
  */
 public final class TestConstants {
 
-	public static final String TEST_LINGCLOUD_SERVER = "10.0.0.13";
+	public static final String TEST_LINGCLOUD_SERVER = "172.22.1.13";
 
-	public static final String TEST_XEN_SERVER = "10.0.0.13";
+	public static final String TEST_XEN_SERVER = "172.22.1.13";
 
-	public static final String TEST_COMMON_SERVER = "10.0.0.12";
+	public static final String TEST_COMMON_SERVER = "172.22.1.12";
 	
 	public static final String TEST_LINGCLOUD_PORTAL_URL = 
 		"http://" + TEST_LINGCLOUD_SERVER + ":8080/";

@@ -16,7 +16,10 @@ package org.lingcloud.molva.test.suite;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestSuite;
 
+import org.lingcloud.molva.test.AllDeployTester;
+import org.lingcloud.molva.test.AllUndeployTester;
 import org.lingcloud.molva.test.ApplianceManagementTester;
+import org.lingcloud.molva.test.CDImageManagementTester;
 import org.lingcloud.molva.test.PartitionTester;
 import org.lingcloud.molva.test.util.TestUtils;
 
@@ -40,10 +43,11 @@ public class PortalTestSuiteImpl {
     	
     	TestUtils.setBrowser(browser);
         TestSuite suite = new TestSuite("The " + browser + " test suite for LingCloud Portal");
-        
-        suite.addTest(new JUnit4TestAdapter(PartitionTester.class));
-        suite.addTest(new JUnit4TestAdapter(ApplianceManagementTester.class));
-        
+      //  suite.addTest(new JUnit4TestAdapter(CDImageManagementTester.class));
+       // suite.addTest(new JUnit4TestAdapter(PartitionTester.class));
+       // suite.addTest(new JUnit4TestAdapter(ApplianceManagementTester.class));
+        suite.addTest(new JUnit4TestAdapter(AllDeployTester.class));
+        suite.addTest(new JUnit4TestAdapter(AllUndeployTester.class));
         return suite;
     }
     

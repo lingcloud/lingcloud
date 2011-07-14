@@ -49,17 +49,18 @@ public class PartitionTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		// Add a VM partition
 		selenium.click("css=td:nth(2) > a > img");
+		//selenium.click("//img[contains(@src,'http://172.22.1.11:8080/lingcloud/images/add.png')]");
 		selenium.click("nodetype");
-		selenium.type("name", "testvp");
+		selenium.type("name", "node1");
 		selenium.type("preInstalledSoft", "soft1");
-		selenium.type("description", "desc1");
+		selenium.type("description", "description1");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
-		verifyTrue(selenium.isTextPresent("testvp"));
+		verifyTrue(selenium.isTextPresent("node1"));
 		// Add a node for VM partition
 		selenium.click("css=td:nth(4) > a > img");
 		selenium.type("privateip", TestConstants.TEST_XEN_SERVER);
-		selenium.type("description", "desc1");
+		selenium.type("description", "description2");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("sd1");
@@ -75,7 +76,7 @@ public class PartitionTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("RUNNING"));
 		// Delete the node for VM partition
 		selenium.click("css=td:nth(5) > a > img");
-		selenium.select("parguid", "label=testvp");
+		selenium.select("parguid", "label=node1");
 		selenium.select("pnguid", "label=" + TestConstants.TEST_XEN_SERVER);
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
@@ -84,12 +85,13 @@ public class PartitionTester extends SeleneseTestCase {
 		verifyFalse(selenium.isTextPresent(TestConstants.TEST_XEN_SERVER));
 		// Delete the VM partition
 		selenium.click("css=td:nth(3) > a > img");
-		selenium.select("parguid", "label=testvp");
+		selenium.select("parguid", "label=node1");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
-		verifyFalse(selenium.isTextPresent("testvp"));
+		verifyFalse(selenium.isTextPresent("node1"));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testGeneralPartitionAndNode() throws Exception {
 		selenium.open("/lingcloud/");
@@ -98,16 +100,16 @@ public class PartitionTester extends SeleneseTestCase {
 		// Add a General partition
 		selenium.click("css=td:nth(2) > a > img");
 		selenium.click("css=#addPartitionTable > tbody > tr:nth(3) > td > input[name=nodetype]");
-		selenium.type("name", "testpp");
+		selenium.type("name", "partition1");
 		selenium.type("preInstalledSoft", "soft2");
-		selenium.type("description", "desc2");
+		selenium.type("description", "description3");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
-		verifyTrue(selenium.isTextPresent("testpp"));
+		verifyTrue(selenium.isTextPresent("partition1"));
 		// Add a node for General partition
 		selenium.click("css=td:nth(4) > a > img");
 		selenium.type("privateip", TestConstants.TEST_COMMON_SERVER);
-		selenium.type("description", "desc2");
+		selenium.type("description", "description4");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("sd1");
@@ -123,7 +125,7 @@ public class PartitionTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("RUNNING"));
 		// Delete the node for General partition
 		selenium.click("css=td:nth(5) > a > img");
-		selenium.select("parguid", "label=testpp");
+		selenium.select("parguid", "label=partition1");
 		selenium.select("pnguid", "label=" + TestConstants.TEST_COMMON_SERVER);
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
@@ -132,10 +134,10 @@ public class PartitionTester extends SeleneseTestCase {
 		verifyFalse(selenium.isTextPresent(TestConstants.TEST_COMMON_SERVER));
 		// Delete the General partition
 		selenium.click("css=td:nth(3) > a > img");
-		selenium.select("parguid", "label=testpp");
+		selenium.select("parguid", "label=partition1");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
-		verifyFalse(selenium.isTextPresent("testpp"));
+		verifyFalse(selenium.isTextPresent("partition1"));
 	}
 	
 	@After
