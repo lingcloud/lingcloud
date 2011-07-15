@@ -329,6 +329,10 @@
 		<symlink overwrite="true" 
 			link="${common.dist.dir}/bin/jre" resource="${common.3rdparty.jre.dir}" />
 		<delete file="${common.dist.dir}/bin/${common.3rdparty.jre.file}" />
+		<!-- jpam -->
+		<copy todir="${common.dist.dir}/bin/jre/lib/amd64/server">
+			<fileset dir="bin/3rdparty/jpam" includes="*.so" />
+		</copy>
 		<!-- tomcat -->
 		<copy todir="${common.dist.dir}/bin">
 			<fileset dir="bin/3rdparty/tomcat" includes="${common.3rdparty.tomcat.file}" />
