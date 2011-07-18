@@ -20,7 +20,7 @@ function stop_pnnode
 function start_pnnode
 {
 	# $1 is the mac of the pnysical machine
-	etherwake $1
+	ether-wake $1
 }
 
 if [ $2 = "stop" ] ; then

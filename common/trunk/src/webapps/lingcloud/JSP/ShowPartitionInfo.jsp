@@ -220,7 +220,7 @@ function refreshPN(parID){
 							<a
 							title="<bean:message key="org.lingcloud.molva.xmm.node.operate.stop"/>"
 							href="javascript:showDialogForOperatePhysicalNode('<%=basePath%>','stop','<%=hi.getGuid()%>','<%=hi.getRunningVms()%>');"><img
-							src="<%=basePath%>/images/poweroff.pngvcd " style="border: medium none;"
+							src="<%=basePath%>/images/poweroff.png" style="border: medium none;"
 							width="16" height="16" /></a><br />
 						</td>
 						<td><img src="<%=basePath%>/images/phnode.png"
