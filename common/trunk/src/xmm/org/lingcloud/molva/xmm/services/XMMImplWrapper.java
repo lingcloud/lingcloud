@@ -631,5 +631,27 @@ public class XMMImplWrapper {
 				operators, values);
 		return XmlUtil.toXml(vnlist);
 	}
+	
+	/**
+	 * Start the physical node.
+	 * @param pnGuid the physical node's guid
+	 * @return the physical node
+	 * @throws Exception
+	 */
+	public String startPhysicalNode(String pnGuid) throws Exception {
+		PhysicalNode pn = impl.startPhysicalNode(pnGuid);
+		return XmlUtil.toXml(pn);
+	}
+	
+	/**
+	 * Stop the physical node.
+	 * @param pnGuid the physical node's guid
+	 * @return the physical node
+	 * @throws Exception
+	 */
+	public String stopPhysicalNode (String pnGuid) throws Exception {
+		PhysicalNode pn = impl.stopPhysicalNode(pnGuid);
+		return XmlUtil.toXml(pn);
+	}
 
 }

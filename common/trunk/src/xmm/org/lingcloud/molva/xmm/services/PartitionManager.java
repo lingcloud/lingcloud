@@ -30,6 +30,7 @@ import org.lingcloud.molva.xmm.pojos.Nic;
 import org.lingcloud.molva.xmm.pojos.Partition;
 import org.lingcloud.molva.xmm.pojos.PhysicalNode;
 import org.lingcloud.molva.xmm.pojos.VirtualCluster;
+import org.lingcloud.molva.xmm.pojos.VirtualNetwork;
 import org.lingcloud.molva.xmm.pojos.VirtualNode;
 import org.lingcloud.molva.xmm.util.XMMConstants;
 import org.lingcloud.molva.xmm.util.XMMUtil;
@@ -676,5 +677,53 @@ public class PartitionManager {
 		log.info("One VirtualNode (" + vn.getName() + " " + vn.getGuid()
 				+ ")is removed.");
 		return vn;
+	}
+	
+	public synchronized PhysicalNode startPhysicalNode (String pnGuid) throws Exception {
+		AssetManagerImpl ami = new AssetManagerImpl();
+		Asset asset = ami.view(pnGuid);
+		
+		if (asset == null) {
+			throw new Exception("The physical node with id " + pnGuid
+					+ " is not exist.");
+		}
+		PhysicalNode pn = new PhysicalNode(asset);
+		
+		PhysicalNode refpn = this.refreshPhysicalNode(pn.getGuid());
+		
+		if (refpn == null) {
+			return pn;
+		}
+		if(refpn.getRunningStatus().equals(XMMConstants.MachineRunningState.SHUTDOWN.toString())){
+			ami.control(asset, "start", new Object[] { asset });
+			refpn.setRunningStatus(XMMConstants.MachineRunningState.BOOT.toString());
+			ami.update(pnGuid, refpn);
+		}
+		log.info("The physical node with id " + pnGuid
+				+ " is started sucessfully.");
+		return refpn;
+	}
+	
+	public synchronized PhysicalNode stopPhysicalNode (String pnGuid) throws Exception {
+		AssetManagerImpl ami = new AssetManagerImpl();
+		Asset asset = ami.view(pnGuid);
+		
+		if (asset == null) {
+			throw new Exception("The physical node with id " + pnGuid
+					+ " is not exist.");
+		}
+		PhysicalNode pn = new PhysicalNode(asset);
+		
+		PhysicalNode refpn = this.refreshPhysicalNode(pn.getGuid());
+		if(refpn.getRunningStatus().equals(XMMConstants.MachineRunningState.RUNNING.toString())
+				|| refpn.getRunningStatus().equals(XMMConstants.MachineRunningState.BOOT.toString())
+				|| refpn.getRunningStatus().equals(XMMConstants.MachineRunningState.STOP.toString())){
+			ami.control(asset, "stop", new Object[] { asset });
+			refpn.setRunningStatus(XMMConstants.MachineRunningState.SHUTDOWN.toString());
+			ami.update(pnGuid, refpn);
+		}
+		log.info("The physical node with id " + pnGuid
+				+ " is stopped sucessfully.");
+		return refpn;
 	}
 }

@@ -1216,4 +1216,38 @@ public class XMMImpl {
 		}
 	}
 	
+	/**
+	 * Start the physical node.
+	 * @param pNodeGuid
+	 * @return
+	 * @throws Exception
+	 */
+	public PhysicalNode startPhysicalNode(String pNodeGuid) throws Exception {
+		ParaChecker.checkGuidFormat(pNodeGuid, "physical node guid");
+		try {
+			return parm.startPhysicalNode(pNodeGuid);
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+
+		}
+	}
+	
+	/**
+	 * stop the physical node.
+	 * @param pNodeGuid
+	 * @return
+	 * @throws Exception
+	 */
+	public PhysicalNode stopPhysicalNode(String pNodeGuid) throws Exception {
+		ParaChecker.checkGuidFormat(pNodeGuid, "physical node guid");
+		try {
+			return parm.stopPhysicalNode(pNodeGuid);
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+
+		}
+	}
+	
 }

@@ -921,4 +921,42 @@ public class XMMClient {
 				"viewPhysicalNode", new Object[] { guid });
 		return (PhysicalNode) XmlUtil.fromXml(pnstr);
 	}
+	
+	/**
+	 * Start physical node.
+	 * @param guid
+	 * 				the global id of physical node
+	 * @return the physical node
+	 * @throws XMMException
+	 */
+	public PhysicalNode startPhysicalNode(String guid) throws XMMException {
+		try {
+			ParaChecker.checkGuidFormat(guid, "physical node guid");
+		} catch (Exception e) {
+			throw new XMMException(e.getMessage());
+		}
+		
+		String pnstr = (String) XMMUtil.callService(xmmServerUrl, 
+				"startPhysicalNode", new Object[] { guid });
+		return (PhysicalNode) XmlUtil.fromXml(pnstr);
+	}
+	
+	/**
+	 * Stop physical node.
+	 * @param guid
+	 * 				the global id of physical node
+	 * @return	the physical node
+	 * @throws XMMException
+	 */
+	public PhysicalNode stopPhysicalNode(String guid) throws XMMException {
+		try {
+			ParaChecker.checkGuidFormat(guid, "physical node guid");
+		} catch (Exception e) {
+			throw new XMMException(e.getMessage());
+		}
+		
+		String pnstr = (String) XMMUtil.callService(xmmServerUrl, 
+				"stopPhysicalNode", new Object[] { guid });
+		return (PhysicalNode) XmlUtil.fromXml(pnstr);
+	}
 }

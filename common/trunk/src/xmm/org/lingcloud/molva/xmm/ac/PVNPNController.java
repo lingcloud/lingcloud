@@ -13,7 +13,9 @@
 
 package org.lingcloud.molva.xmm.ac;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +23,8 @@ import org.lingcloud.molva.ocl.asset.Asset;
 import org.lingcloud.molva.ocl.asset.AssetController;
 import org.lingcloud.molva.ocl.poll.AssetPollingTask;
 import org.lingcloud.molva.ocl.poll.PollingTaskManager;
+import org.lingcloud.molva.xmm.ac.PartitionAC;
+import org.lingcloud.molva.xmm.pojos.Nic;
 import org.lingcloud.molva.xmm.pojos.Partition;
 import org.lingcloud.molva.xmm.pojos.PhysicalNode;
 import org.lingcloud.molva.xmm.services.PartitionManager;
@@ -157,10 +161,15 @@ public class PVNPNController extends AssetController {
 		if (pn.getRunningStatus().equals(
 				XMMConstants.MachineRunningState.BOOT.toString())
 				&& pn.getRedeployTagInCreate()) {
-			if (PartitionAC.getPhysicalNodeStatus(pn.getPrivateIps()[0])
-					.equals("cloned")) {
-				pn.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
-						.toString());
+			try {
+				if (PartitionAC.getPhysicalNodeStatus(pn.getPrivateIps()[0])
+						.equals(PartitionAC.NODE_DEPLOY_STATUS_CLONED)) {
+					pn.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
+							.toString());
+				}
+			}catch (RemoteException e) {
+				log.info("The physical node " + pn.getName() + " is stil booting.");
+				return pn;
 			}
 		} else {
 			VirtualClient vc = VirtualManager.getInstance().getVirtualClient();
@@ -206,14 +215,74 @@ public class PVNPNController extends AssetController {
 		return asset;
 	}
 
-	public void start(Asset asset) {
-		log.info("The physical node " + asset.getName() 
-				+ " is started itself.");
+	public void start(Asset asset) throws Exception {
+		PhysicalNode pn = new PhysicalNode(asset);
+		String[] ips = pn.getPrivateIps();
+		String name = pn.getName();
+		
+		try {
+			StringBuffer cmdSB = new StringBuffer();
+			String cmd = XMMUtil.getOperatePhysicalNodeCmdInCfgFile();
+			if (cmd == null || "".equals(cmd)) {
+				log.error("can't get operatePhycialNodeCmd in Cfg file.");
+				throw new Exception("can't get operatePhycialNodeCmd "
+						+ "in Cfg file.");
+			}
+			cmdSB.append(cmd).append(" " + ips[0] + " start");
+			String stdout = XMMUtil.runCommand(cmdSB.toString());
+			if (stdout.trim().equals("true")) {
+				log.info("start phycial node " + name
+						+ " sucess.");
+			} else {
+				log.info("start phycial node " + name
+						+ " Failed: " + stdout);
+				throw new Exception("start phycial node " + name + " Failed: " + stdout);
+			}
+			log.info("The physical node " + asset.getName() 
+					+ " is started itself.");
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 
-	public void stop(Asset asset) {
-		log.info("The physical node " + asset.getName() 
-				+ " is stopped itself.");
+	public void stop(Asset asset) throws Exception {
+		PhysicalNode pn = new PhysicalNode(asset);
+		String mac = null;
+		String name = pn.getName();
+		
+		List<Nic> nicls  = pn.getNics();
+		for (int j = 0; j < nicls.size(); j++) {
+			Nic ll = (Nic) nicls.get(j);
+			String nicName = ll.getNicName();
+			if (nicName != null && nicName.matches("eth\\d++")) {
+				// The eth0:0 and eth0:1 will have the same mac address.
+				mac = ll.getMac();
+				break;
+			}
+		}
+		try {
+			StringBuffer cmdSB = new StringBuffer();
+			String cmd = XMMUtil.getOperatePhysicalNodeCmdInCfgFile();
+			if (cmd == null || "".equals(cmd)) {
+				log.error("can't get operatePhycialNodeCmd in Cfg file.");
+				throw new Exception("can't get operatePhycialNodeCmd "
+						+ "in Cfg file.");
+			}
+			cmdSB.append(cmd).append(" " + mac + " stop");
+			String stdout = XMMUtil.runCommand(cmdSB.toString());
+			if (stdout.trim().equals("true")) {
+				log.info("stop phycial node " + name
+						+ " sucess.");
+			} else {
+				log.info("stop phycial node " + name
+						+ " Failed: " + stdout);
+				throw new Exception("stop phycial node " + name + " Failed: " + stdout);
+			}
+			log.info("The physical node " + name 
+					+ " is stopped itself.");
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 
 }

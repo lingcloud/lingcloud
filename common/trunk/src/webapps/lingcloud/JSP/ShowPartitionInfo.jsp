@@ -205,12 +205,24 @@ function refreshPN(parID){
 							PhysicalNode hi = (PhysicalNode) pnl.get(i);
 					%>
 					<tr class="actionlog" id="ptNodeRrd<%=i + 1%>">
-						<td
+						<td align="center" width="25">
+							<a
 							onclick="<%vxc.refreshPhysicalNode(hi.getGuid());%>;JavaScript:showPartitionInfo('<%=basePath%>','<%=parid%>')"
-							style="cursor: pointer" align="center"><span><img
+							style="cursor: pointer" align="center"><img
 							title="<bean:message key="org.lingcloud.molva.xmm.refresh"/>"
 							src="<%=basePath%>/images/refresh.png"
-							style="border: medium none;" width="16" height="16" /></span></td>
+							style="border: medium none;" width="16" height="16" /></a><br />
+							<a
+							title="<bean:message key="org.lingcloud.molva.xmm.node.operate.start"/>"
+							href="javascript:showDialogForOperatePhysicalNode('<%=basePath%>','start','<%=hi.getGuid()%>','0');"><img
+							src="<%=basePath%>/images/poweron.png" style="border: medium none;"
+							width="16" height="16" /></a><br />
+							<a
+							title="<bean:message key="org.lingcloud.molva.xmm.node.operate.stop"/>"
+							href="javascript:showDialogForOperatePhysicalNode('<%=basePath%>','stop','<%=hi.getGuid()%>','<%=hi.getRunningVms()%>');"><img
+							src="<%=basePath%>/images/poweroff.pngvcd " style="border: medium none;"
+							width="16" height="16" /></a><br />
+						</td>
 						<td><img src="<%=basePath%>/images/phnode.png"
 							style="border: medium none;" width="16" height="16" /> <%=hi.getName()%>
 						| <font color="green"> <bean:message

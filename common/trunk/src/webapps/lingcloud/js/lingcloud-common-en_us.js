@@ -71,6 +71,13 @@ var lingcloud = {
 			unfoldMacInfo:'Unflod Network Information',
 			foldMacInfo:'Fold Network Information'
 		},
+		physicalNodeOp:{
+			title:'Operate Physical Node',
+			start:'start this physical node',
+			stop:'stop this physical node',
+			warn:'The physical node has running virtual node. ',
+			confirmTip:'Are you sure to '
+		},
 		virtualNodeOp:{
 			title:'Operate Virtual Node',
 			save:'save this virtual node',

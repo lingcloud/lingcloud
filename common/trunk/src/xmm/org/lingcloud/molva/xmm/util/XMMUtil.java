@@ -192,7 +192,11 @@ public class XMMUtil {
 		child.destroy();
 		return sb.toString();
 	}
-
+	
+	public static String getOperatePhysicalNodeCmdInCfgFile() throws Exception {
+		return getValueInCfgFile("operatePhysicalNodeCmd");
+	}
+	
 	public static String getTestPhysicalNodeCmdInCfgFile() throws Exception {
 		return getValueInCfgFile("testPhysicalNodeCmd");
 	}

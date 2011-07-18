@@ -526,6 +526,50 @@ showPartitionInfo = function (basePath, parid) {
     ajax.send(null);
 };
 
+callbackForOperatePhysicalNode = function (result) {
+    if (result) {
+    	try {
+            var form = document.getElementById("operatePhysicalNodeForm");
+            form.submit();
+    	}catch(e) {
+    		alert(e);
+    	}
+    } else {
+    }
+};
+
+showDialogForOperatePhysicalNode = function (basePath, action, pNodeGuid,runningVms) {
+	var strAction;
+	var title = lingcloud.Infrastructure.physicalNodeOp.title;
+	if(action === "start"){
+		strAction = lingcloud.Infrastructure.physicalNodeOp.start;
+	}
+	else if(action === "stop"){
+		strAction = lingcloud.Infrastructure.physicalNodeOp.stop;
+	}
+	else{
+		return ;
+	}
+	var str = "<form id=\"operatePhysicalNodeForm\" action=\"" 
+    			+ basePath + "operatePhysicalNodeAction.do\" method=\"post\">";
+    str += "<input type=\"hidden\" name=\"pNodeGuid\" value=\"" + pNodeGuid + "\" />";
+    str += "<input type=\"hidden\" name=\"action\" value=\"" + action + "\" />";
+    str += "<input type=\"hidden\" name=\"thispage\" value=\"/JSP/ViewVirtualCluster.jsp\" />";
+    if(runningVms === "0") {
+	    str += "<table width=\"400px\"><tbody><tr><td>&nbsp;&nbsp;"
+			+ lingcloud.Infrastructure.physicalNodeOp.confirmTip 
+			+ strAction + "?</td></tr></tbody></table>";
+    }
+    else {
+    	str += "<table width=\"400px\"><tbody><tr><td>&nbsp;&nbsp;"
+    		+ lingcloud.Infrastructure.physicalNodeOp.warn
+			+ lingcloud.Infrastructure.physicalNodeOp.confirmTip 
+			+ strAction + "?</td></tr></tbody></table>";
+    }
+    str += "</form>\n";	
+    jSubmit(str, title, callbackForOperatePhysicalNode);
+};
+
 callbackForOperateVirtualNode = function (result) {
     if (result) {
     	try {
