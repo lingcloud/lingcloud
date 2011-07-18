@@ -29,9 +29,11 @@ import org.lingcloud.molva.xmm.pojos.Partition;
 import org.lingcloud.molva.xmm.pojos.PhysicalNode;
 import org.lingcloud.molva.xmm.services.PartitionManager;
 import org.lingcloud.molva.xmm.services.VirtualManager;
+import org.lingcloud.molva.xmm.services.VirtualNetworkManager;
 import org.lingcloud.molva.xmm.util.XMMConstants;
 import org.lingcloud.molva.xmm.util.XMMUtil;
 import org.lingcloud.molva.xmm.vmc.VirtualClient;
+import org.lingcloud.molva.xmm.util.PNStaticMetaInfoParser;
 
 /**
  * <strong>Purpose:</strong><br>
@@ -47,6 +49,10 @@ public class PVNPNController extends AssetController {
 	private static Log log = LogFactory.getLog(PVNPNController.class);
 
 	private static String imageMgmtWay = null;
+
+	private static String metaInfoCollector = null;
+	
+	private static String metaInfoSender = null;
 
 	public static final String ONE_CLUSTER_ID = "ONE_CLUSTER_ID";
 
@@ -171,12 +177,61 @@ public class PVNPNController extends AssetController {
 				log.info("The physical node " + pn.getName() + " is stil booting.");
 				return pn;
 			}
-		} else {
-			VirtualClient vc = VirtualManager.getInstance().getVirtualClient();
-			PhysicalNode newpn = vc.getVMProvisionNode(pn);
+		} else if(pn.getRunningStatus().equals(
+				XMMConstants.MachineRunningState.RUNNING.toString())){
+			
+			if (metaInfoSender == null || "".equals(metaInfoSender)) {
+				metaInfoSender = XMMUtil.getStaticMetaInfoSenderInCfgFile();
+			}
+			if (metaInfoCollector == null || "".equals(metaInfoCollector)) {
+				metaInfoCollector = XMMUtil
+						.getStaticMetaInfoCollectorInCfgFile();
+			}
+			// XXX run command firstly. send when necessary.
+			String command = metaInfoCollector.replaceAll("\\$host",
+					pn.getPrivateIps()[0]);
+			String stdout = XMMUtil.runCommand(command);
+			if (stdout == null || "".equals(stdout)) {
+				String scommand = metaInfoSender.replaceAll("\\$host",
+						pn.getPrivateIps()[0]);
+				XMMUtil.runCommand(scommand);
+				log.debug("run command to send script : " + command);
+				// Run command again.
+				stdout = XMMUtil.runCommand(command);
+			}
+			if(stdout == null || "".equals(stdout))
+			{
+				
+			}
+			else {
+				log.debug("run command to get meta info : " + command);
+				PNStaticMetaInfoParser pnsmip = new PNStaticMetaInfoParser(stdout);
+				pn.setCpuArch(pnsmip.getARCH());
+				pn.setCpuModal(pnsmip.getMODELNAME());
+				pn.setHostName(pnsmip.getHOSTNAME());
+				
+				pn.setCpuNum(pnsmip.getCpuNum());
+				pn.setFreeCpu(pnsmip.getCpuNum());
+				pn.setCpuSpeed((int) pnsmip.getCpuSpeed());
+				
+				pn.setMemsize(pnsmip.getMem());
+				pn.setFreeMemory(pnsmip.getMem());
+				
+				// remove old ones.
+				VirtualNetworkManager.triggerNetworkInfoRemove(pn.getNics());
+				pn.setNics(pnsmip.getNics());
+				// add new ones.
+				VirtualNetworkManager.triggerNetworkInfoAdd(pn.getNics());
+				VirtualClient vc = VirtualManager.getInstance().getVirtualClient();
+				PhysicalNode newpn = vc.getVMProvisionNode(pn);
+				log.info("The physical node " + pn.getName()
+						+ "'s running status is " + newpn.getRunningStatus());
+				return newpn;
+			}
+		}
+		else {
 			log.info("The physical node " + pn.getName()
-					+ "'s running status is " + newpn.getRunningStatus());
-			return newpn;
+						+ "'s running status is " + pn.getRunningStatus());
 		}
 		return pn;
 	}
