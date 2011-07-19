@@ -164,7 +164,7 @@ public class PVNPNController extends AssetController {
 		if (pn.getRunningStatus() == null) {
 			throw new Exception("The physical node has a null running status.");
 		}
-		if (pn.getRunningStatus().equals(
+		/*if (pn.getRunningStatus().equals(
 				XMMConstants.MachineRunningState.BOOT.toString())
 				&& pn.getRedeployTagInCreate()) {
 			try {
@@ -177,7 +177,31 @@ public class PVNPNController extends AssetController {
 				log.info("The physical node " + pn.getName() + " is stil booting.");
 				return pn;
 			}
-		} else if(pn.getRunningStatus().equals(
+		}else */if (pn.getRunningStatus().equals(
+				XMMConstants.MachineRunningState.BOOT.toString())){
+			//FIXME The property of the physical node "isRedeployInCreate" is not in use.
+			// The former if block is not in function now.
+			StringBuffer cmdSB = new StringBuffer();
+			String cmd = XMMUtil.getOperatePhysicalNodeCmdInCfgFile();
+			if (cmd == null || "".equals(cmd)) {
+				log.error("can't get operatePhycialNodeCmd in Cfg file.");
+				throw new Exception("can't get operatePhycialNodeCmd "
+						+ "in Cfg file.");
+			}
+			cmdSB.append(cmd).append(" " + pn.getPrivateIps()[0] + " ping");
+			String stdout = XMMUtil.runCommand(cmdSB.toString());
+			if (stdout.trim().equals("true")) {
+				pn.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
+						.toString());
+				log.info("The phycial node " + pn.getName()
+						+ " is booting sucess.");
+			}
+			else {
+				log.info("The physical node " + pn.getName()
+						+ " is still booting.");
+			}
+		}
+		else if(pn.getRunningStatus().equals(
 				XMMConstants.MachineRunningState.RUNNING.toString())){
 			
 			if (metaInfoSender == null || "".equals(metaInfoSender)) {
@@ -270,7 +294,7 @@ public class PVNPNController extends AssetController {
 		return asset;
 	}
 
-	public void start(Asset asset) throws Exception {
+	public void stop(Asset asset) throws Exception {
 		PhysicalNode pn = new PhysicalNode(asset);
 		String[] ips = pn.getPrivateIps();
 		String name = pn.getName();
@@ -283,24 +307,24 @@ public class PVNPNController extends AssetController {
 				throw new Exception("can't get operatePhycialNodeCmd "
 						+ "in Cfg file.");
 			}
-			cmdSB.append(cmd).append(" " + ips[0] + " start");
+			cmdSB.append(cmd).append(" " + ips[0] + " stop");
 			String stdout = XMMUtil.runCommand(cmdSB.toString());
 			if (stdout.trim().equals("true")) {
-				log.info("start phycial node " + name
+				log.info("shutdown phycial node " + name
 						+ " sucess.");
 			} else {
-				log.info("start phycial node " + name
+				log.info("shutdown phycial node " + name
 						+ " Failed: " + stdout);
-				throw new Exception("start phycial node " + name + " Failed: " + stdout);
+				throw new Exception("shutdown phycial node " + name + " Failed: " + stdout);
 			}
 			log.info("The physical node " + asset.getName() 
-					+ " is started itself.");
+					+ " is shutdown itself.");
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
-	public void stop(Asset asset) throws Exception {
+	public void start(Asset asset) throws Exception {
 		PhysicalNode pn = new PhysicalNode(asset);
 		String mac = null;
 		String name = pn.getName();
@@ -323,18 +347,18 @@ public class PVNPNController extends AssetController {
 				throw new Exception("can't get operatePhycialNodeCmd "
 						+ "in Cfg file.");
 			}
-			cmdSB.append(cmd).append(" " + mac + " stop");
+			cmdSB.append(cmd).append(" " + mac + " start");
 			String stdout = XMMUtil.runCommand(cmdSB.toString());
 			if (stdout.trim().equals("true")) {
-				log.info("stop phycial node " + name
+				log.info("boot phycial node " + name
 						+ " sucess.");
 			} else {
-				log.info("stop phycial node " + name
+				log.info("boot phycial node " + name
 						+ " Failed: " + stdout);
-				throw new Exception("stop phycial node " + name + " Failed: " + stdout);
+				throw new Exception("boot phycial node " + name + " Failed: " + stdout);
 			}
 			log.info("The physical node " + name 
-					+ " is stopped itself.");
+					+ " is booting itself.");
 		} catch (Exception e) {
 			throw e;
 		}

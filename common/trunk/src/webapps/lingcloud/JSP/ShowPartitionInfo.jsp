@@ -213,12 +213,12 @@ function refreshPN(parID){
 							src="<%=basePath%>/images/refresh.png"
 							style="border: medium none;" width="16" height="16" /></a><br />
 							<a
-							title="<bean:message key="org.lingcloud.molva.xmm.node.operate.start"/>"
+							title="<bean:message key="org.lingcloud.molva.xmm.node.operate.boot"/>"
 							href="javascript:showDialogForOperatePhysicalNode('<%=basePath%>','start','<%=hi.getGuid()%>','0');"><img
 							src="<%=basePath%>/images/poweron.png" style="border: medium none;"
 							width="16" height="16" /></a><br />
 							<a
-							title="<bean:message key="org.lingcloud.molva.xmm.node.operate.stop"/>"
+							title="<bean:message key="org.lingcloud.molva.xmm.node.operate.shutdown"/>"
 							href="javascript:showDialogForOperatePhysicalNode('<%=basePath%>','stop','<%=hi.getGuid()%>','<%=hi.getRunningVms()%>');"><img
 							src="<%=basePath%>/images/poweroff.png" style="border: medium none;"
 							width="16" height="16" /></a><br />

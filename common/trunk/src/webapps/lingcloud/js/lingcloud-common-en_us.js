@@ -73,8 +73,8 @@ var lingcloud = {
 		},
 		physicalNodeOp:{
 			title:'Operate Physical Node',
-			start:'start this physical node',
-			stop:'stop this physical node',
+			boot:'boot this physical node',
+			shutdown:'shutdown this physical node',
 			warn:'The physical node has running virtual node. ',
 			confirmTip:'Are you sure to '
 		},

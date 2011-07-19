@@ -124,10 +124,24 @@ public class PPNPNController extends AssetController {
 		if (pn.getRunningStatus().equals(
 				XMMConstants.MachineRunningState.BOOT.toString())) {
 			try {
-				if (PartitionAC.getPhysicalNodeStatus(pn.getPrivateIps()[0])
-						.equals(PartitionAC.NODE_DEPLOY_STATUS_CLONED)) {
+				StringBuffer cmdSB = new StringBuffer();
+				String cmd = XMMUtil.getOperatePhysicalNodeCmdInCfgFile();
+				if (cmd == null || "".equals(cmd)) {
+					log.error("can't get operatePhycialNodeCmd in Cfg file.");
+					throw new Exception("can't get operatePhycialNodeCmd "
+							+ "in Cfg file.");
+				}
+				cmdSB.append(cmd).append(" " + pn.getPrivateIps()[0] + " ping");
+				String stdout = XMMUtil.runCommand(cmdSB.toString());
+				if (stdout.trim().equals("true")) {
 					pn.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
 							.toString());
+					log.info("The phycial node " + pn.getName()
+							+ " is booting sucess.");
+				}
+				else {
+					log.info("The physical node " + pn.getName()
+						+ " is still booting.");
 				}
 			}catch (RemoteException e) {
 				log.info("The physical node " + pn.getName() + " is stil booting.");
@@ -338,7 +352,7 @@ public class PPNPNController extends AssetController {
 		return pn;
 	}
 
-	public void start(Asset asset) throws Exception {
+	public void stop(Asset asset) throws Exception {
 		PhysicalNode pn = new PhysicalNode(asset);
 		String[] ips = pn.getPrivateIps();
 		String name = pn.getName();
@@ -351,24 +365,24 @@ public class PPNPNController extends AssetController {
 				throw new Exception("can't get operatePhycialNodeCmd "
 						+ "in Cfg file.");
 			}
-			cmdSB.append(cmd).append(" " + ips[0] + " start");
+			cmdSB.append(cmd).append(" " + ips[0] + " stop");
 			String stdout = XMMUtil.runCommand(cmdSB.toString());
 			if (stdout.trim().equals("true")) {
-				log.info("start phycial node " + name
+				log.info("shutdown phycial node " + name
 						+ " sucess.");
 			} else {
-				log.info("start phycial node " + name
+				log.info("shutdown phycial node " + name
 						+ " Failed: " + stdout);
-				throw new Exception("start phycial node " + name + " Failed: " + stdout);
+				throw new Exception("shutdown phycial node " + name + " Failed: " + stdout);
 			}
 			log.info("The physical node " + asset.getName() 
-					+ " is started itself.");
+					+ " is shutdown itself.");
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
-	public void stop(Asset asset) throws Exception {
+	public void start(Asset asset) throws Exception {
 		PhysicalNode pn = new PhysicalNode(asset);
 		String mac = null;
 		String name = pn.getName();
@@ -391,18 +405,18 @@ public class PPNPNController extends AssetController {
 				throw new Exception("can't get operatePhycialNodeCmd "
 						+ "in Cfg file.");
 			}
-			cmdSB.append(cmd).append(" " + mac + " stop");
+			cmdSB.append(cmd).append(" " + mac + " start");
 			String stdout = XMMUtil.runCommand(cmdSB.toString());
 			if (stdout.trim().equals("true")) {
-				log.info("stop phycial node " + name
+				log.info("boot phycial node " + name
 						+ " sucess.");
 			} else {
-				log.info("stop phycial node " + name
+				log.info("boot phycial node " + name
 						+ " Failed: " + stdout);
-				throw new Exception("stop phycial node " + name + " Failed: " + stdout);
+				throw new Exception("boot phycial node " + name + " Failed: " + stdout);
 			}
 			log.info("The physical node " + name 
-					+ " is stopped itself.");
+					+ " is booting itself.");
 		} catch (Exception e) {
 			throw e;
 		}

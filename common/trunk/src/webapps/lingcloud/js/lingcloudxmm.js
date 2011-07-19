@@ -542,10 +542,10 @@ showDialogForOperatePhysicalNode = function (basePath, action, pNodeGuid,running
 	var strAction;
 	var title = lingcloud.Infrastructure.physicalNodeOp.title;
 	if(action === "start"){
-		strAction = lingcloud.Infrastructure.physicalNodeOp.start;
+		strAction = lingcloud.Infrastructure.physicalNodeOp.boot;
 	}
 	else if(action === "stop"){
-		strAction = lingcloud.Infrastructure.physicalNodeOp.stop;
+		strAction = lingcloud.Infrastructure.physicalNodeOp.shutdown;
 	}
 	else{
 		return ;
