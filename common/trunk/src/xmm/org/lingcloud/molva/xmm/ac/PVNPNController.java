@@ -177,8 +177,11 @@ public class PVNPNController extends AssetController {
 				log.info("The physical node " + pn.getName() + " is stil booting.");
 				return pn;
 			}
-		}else */if (pn.getRunningStatus().equals(
-				XMMConstants.MachineRunningState.BOOT.toString())){
+		}else */
+		if (pn.getRunningStatus().equals(
+				XMMConstants.MachineRunningState.BOOT.toString())
+				|| pn.getRunningStatus().equals(
+						XMMConstants.MachineRunningState.ERROR.toString())){
 			//FIXME The property of the physical node "isRedeployInCreate" is not in use.
 			// The former if block is not in function now.
 			StringBuffer cmdSB = new StringBuffer();
@@ -200,6 +203,11 @@ public class PVNPNController extends AssetController {
 				log.info("The physical node " + pn.getName()
 						+ " is still booting.");
 			}
+		}
+		else if(pn.getRunningStatus().equals(
+				XMMConstants.MachineRunningState.SHUTDOWN.toString())){
+			log.info("The physical node " + pn.getName()
+						+ "'s running status is " + pn.getRunningStatus());
 		}
 		else if(pn.getRunningStatus().equals(
 				XMMConstants.MachineRunningState.RUNNING.toString())){
@@ -254,9 +262,16 @@ public class PVNPNController extends AssetController {
 			}
 		}
 		else {
+			
+			VirtualClient vc = VirtualManager.getInstance().getVirtualClient();
+			PhysicalNode newpn = vc.getVMProvisionNode(pn);
+			log.info("The physical node " + pn.getName()
+					+ "'s running status is " + newpn.getRunningStatus());
+			
 			log.info("The physical node " + pn.getName()
 						+ "'s running status is " + pn.getRunningStatus());
 		}
+		
 		return pn;
 	}
 

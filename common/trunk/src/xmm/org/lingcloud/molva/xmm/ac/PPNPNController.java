@@ -122,7 +122,9 @@ public class PPNPNController extends AssetController {
 			throw new Exception("The physical node has a null running status.");
 		}
 		if (pn.getRunningStatus().equals(
-				XMMConstants.MachineRunningState.BOOT.toString())) {
+				XMMConstants.MachineRunningState.BOOT.toString())
+				|| pn.getRunningStatus().equals(
+						XMMConstants.MachineRunningState.ERROR.toString())) {
 			try {
 				StringBuffer cmdSB = new StringBuffer();
 				String cmd = XMMUtil.getOperatePhysicalNodeCmdInCfgFile();
@@ -147,7 +149,13 @@ public class PPNPNController extends AssetController {
 				log.info("The physical node " + pn.getName() + " is stil booting.");
 				return pn;
 			}
-		} else if (pn.getRunningStatus().equals(
+		}
+		else if(pn.getRunningStatus().equals(
+				XMMConstants.MachineRunningState.SHUTDOWN.toString())){
+			log.info("The physical node " + pn.getName()
+						+ "'s running status is " + pn.getRunningStatus());
+		}
+		else if (pn.getRunningStatus().equals(
 				XMMConstants.MachineRunningState.RUNNING.toString())) {
 			if (metaInfoSender == null || "".equals(metaInfoSender)) {
 				metaInfoSender = XMMUtil.getStaticMetaInfoSenderInCfgFile();
