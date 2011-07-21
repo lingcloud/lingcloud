@@ -39,7 +39,7 @@ function start_pnnode
 function ping_pnnode
 {
 	# $1 is the ip of the physical machine
-	ping -c 5 $1 >/dev/null 2>/dev/null
+	ping -w 2 $1 >/dev/null 2>/dev/null
 	if [ "$?" != "0" ]
 	then
 		echo "$failed"
