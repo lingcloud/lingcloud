@@ -22,7 +22,8 @@ package org.lingcloud.molva.test.util;
  * 
  */
 public final class TestConstants {
-
+	public static final String LINGCLOUD_HOME = "/home/ricky/workspace/molva/molva_common/";
+	
 	public static final String TEST_LINGCLOUD_SERVER = "10.0.0.10";
 
 	public static final String TEST_XEN_SERVER = "10.0.0.10";
@@ -42,6 +43,19 @@ public final class TestConstants {
 
 	public static final long RETRY_INTERVAL = 5000;
 	
+	private TestConstants() {
+		
+	}
+	
+	/**
+	 * 
+	 * <strong>Purpose:</strong><br>
+	 * The browser for LingCloud Portal test.
+	 *
+	 * @version 1.0.0 2011-7-23<br>
+	 * @author Ruijian Wang<br>
+	 *
+	 */
 	public final class Browser {
 	/* Selenium supported browser list:
 	  *firefox
@@ -66,5 +80,9 @@ public final class TestConstants {
 		public static final String FIREFOX = "*firefox";
 		public static final String CHROME = "*googlechrome";
 		public static final String IE = "*iexplore";
+		
+		private Browser() {
+			
+		}
 	}
 }

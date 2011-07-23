@@ -32,5 +32,9 @@ public class TestUtils {
 	public static String getBrowser() {
 		return browser;
 	}
+	
+	private TestUtils() {
+		
+	}
 
 }
