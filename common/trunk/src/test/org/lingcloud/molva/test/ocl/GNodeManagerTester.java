@@ -10,13 +10,16 @@
  * http://lingcloud.org 
  * 
  */
-package org.lingcloud.molva.ocl.persistence;
+package org.lingcloud.molva.test.ocl;
 
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.lingcloud.molva.ocl.persistence.GNode;
+import org.lingcloud.molva.ocl.persistence.GNodeConstants;
+import org.lingcloud.molva.ocl.persistence.GNodeManager;
 import org.lingcloud.molva.ocl.util.HashFunction;
 
 import org.junit.Before;

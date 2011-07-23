@@ -22,7 +22,7 @@ package org.lingcloud.molva.test.util;
  * 
  */
 public final class TestConstants {
-	public static final String LINGCLOUD_HOME = "/home/ricky/workspace/molva/molva_common/";
+	public static final String LINGCLOUD_HOME = ".";
 	
 	public static final String TEST_LINGCLOUD_SERVER = "10.0.0.10";
 
