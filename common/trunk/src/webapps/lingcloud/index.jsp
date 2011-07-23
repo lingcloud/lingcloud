@@ -5,6 +5,7 @@
 <%@ page import="java.io.File"%>
 <%@ page import="java.io.FileInputStream"%>
 <%@ page import="java.io.InputStreamReader"%>
+<%@ page import="org.lingcloud.molva.portal.util.AccessControl"%>
 <%@ page import="org.lingcloud.molva.xmm.vam.util.VAMConfig"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -70,10 +71,16 @@
 <div id="container"><!-- header -->
 <%@ include file="JSP/BannerAndMenu.jsp" %>
 <!--end header --> <!-- main -->
+
 <div id="main">
+<div id="mainright">
+<div id="loginbox">
+<%@ include file="JSP/IndexAccessControl.jsp" %>
+</div>
 <div id="sidebar"><!-- InstanceBeginEditable name="EditRegion3" -->
 	<%@ include file="JSP/Lingcloud_roadmap.jsp" %>
 <!-- InstanceEndEditable --></div>
+</div>
 <div id="text"><!-- InstanceBeginEditable name="EditRegion4" -->
 	<%@ include file="JSP/Lingcloud_intro.jsp" %>
 </div>

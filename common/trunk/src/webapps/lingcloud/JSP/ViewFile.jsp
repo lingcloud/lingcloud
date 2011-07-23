@@ -8,6 +8,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ page isELIgnored="false"%>
+<%@ page import="org.lingcloud.molva.portal.util.AccessControl"%>
 <%String path = request.getContextPath();
 			String basePath = request.getScheme() + "://"
 					+ request.getServerName() + ":" + request.getServerPort()
@@ -48,6 +49,7 @@
 </head>
 
 <body>
+<%@ include file="OtherAccessControl.jsp" %>
 <!-- container -->
 <div id="container"><!-- header -->
 <div id="logo"><a href="#"> <img

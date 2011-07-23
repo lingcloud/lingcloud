@@ -209,6 +209,13 @@
 			<form-property name="description" type="java.lang.String"></form-property>
 			<form-property name="thispage" type="java.lang.String"></form-property>
 		</form-bean>
+		<form-bean name="loginForm"  dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+        	<form-property name="username" type="java.lang.String"></form-property>
+			<form-property name="password" type="java.lang.String"></form-property>
+        </form-bean>
+        <form-bean name="logoutForm"  dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+        </form-bean>
+        
 	</form-beans>
 
 	<!--Set global exception handling -->
@@ -331,6 +338,14 @@
 			<forward name="success" path="/JSP/ViewVirtualAppliance.jsp" />
 			<forward name="failure" path="/JSP/ViewVirtualAppliance.jsp" />
 		</action>
+		<action path="/login" type="org.lingcloud.molva.portal.struts.action.LoginAction" name="loginForm" scope="session" validate="false">
+           <forward name="success" path="/index.jsp" />
+           <forward name="failure" path="/JSP/LoginErrorJump.jsp" />
+        </action>
+        <action path="/logout" type="org.lingcloud.molva.portal.struts.action.LogoutAction" name="logoutForm" scope="session" validate="false">
+           <forward name="success" path="/index.jsp" />
+           <forward name="failure" path="/index.jsp" />
+        </action>
 	</action-mappings>
 
 	<!--Config message resource file -->

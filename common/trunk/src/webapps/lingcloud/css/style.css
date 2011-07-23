@@ -66,14 +66,18 @@ a:hover {
 	line-height: 16px;
 	color: #21334a;
 }
-
+#mainright {
+	float:right;
+	width:224px;
+	}
 #sidebar {
-	float: right;
-	width: 224px;
-	padding: 0 37px 30px 0;
+	padding: 0px 37px 30px 0;
 	margin-top: 10px;
 }
+#loginbox {
 
+	padding: 10px 37px 0px 0;
+}
 #sidebar h3 {
 	text-transform: capitalize;
 	font-size: 16px;

@@ -296,6 +296,7 @@
 				<include name="hibernate*.jar" />
 				<include name="jdom*.jar" />
 				<include name="jta*.jar" />
+				<include name="JPam-1.1.jar" />
 				<include name="mysql-connector-java-*-bin.jar" />
 				<include name="one-oca-*.jar" />
 				<include name="ws-commons-util-*.jar" />

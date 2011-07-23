@@ -27,6 +27,7 @@
 <%@page import="java.io.*" %>
 <%@page import="org.lingcloud.molva.portal.util.XMMPortalUtil" %>
 <%@page import="org.lingcloud.molva.xmm.vam.util.*" %>
+<%@ page import="org.lingcloud.molva.portal.util.AccessControl"%>
 <%@page import="org.apache.struts.Globals"%>
 <%@page import="org.apache.commons.logging.Log"%>
 <%@page import="org.apache.commons.logging.LogFactory"%>
@@ -1284,6 +1285,7 @@ a {
 %>
 </head>
 <body>
+<%@ include file="OtherAccessControl.jsp" %>
 <h2>Content of <%=conv2Html(f.getName())%></h2>
 <br />
 <table class="filelist" cellspacing="1px" cellpadding="0px">

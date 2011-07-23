@@ -9,6 +9,7 @@
 <%@ page import="org.apache.struts.Globals"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ page import="org.lingcloud.molva.portal.util.AccessControl"%>
 <%@ page isELIgnored="false"%>
 <%String path = request.getContextPath();
 			String basePath = request.getScheme() + "://"
@@ -151,6 +152,7 @@
 </head>
 
 <body>
+<%@ include file="OtherAccessControl.jsp" %>
 <script type="text/javascript">
 		
 	</script>

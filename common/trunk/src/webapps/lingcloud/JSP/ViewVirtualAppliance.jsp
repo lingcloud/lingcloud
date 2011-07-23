@@ -4,6 +4,7 @@
 <%@ page import="org.lingcloud.molva.xmm.vam.util.*"%>
 <%@ page import="org.lingcloud.molva.xmm.vam.pojos.*"%>
 <%@ page import="org.lingcloud.molva.xmm.vam.services.*"%>
+<%@ page import="org.lingcloud.molva.portal.util.AccessControl"%>
 <%@ page import="org.apache.struts.Globals"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -83,6 +84,7 @@ var title=lingcloud.upload.disk;
 </head>
 
 <body onload="applianceManagementTab('<%=basePath%>')">
+<%@ include file="OtherAccessControl.jsp" %>
 <!-- container -->
 <div id="container"><!-- header -->
 <%@ include file="BannerAndMenu.jsp" %>

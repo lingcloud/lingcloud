@@ -4,6 +4,7 @@
 <%@ page import="org.lingcloud.molva.xmm.vam.services.*"%>
 <%@ page import="org.lingcloud.molva.portal.util.XMMPortalUtil"%>
 <%@ page import="org.apache.struts.Globals"%>
+<%@ page import="org.lingcloud.molva.portal.util.AccessControl"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ page isELIgnored="false"%>
@@ -121,6 +122,7 @@
 </head>
 
 <body>
+<%@ include file="OtherAccessControl.jsp" %>
 <div id="container"><!-- header -->
 <%@ include file="BannerAndMenu.jsp" %>
 <!--end header --> <!-- main -->

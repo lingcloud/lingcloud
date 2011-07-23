@@ -442,4 +442,17 @@ public class XMMUtil {
 	public static String getImageMgmtWay() throws Exception {
 		return getValueInCfgFile("imageMgmtWay");
 	}
+	
+	public static boolean getAccessControlEnable() throws Exception {
+		String accessControlEnable = getValueInCfgFile("accessControlEnable");
+		return accessControlEnable.equals("true");
+	}
+	
+	public static String getAccessControlAdminGroup() throws Exception {
+		return getValueInCfgFile("accessControlAdminGroup");
+	}	
+	
+	public static String getUtilityScriptsPath() throws Exception {
+		return getValueInCfgFile("utilityScriptsPath");
+	}
 }
