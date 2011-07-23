@@ -1,5 +1,5 @@
 /* 
- * @(#)AuthenticateUserAction.java Jan 3, 2008 
+ * @(#)LogoutAction.java Jul 18, 2011
  *  
  * Copyright (C) 2008-2011, 
  * LingCloud Team, 

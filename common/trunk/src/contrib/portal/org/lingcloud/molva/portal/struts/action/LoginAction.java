@@ -1,5 +1,5 @@
 /* 
- * @(#)AuthenticateUserAction.java Jan 3, 2008 
+ * @(#)LoginAction.java Jul 18, 2011
  *  
  * Copyright (C) 2008-2011, 
  * LingCloud Team, 
@@ -60,14 +60,11 @@ public class LoginAction extends NeedLoginAction {
 
 			}
 			username = username.trim();
-			password = password.trim();
-
 			
 			log.info("username:"+username+"\n"+"password:"+password);
 			
-			
 			AccessControl ac = new AccessControl();
-			ac.username = username;
+			ac.setUsername(username);
 			boolean result = ac.Authenticate(username, password);
 			HttpSession session = request.getSession();
 			if (result == true)

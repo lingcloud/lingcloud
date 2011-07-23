@@ -14,7 +14,7 @@ function clock()
 { 
    window.setTimeout('clock()',1000); 
    times=times-1; 
-   time.innerHTML =times; 
+   time.innerHTML=times; 
 } 
 </script>
 <head>
@@ -26,21 +26,12 @@ function clock()
 <div id = "body">
 <table style="margin-top:10%;" align = center WIDTH=75%   BORDER=0  background=<%=basePath%>images/main.png>
 <tr>
-<td align = center ><bean:message key="org.lingcloud.molva.portal.loginerror" /></font></td>
+<td align = center ><bean:message key="org.lingcloud.molva.portal.loginerror" /></td>
 </tr> 
 <tr> 
-<td  align = center><bean:message key="org.lingcloud.molva.portal.beforeJumpsecond" /></font> </td> 
-</tr>
-<tr>
-<td  align = center> <div id= "time"> 3 </div> </td> 
-</tr>
-<tr>
-<td  align = center><bean:message key="org.lingcloud.molva.portal.afterJumpsecond" /></font> </td> 
+<td  align = center><bean:message key="org.lingcloud.molva.portal.beforeJumpsecond" />&nbsp;<span id= "time">3</span>&nbsp;<bean:message key="org.lingcloud.molva.portal.afterJumpsecond" /></td>
 </tr>
 </table> 
 </div>
 </body>
 </html>
- 
-
-

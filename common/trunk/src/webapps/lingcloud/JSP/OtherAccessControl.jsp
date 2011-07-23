@@ -7,12 +7,9 @@
     if (ac == null)
     {
     	ac = new AccessControl();
-        //if the AccessControl service if used, the login dialoge is shown
+        //if the AccessControl service if used, the login dialog is shown
     	if (ac.isAccessControlEnabled() == true)
     	{
-    	%>
-    	no login o!
-    	<%
     		    response.sendRedirect("LoginErrorJump.jsp");
                 return;
      	}

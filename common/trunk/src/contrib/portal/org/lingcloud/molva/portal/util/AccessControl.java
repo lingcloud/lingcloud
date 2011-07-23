@@ -1,5 +1,5 @@
 /* 
- * @(#)Json.java 2009-10-6 
+ * @(#)AccessControl.java Jul 18, 2011
  *  
  * Copyright (C) 2008-2011, 
  * LingCloud Team, 
@@ -31,21 +31,21 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
 public class AccessControl {
 	
 	//identify if the AccessControl service is opened
-	boolean isOpen;
+	private boolean isEnabled;
 	
 	//the admin group that allowed to access
-	String adminGroup;
+	private String adminGroup;
 	
 	//path of the executeable script
-	String shPath; 
+	private String shPath; 
 	
 	//name of the user 
-	public String username;
+	private String username;
 		
-	//status of a user(admin,invalid or usused)
+	//status of a user(admin, invalid or usused)
 	public enum accessControlStatus 
 	{
-		ADMIN, INVALID, UNUSED,DEFAULT;
+		ADMIN, INVALID, UNUSED;
 	}
 	
 	//the enum Variable
@@ -56,10 +56,10 @@ public class AccessControl {
 	//Initial function which reads the profile
 	public AccessControl() throws Exception
 	{
-		isOpen = XMMUtil.getAccessControlEnable();
+		isEnabled = XMMUtil.getAccessControlEnable();
 		adminGroup = XMMUtil.getAccessControlAdminGroup();
 		shPath = XMMUtil.getUtilityScriptsPath()+"/isUserInGroup.sh";
-		setStatus(accessControlStatus.DEFAULT);
+		setStatus(accessControlStatus.INVALID);
 	}
 	
     //get the status of the user
@@ -72,14 +72,10 @@ public class AccessControl {
 		this.status = status;
 	}
 
-	
 	//the function return whether the AccessControl is opened
 	public boolean isAccessControlEnabled()
 	{
-		if (isOpen == true) 
-			return true;
-		else 
-			return false;
+		return isEnabled;
 	}
 		
 	//the function judge whether the user is existed in system through PAM authentication
@@ -94,8 +90,8 @@ public class AccessControl {
 	public boolean isAdmin(String username) throws Exception
 	{
            boolean result;
-           result = isUserInGroup(username,adminGroup);
-           log.info("the isAdimin result is:"+result+"\n");
+           result = isUserInGroup(username, adminGroup);
+           log.info("the isAdmin result is:"+result+"\n");
            return result;
 	}
 	
@@ -124,6 +120,14 @@ public class AccessControl {
 		}
 		else 
 			return false;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 
 }
