@@ -74,3 +74,7 @@ SET_SETUP_VNC=0
 SETUP_VNC_SCRIPT=setup-vnc.sh
 # ARGS: [VNC_USER]
 SETUP_VNC_SCRIPT_ARGS="root"
+
+# Set it to 1 if you want to setup PAM configuration for JPam
+SET_PAM_CONF=0
+PAM_CONF_AC_TYPE=unix
