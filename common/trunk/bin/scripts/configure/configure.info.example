@@ -62,7 +62,7 @@ MAKE_APPLIANCE_HOST=10.0.0.12
 MAKE_APPLIANCE_IP_POOL=10.0.0.231-235
 
 # whether enable access control for portal (true/false)
-ACCESS_CONTROL_ENABLE=true
+ACCESS_CONTROL_ENABLE=false
 
 # the admin group name for for access control
 ACCESS_CONTROL_ADMIN=lingcloudadmin
