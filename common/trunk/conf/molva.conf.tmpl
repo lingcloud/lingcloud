@@ -79,14 +79,11 @@ nfsHost="${NFS_SERVER}"
 # remote story host user
 nfsUser="root"
 
-# the max number of snapshot one appliance supports
-supportSnapshotNum="8"
+# the default virtual disk image format 
+imageFormat="raw"
 
-# the max count of redundant copies of a appliance
-maxRedundantInstance="2"
-
-# the min count of redundant copies of a appliance
-minRedundantInstance="1"
+# the snapshot image format
+snapshotImageFormat="qcow"
 
 # the host used to make appliance
 makeApplianceHost="${MAKE_APPLIANCE_HOST}"

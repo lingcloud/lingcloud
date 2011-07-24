@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.lingcloud.molva.xmm.vam.daos.DaoFactory;
 import org.lingcloud.molva.xmm.vam.daos.VAFileDao;
-import org.lingcloud.molva.xmm.vam.pojos.VADisk;
 import org.lingcloud.molva.xmm.vam.pojos.VAFile;
 import org.lingcloud.molva.xmm.vam.util.VAMConfig;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
@@ -97,7 +96,7 @@ class FileOperation {
 			VAFileDao fileDao = DaoFactory.getVAFileDao();
 
 			// update the file
-			vafile.setState(VAMConstants.STATE_MOVING);
+			vafile.setState(VAMConstants.STATE_PROCESSING);
 			vafile.setOperationType(VAMConstants.VAO_OPERATION_TYPE_MOVE_FILE);
 			vafile.setSrcPath(srcPath);
 			vafile.setTimestamp(getTimestamp());
@@ -143,7 +142,7 @@ class FileOperation {
 			VAFileDao fileDao = DaoFactory.getVAFileDao();
 
 			// update the file
-			vafile.setState(VAMConstants.STATE_DELETING);
+			vafile.setState(VAMConstants.STATE_PROCESSING);
 			vafile.setOperationType(
 					VAMConstants.VAO_OPERATION_TYPE_DELETE_FILE);
 			vafile.setSrcPath(path);
@@ -153,7 +152,7 @@ class FileOperation {
 		
 		// add task to the thread pool
 		OperationThread.getInstance().addTask(VAMConstants.TASK_TYPE_REMOVE,
-				taskFunc, vafile, VAMConstants.STATE_READY,
+				taskFunc, vafile, VAMConstants.STATE_DELETED,
 				VAMConstants.STATE_ERROR, cmdList,
 				VAMConstants.THREAD_TYPE_LIGHT);
 	}
@@ -181,24 +180,10 @@ class FileOperation {
 		VAFileDao fileDao = DaoFactory.getVAFileDao();
 
 		// update file
-		vafile.setState(VAMConstants.STATE_COPING);
+		vafile.setState(VAMConstants.STATE_PROCESSING);
 		vafile.setOperationType(VAMConstants.VAO_OPERATION_TYPE_COPY_FILE);
 		vafile.setSrcPath(srcPath);
 		vafile.setTimestamp(getTimestamp());
-
-		VADisk vadisk = new VADisk(vafile);
-
-		// create the directory
-		VAMUtil.createDirectory(vafile.getSavePath());
-		// create a command list and add create virtual disk command
-		List<String> createCmdList = new ArrayList<String>();
-		if (host == null || user == null) {
-			host = VAMConfig.getNfsHost();
-			user = VAMConfig.getNfsUser();
-		}
-		String command = VAMUtil.getCreateDiskCommand(host, user,	
-				vafile.getFormat(), dstPath, vadisk.getCapacity(), srcPath);
-		createCmdList.add(command);
 
 		// create a command list and add copy file command, move file command, 
 		// copy the disk to temporary directory, 
@@ -206,9 +191,12 @@ class FileOperation {
 		List<String> copyCmdList = new ArrayList<String>();
 		String tempPath = VAMConfig.getTempDirLocation()
 				+ vafile.getLocation();
+		// create the directory
+		VAMUtil.createDirectory(vafile.getSavePath());
 		VAMUtil.createDirectory(VAMConfig.getTempDirLocation()
 				+ vafile.getLocation());
-		command = VAMUtil.getCopyFileCommand(host, user, srcPath, tempPath);
+		String command = VAMUtil.getCopyFileCommand(host, user, srcPath, 
+				tempPath);
 		copyCmdList.add(command);
 		command = VAMUtil.getMoveFileCommand(host, user, tempPath, dstPath);
 		copyCmdList.add(command);
@@ -216,12 +204,6 @@ class FileOperation {
 		// update the file
 		fileDao.update(vafile);
 
-		// add create disk task to thread pool
-		OperationThread.getInstance().addTask(VAMConstants.TASK_TYPE_UPDATE,
-				taskFunc, vafile, VAMConstants.STATE_COPING,
-				VAMConstants.STATE_ERROR, createCmdList,
-				VAMConstants.THREAD_TYPE_IDLE);
-		
 		// add copy disk task to thread pool
 		OperationThread.getInstance().addTask(VAMConstants.TASK_TYPE_COPY,
 				taskFunc, vafile, VAMConstants.STATE_READY,
@@ -265,7 +247,7 @@ class FileOperation {
 			VAFileDao fileDao = DaoFactory.getVAFileDao();
 			
 			// update the file
-			vafile.setState(VAMConstants.STATE_CONVERTING);
+			vafile.setState(VAMConstants.STATE_PROCESSING);
 			vafile.setOperationType(
 					VAMConstants.VAO_OPERATION_TYPE_CONVERT_FORMAT);
 			vafile.setSrcPath(srcPath);
@@ -315,7 +297,7 @@ class FileOperation {
 		VAFileDao fileDao = DaoFactory.getVAFileDao();
 		
 		// update the file
-		vafile.setState(VAMConstants.STATE_CONVERTING);
+		vafile.setState(VAMConstants.STATE_PROCESSING);
 		vafile.setOperationType(VAMConstants.VAO_OPERATION_TYPE_CREATE_DISK);
 		vafile.setSrcPath(path);
 		vafile.setTimestamp(getTimestamp());
@@ -359,6 +341,7 @@ class FileOperation {
 		VAFileDao fileDao = DaoFactory.getVAFileDao();
 
 		// update the file
+		vafile.setState(VAMConstants.STATE_PROCESSING);
 		vafile
 			.setOperationType(VAMConstants.VAO_OPERATION_TYPE_CREATE_SNAPSHOT);
 		vafile.setSrcPath(backingPath);

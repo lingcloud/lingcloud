@@ -28,6 +28,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 import org.lingcloud.molva.portal.util.XMMPortalUtil;
 import org.lingcloud.molva.xmm.vam.pojos.VirtualAppliance;
 import org.lingcloud.molva.xmm.vam.services.VirtualApplianceManager;
+import org.lingcloud.molva.xmm.vam.util.VAMConfig;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
 import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 
@@ -72,7 +73,7 @@ public class MakeNewVirtualApplianceAction extends NeedLoginAction {
 						+ "name, os, memsize, disk capacity, " + "cpu amount!");
 			}
 
-			format = VAMConstants.VAF_FORMAT_DEFAULT;
+			format = VAMConfig.getImageFormat();
 			loader = VAMConstants.VA_BOOTLOAD_HVM;
 
 			name = name.trim();

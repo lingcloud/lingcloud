@@ -202,7 +202,7 @@ var lingcloud = {
 			application:'Applications',
 			disk:'Capacity',
 			size:'Size',
-			format:'Format',
+			state:'State',
 			detail:'Detail',
 			more:'More',
 			tip4AddAppliance:'Add Appliance',

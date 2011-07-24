@@ -84,15 +84,21 @@ public class VAMConstants {
 	
 	public static final String VAF_FORMAT_QCOW = "qcow";
 	
+	public static final String VAF_FORMAT_QCOW_2 = "qcow2";
+	
 	public static final String VAF_FORMAT_VMDK = "vmdk";
 	
-	public static final String VAF_FORMAT_DEFAULT = "qcow";
+	public static final String VAF_FORMAT_SNAPSHOT = "qcow";
+	
+	public static final String VAF_FORMAT_DEFAULT = "raw";
 	
 	public static final String VAF_FORMAT_TEXT = "text";
 	
 	public static final String VAF_PARENT = "parent";
 	
 	public static final String VAF_REF = "ref";
+	
+	public static final String VAF_REPLICA = "replica";
 	
 	public static final String VAD_CAPACITY = "capacity";
 	
@@ -224,6 +230,8 @@ public class VAMConstants {
 	public static final int STATE_ERROR = 128;
 
 	public static final int STATE_MAKING = 256;
+	
+	public static final int STATE_PROCESSING = 512;
 	
 	public static final int TASK_TYPE_CREATE = 1;
 	

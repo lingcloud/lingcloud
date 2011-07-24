@@ -25,7 +25,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 import org.lingcloud.molva.portal.util.XMMPortalUtil;
 import org.lingcloud.molva.xmm.vam.pojos.VirtualAppliance;
 import org.lingcloud.molva.xmm.vam.services.VirtualApplianceManager;
-import org.lingcloud.molva.xmm.vam.util.VAMConstants;
+import org.lingcloud.molva.xmm.vam.util.VAMConfig;
 import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 
 /**
@@ -64,7 +64,7 @@ public class MakeByExistedVirtualApplianceAction extends NeedLoginAction {
 						+ "appliance, name,  memsize!");
 			}
 
-			format = VAMConstants.VAF_FORMAT_DEFAULT;
+			format = VAMConfig.getSnapshotImageFormat();
 
 			appGuid = appGuid.trim();
 			name = name.trim();
@@ -88,7 +88,7 @@ public class MakeByExistedVirtualApplianceAction extends NeedLoginAction {
 			VirtualAppliance va = new VirtualAppliance();
 			if (action.equals("add")) {
 				va.setVAName(name);
-				va.setFormat("qcow");
+				va.setFormat(format);
 			} else if (action.equals("modify")) {
 				va.setGuid(appGuid);
 			} else {

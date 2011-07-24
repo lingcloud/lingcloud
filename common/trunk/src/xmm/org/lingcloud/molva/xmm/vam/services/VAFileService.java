@@ -28,9 +28,9 @@ import java.util.regex.Pattern;
 import org.lingcloud.molva.xmm.vam.daos.DaoFactory;
 import org.lingcloud.molva.xmm.vam.daos.VAFileDao;
 import org.lingcloud.molva.xmm.vam.pojos.VADisk;
+import org.lingcloud.molva.xmm.vam.pojos.VADisk.DiskInfo;
 import org.lingcloud.molva.xmm.vam.pojos.VAFile;
 import org.lingcloud.molva.xmm.vam.pojos.VAObject;
-import org.lingcloud.molva.xmm.vam.util.DiskInfo;
 import org.lingcloud.molva.xmm.vam.util.VAMConfig;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
 import org.lingcloud.molva.xmm.vam.util.VAMUtil;
@@ -107,10 +107,12 @@ public class VAFileService implements TaskFunction {
 		} else if (fileType.equals(VAMConstants.VAF_FILE_TYPE_DISK)) {
 			if (!format.equals(VAMConstants.VAF_FORMAT_RAW)
 					&& !format.equals(VAMConstants.VAF_FORMAT_QCOW)
+					&& !format.equals(VAMConstants.VAF_FORMAT_QCOW_2)
 					&& !format.equals(VAMConstants.VAF_FORMAT_VMDK)) {
 				throw new Exception("The disk format must be "
-						+ VAMConstants.VAF_FORMAT_RAW + ","
-						+ VAMConstants.VAF_FORMAT_QCOW + ","
+						+ VAMConstants.VAF_FORMAT_RAW + ", "
+						+ VAMConstants.VAF_FORMAT_QCOW + ", "
+						+ VAMConstants.VAF_FORMAT_QCOW_2 + ", "
 						+ VAMConstants.VAF_FORMAT_VMDK);
 			}
 		} else if (fileType.equals(VAMConstants.VAF_FILE_TYPE_CONFIG)) {
@@ -245,19 +247,18 @@ public class VAFileService implements TaskFunction {
 					backingFile = info.getBackingFile();
 				}
 				if (format != null && format.equalsIgnoreCase(
-						VAMConstants.VAF_FORMAT_DEFAULT)
+						VAMConfig.getImageFormat())
 						&& backingFile == null) {
 					VADisk disk = new VADisk(vafile);
 					disk.setCapacity(info.getVirtualSize());
 					disk.setSize(info.getDiskSize());
-					VAMUtil.outputLog("Capacity: " + info.getVirtualSize());
 
 					FileOperation.getInstance().moveFile(
 							VAMConfig.getNfsHost(), VAMConfig.getNfsUser(),
 							disk, storeLoc, disk.getSavePath(), this);
 				} else {
 					convertDiskFormat(vafile, storeLoc,
-							VAMConstants.VAF_FORMAT_DEFAULT, deleteSrcFile);
+							VAMConfig.getImageFormat(), deleteSrcFile);
 				}
 
 			} else if (storeLoc != null) { // move file
@@ -342,6 +343,7 @@ public class VAFileService implements TaskFunction {
 		VADisk vadisk = new VADisk(vafile);
 		vadisk.setCapacity(srcDisk.getCapacity());
 		vadisk.setParent(srcFile.getGuid());
+		vadisk.setReplica(true);
 
 		// get file data access object
 		VAFileDao fileDao = DaoFactory.getVAFileDao();
@@ -460,32 +462,15 @@ public class VAFileService implements TaskFunction {
 		// check file type
 		checkDiskType(srcFile);
 
-		// if the file has parent file, it can't create snapshot
-		if (!srcFile.getParent().equals(VAMConstants.NULL)) {
-			throw new Exception("Can't create the disk's snapshot");
-		}
-
 		// get file data access object
 		VAFileDao fileDao = DaoFactory.getVAFileDao();
 
-		// query the file by GUID
-		VAFile instance = fileDao.query(srcFile.getGuid(), VAMConfig
-				.getSupportSnapshotNum(), VAMConstants.TYPE_SMALLER);
-		if (instance == null) {
-			instance = copyDisk(srcFile);
-		}
-
-		if (instance == null) {
-			throw new Exception("Can't get file");
-		}
-
-		VADisk instDisk = new VADisk(instance);
+		VADisk instDisk = new VADisk(srcFile);
 
 		// create new disk and set parent
 		VADisk vadisk = new VADisk(dstFile);
 		vadisk.setCapacity(instDisk.getCapacity());
-		vadisk.setParent(instance.getGuid());
-		vadisk.setState(instance.getState());
+		vadisk.setParent(srcFile.getGuid());
 
 		// add the file to the database
 		dstFile = fileDao.add(vadisk);
@@ -499,12 +484,11 @@ public class VAFileService implements TaskFunction {
 			if (host == null || user == null) {
 				host = VAMConfig.getNfsHost();
 				user = VAMConfig.getNfsUser();
-				path = dstFile.getSavePath();
-				backingPath = instance.getSavePath();
-			} else {
-				path = dstFile.getSavePath();
-				backingPath = instance.getSavePath();
 			}
+			
+			path = dstFile.getSavePath();
+			backingPath = srcFile.getSavePath();
+			
 			// create snapshot
 			FileOperation.getInstance().createSnapshot(dstFile, host, user,
 					path, backingPath, this);
@@ -760,168 +744,34 @@ public class VAFileService implements TaskFunction {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #updateCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
-	 */
-	public void updateCallBack(VAObject obj) throws Exception {
-		// get file data access object
-		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		VAFile file = new VAFile(obj);
-
-		// if the operation is create snapshot do nothing
-		if (file.getOperationType() 
-				== VAMConstants.VAO_OPERATION_TYPE_CREATE_SNAPSHOT) {
-			if (file.getState() != VAMConstants.STATE_ERROR) {
-				return;
-			}
-		}
-
-		// update the file
-		file = fileDao.query(obj.getGuid());
-		// a small bug, 2010-08-23.should check the object whether is null.
-		if (file == null || file.getState() == VAMConstants.STATE_READY) {
-			return;
-		}
-		file.setState(obj.getState());
-		fileDao.update(file);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #createCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
-	 */
-	public void removeCallBack(VAObject obj) throws Exception {
-		// get file data access object
-		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		if (obj.getState() == VAMConstants.STATE_ERROR) {
-			return;
-		}
-
-		// if the file type is not disk do nothing
-		VAFile vafile = new VAFile(obj);
-		if (vafile.getFileType().equals(VAMConstants.VAF_FILE_TYPE_DISK)) {
-			int count = VAMConfig.getMaxRedundantInstance();
-			String baseGuid;
-			if (vafile.getParent().equals(VAMConstants.NULL)) { // base disk
-				count = 0;
-				baseGuid = vafile.getGuid();
-			} else {
-				vafile = fileDao.query(vafile.getParent());
-				// instance
-				if (vafile == null 
-						|| vafile.getParent().equals(VAMConstants.NULL)) {
-					return;
-				}
-				baseGuid = vafile.getParent();
-				// base disk
-				vafile = fileDao.query(vafile.getParent());
-				if (vafile == null) {
-					count = 0;
-				}
-			}
-
-			// remove redundant disk
-			removeRedundantDisk(count, baseGuid);
-		}
-
-		// remove the file
-		fileDao.remove(obj.getGuid());
-	}
+	
 
 	/**
-	 * remove redundant disk.
+	 * remove replicas.
 	 * 
-	 * @param count
-	 *            max redundant disk amount
-	 * @param baseGuid
-	 *            base disk GUID
+	 * @param guid
+	 *            file's GUID
 	 * @throws Exception
 	 */
-	public synchronized void removeRedundantDisk(int count, String baseGuid)
+	public synchronized void removeReplicas(String guid)
 			throws Exception {
 		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		while (fileDao.getUnusedCount(baseGuid) > count) {
-
-			VAFile instance = fileDao.query(baseGuid, 0,
-					VAMConstants.TYPE_EQUAL);
-			if (instance != null) {
-				removeFile(null, null, instance.getGuid());
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #removeCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
-	 */
-	public void createCallBack(VAObject obj) throws Exception {
-		if (obj.getState() == VAMConstants.STATE_ERROR) {
-			return;
-		}
-
-		// get data access object
-		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		VAFile vafile = fileDao.query(obj.getGuid());
-
-		// if can't find the file in the database, remove the file
-		if (vafile == null) {
-			vafile = (VAFile) obj;
-			FileOperation.getInstance().removeFile(null, null, null,
-					vafile.getSavePath(), null);
-			return;
-		}
 		
-		vafile.setState(obj.getState());
-		fileDao.update(vafile);
-
-		// if the file type is disk
-		if (vafile.getFileType().equals(VAMConstants.VAF_FILE_TYPE_DISK)) {
-			VAFile base = null;
-			// if the file has parent file
-			if (!vafile.getParent().equals(VAMConstants.NULL)) {
-				vafile = fileDao.query(vafile.getParent());
-				// if can't find the file or the file has no parent file
-				if (vafile == null 
-						|| vafile.getParent().equals(VAMConstants.NULL)) {
-					return;
-				}
-				vafile = fileDao.query(vafile.getParent());
-				if (vafile == null) {
-					return;
-				}
-				base = vafile;
-
-				// create redundant disk
-				createRedundantDisk(base);
-			}
+		List<VAObject> replicas = fileDao.getReplicas(guid);
+		for (VAObject replica : replicas) {
+			removeFile(null, null, replica.getGuid());
 		}
 	}
 
 	/**
 	 * create redundant disk.
 	 * 
-	 * @param base
+	 * @param file
 	 *            base disk object
 	 * @throws Exception
 	 */
-	public void createRedundantDisk(VAFile base) throws Exception {
-		VAFileDao fileDao = DaoFactory.getVAFileDao();
-		// create redundant disk
-		int minRedundant = VAMConfig.getMinRedundantInstance();
-		while (fileDao.getUnusedCount(base.getGuid()) < minRedundant) {
-			copyDisk(base);
-		}
+	public void createReplica(VAFile file) throws Exception {
+		copyDisk(file);
 	}
 
 	/**
@@ -992,6 +842,86 @@ public class VAFileService implements TaskFunction {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
+	 * #updateCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
+	 */
+	public void updateCallBack(VAObject obj) throws Exception {
+		// get file data access object
+		VAFileDao fileDao = DaoFactory.getVAFileDao();
+
+		VAFile file = new VAFile(obj);
+
+		// update the file
+		file = fileDao.query(obj.getGuid());
+		// a small bug, 2010-08-23.should check the object whether is null.
+		if (file == null || file.getState() == VAMConstants.STATE_READY) {
+			return;
+		}
+		file.setState(obj.getState());
+		fileDao.update(file);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
+	 * #createCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
+	 */
+	public void removeCallBack(VAObject obj) throws Exception {
+		// get file data access object
+		VAFileDao fileDao = DaoFactory.getVAFileDao();
+
+		if (obj.getState() == VAMConstants.STATE_ERROR) {
+			return;
+		}
+
+		// if the file type is not disk do nothing
+		VAFile vafile = new VAFile(obj);
+		if (vafile.getFileType().equals(VAMConstants.VAF_FILE_TYPE_DISK)) {
+			String baseGuid;
+			if (vafile.getParent().equals(VAMConstants.NULL)) { // base disk
+				baseGuid = vafile.getGuid();
+				
+				// remove redundant disk
+				removeReplicas(baseGuid);
+			} 
+		}
+
+		// remove the file
+		fileDao.remove(obj.getGuid());
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
+	 * #removeCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
+	 */
+	public void createCallBack(VAObject obj) throws Exception {
+		if (obj.getState() == VAMConstants.STATE_ERROR) {
+			return;
+		}
+
+		// get data access object
+		VAFileDao fileDao = DaoFactory.getVAFileDao();
+
+		VAFile vafile = fileDao.query(obj.getGuid());
+
+		// if can't find the file in the database, remove the file
+		if (vafile == null) {
+			vafile = (VAFile) obj;
+			FileOperation.getInstance().removeFile(null, null, null,
+					vafile.getSavePath(), null);
+			return;
+		}
+		
+		vafile.setState(obj.getState());
+		fileDao.update(vafile);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
 	 * #copyCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
 	 */
 	public void copyCallBack(VAObject obj) throws Exception {
@@ -1009,9 +939,6 @@ public class VAFileService implements TaskFunction {
 
 		vafile.setState(obj.getState());
 		fileDao.update(vafile);
-		
-		// update state
-		fileDao.updateState(vafile.getGuid(), vafile.getState());
 	}
 
 	/*
@@ -1043,46 +970,11 @@ public class VAFileService implements TaskFunction {
 		// update disk information
 		VADisk vadisk = getDiskCapacity(vafile);
 
-		String parentGuid = null;
 		if (!vafile.getParent().equals(VAMConstants.NULL)) {
-			parentGuid = vafile.getParent();
 			vadisk.setParent(VAMConstants.NULL);
 		}
 
 		fileDao.update(vadisk);
-
-		VAFile base = null;
-		// if the file has no parent file
-		if (vadisk.getParent().equals(VAMConstants.NULL)) {
-			base = vadisk;
-			try {
-				createRedundantDisk(base);
-			} catch (Exception e) {
-				VAMUtil.outputLog(e.getMessage());
-			}
-		}
-
-		if (parentGuid != null) {
-			try {
-				VAFile file = fileDao.query(parentGuid);
-				// instance
-				if (file != null 
-						&& !file.getParent().equals(VAMConstants.NULL)) {
-					String baseGuid = file.getParent();
-					int count = VAMConfig.getMaxRedundantInstance();
-					// base disk
-					file = fileDao.query(baseGuid);
-					if (file == null) {
-						count = 0;
-					}
-					// remove redundant disk
-					removeRedundantDisk(count, baseGuid);
-				}
-
-			} catch (Exception e) {
-				VAMUtil.outputLog(e.getMessage());
-			}
-		}
 
 		// delete file after operation
 		if (vadisk.isDeleteFileAfterOperation()) {
@@ -1116,19 +1008,6 @@ public class VAFileService implements TaskFunction {
 		}
 		vafile.setState(obj.getState());
 		fileDao.update(vafile);
-		
-		if (vafile.getState() != VAMConstants.STATE_READY) {
-			return;
-		}
-
-		if (vafile.getFileType().equals(VAMConstants.VAF_FILE_TYPE_DISK)
-				&& vafile.getParent().equals(VAMConstants.NULL)) {
-			try {
-				createRedundantDisk(vafile);
-			} catch (Exception e) {
-				VAMUtil.outputLog(e.getMessage());
-			}
-		}
 	}
 
 	/*
@@ -1150,7 +1029,5 @@ public class VAFileService implements TaskFunction {
 		}
 
 		return true;
-
 	}
-
 }

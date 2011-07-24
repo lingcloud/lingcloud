@@ -33,6 +33,7 @@ import org.lingcloud.molva.ocl.util.HashFunction;
 import org.lingcloud.molva.xmm.vam.daos.DaoFactory;
 import org.lingcloud.molva.xmm.vam.daos.VirtualApplianceDao;
 import org.lingcloud.molva.xmm.vam.pojos.VAFile;
+import org.lingcloud.molva.xmm.vam.pojos.VADisk.DiskInfo;
 import org.lingcloud.molva.xmm.vam.pojos.VMState;
 import org.lingcloud.molva.xmm.vam.services.VirtualApplianceManager;
 import org.lingcloud.molva.xmm.vam.services.VirtualApplianceManagerImpl;
@@ -126,6 +127,8 @@ public class VAMUtil {
 			return "Preparing";
 		case VAMConstants.STATE_MAKING:
 			return "Making";
+		case VAMConstants.STATE_PROCESSING:
+			return "Processing";
 		default:
 			return "Unknown";
 		}
@@ -573,16 +576,19 @@ public class VAMUtil {
 	 * 
 	 * @param format
 	 *            the disk format, it can be VAMConstants.VAF_FORMAT_QCOW,
-	 *            VAMConstants.VAF_FORMAT_RAW, VAMConstants.VAF_FORMAT_VMDK now
+	 *            VAMConstants.VAF_FORMAT_QCOW_2, VAMConstants.VAF_FORMAT_RAW,
+	 *        	  VAMConstants.VAF_FORMAT_VMDK now
 	 * @return whether disk format is correct
 	 * @throws Exception
 	 */
 	public static boolean checkDiskFormat(String format) throws Exception {
 		if (!format.equals(VAMConstants.VAF_FORMAT_QCOW)
+				&& !format.equals(VAMConstants.VAF_FORMAT_QCOW_2)
 				&& !format.equals(VAMConstants.VAF_FORMAT_RAW)
 				&& !format.equals(VAMConstants.VAF_FORMAT_VMDK)) {
 			throw new Exception("Un supported virtual appliance format, "
 					+ "it should be " + VAMConstants.VAF_FORMAT_RAW + ", "
+					+ VAMConstants.VAF_FORMAT_QCOW_2 + ", "
 					+ VAMConstants.VAF_FORMAT_QCOW + " or "
 					+ VAMConstants.VAF_FORMAT_VMDK + ".");
 		}

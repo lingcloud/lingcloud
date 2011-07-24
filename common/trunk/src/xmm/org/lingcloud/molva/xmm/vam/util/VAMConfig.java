@@ -182,62 +182,6 @@ public class VAMConfig {
 	}
 
 	/**
-	 * get the max support number of snapshot.
-	 * 
-	 * @return max number
-	 */
-	public static int getSupportSnapshotNum() {
-		return Integer.parseInt((String) properties.get("supportSnapshotNum"));
-	}
-
-	/**
-	 * get the max number of redundant instance.
-	 * 
-	 * @return max number
-	 */
-	public static int getMaxRedundantInstance() {
-		return Integer
-				.parseInt((String) properties.get("maxRedundantInstance"));
-	}
-
-	/**
-	 * get the minimum number of redundant instance.
-	 * 
-	 * @return minimum number
-	 */
-	public static int getMinRedundantInstance() {
-		return Integer
-				.parseInt((String) properties.get("minRedundantInstance"));
-	}
-
-	/**
-	 * get the FTP host name or IP.
-	 * 
-	 * @return host name or IP
-	 */
-	public static String getFtpHost() {
-		return (String) properties.get("ftpHost");
-	}
-
-	/**
-	 * get the FTP user name.
-	 * 
-	 * @return user name
-	 */
-	public static String getFtpUser() {
-		return (String) properties.get("ftpUser");
-	}
-
-	/**
-	 * get the FTP password.
-	 * 
-	 * @return password
-	 */
-	public static String getFtpPassword() {
-		return (String) properties.get("ftpPassword");
-	}
-
-	/**
 	 * get the making appliance host user name.
 	 * 
 	 * @return user name
@@ -347,7 +291,19 @@ public class VAMConfig {
 		return name;
 	}
 
-	public static String getLingCloudAgent() {
-		return (String) properties.get("LingCloudAgent");
+	public static String getImageFormat() {
+		String format = (String) properties.get("imageFormat");
+		if (format == null) {
+			format = VAMConstants.VAF_FORMAT_DEFAULT;
+		}
+		return format;
+	}
+	
+	public static String getSnapshotImageFormat() {
+		String format = (String) properties.get("snapshotImageFormat");
+		if (format == null) {
+			format = VAMConstants.VAF_FORMAT_SNAPSHOT;
+		}
+		return format;
 	}
 }

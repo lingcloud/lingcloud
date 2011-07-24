@@ -28,6 +28,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 import org.lingcloud.molva.portal.util.XMMPortalUtil;
 import org.lingcloud.molva.xmm.vam.pojos.VirtualAppliance;
 import org.lingcloud.molva.xmm.vam.services.VirtualApplianceManager;
+import org.lingcloud.molva.xmm.vam.util.VAMConfig;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
 import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 
@@ -79,7 +80,7 @@ public class SaveVirtualApplianceAction extends NeedLoginAction {
 						+ "loginstyle, username, password!");
 			}
 
-			format = VAMConstants.VAF_FORMAT_DEFAULT;
+			format = VAMConfig.getImageFormat();
 
 			format = format.trim();
 			category = category.trim();

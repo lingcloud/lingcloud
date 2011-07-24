@@ -256,6 +256,19 @@ public class VAFile extends VAObject {
 		}
 		this.getAttributes().put(VAMConstants.VAF_REF, "" + ref);
 	}
+	
+	public boolean isReplica() {
+		if (VAMUtil.isBlankOrNull((String) this.getAttributes().get(
+				VAMConstants.VAF_REPLICA))) {
+			return false;
+		}
+		return Boolean.parseBoolean((String) this.getAttributes().get(
+				VAMConstants.VAF_REPLICA));
+	}
+	
+	public void setReplica(boolean replica) {
+		this.getAttributes().put(VAMConstants.VAF_REPLICA, "" + replica);
+	}
 
 	/**
 	 * get the local save location.

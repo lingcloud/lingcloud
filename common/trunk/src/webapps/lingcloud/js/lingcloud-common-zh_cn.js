@@ -191,7 +191,7 @@ var lingcloud = {
 			application:'\u5DF2\u5B89\u88C5\u5E94\u7528',
 			disk:'\u5BB9\u91CF',
 			size:'\u5B9E\u9645\u5927\u5C0F',
-			format:'\u72B6\u6001',
+			state:'\u72B6\u6001',
 			detail:'\u8be6\u60c5',
 			more:'\u66F4\u591A',
 			tip4AddAppliance:'\u6dfb\u52a0\u865a\u62df\u7535\u5668',

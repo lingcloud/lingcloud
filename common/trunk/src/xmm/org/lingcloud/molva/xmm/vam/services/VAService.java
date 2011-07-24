@@ -21,10 +21,10 @@ import org.lingcloud.molva.xmm.vam.daos.VAFileDao;
 import org.lingcloud.molva.xmm.vam.daos.VirtualApplianceDao;
 import org.lingcloud.molva.xmm.vam.pojos.VAConfig;
 import org.lingcloud.molva.xmm.vam.pojos.VADisk;
+import org.lingcloud.molva.xmm.vam.pojos.VADisk.DiskInfo;
 import org.lingcloud.molva.xmm.vam.pojos.VAFile;
 import org.lingcloud.molva.xmm.vam.pojos.VAObject;
 import org.lingcloud.molva.xmm.vam.pojos.VirtualAppliance;
-import org.lingcloud.molva.xmm.vam.util.DiskInfo;
 import org.lingcloud.molva.xmm.vam.util.VAMConfig;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
 import org.lingcloud.molva.xmm.vam.util.VAMUtil;
@@ -89,6 +89,10 @@ public class VAService {
 			String filepath, boolean deleteFile)
 			throws Exception {
 		VAFileService fileService = ServiceFactory.getFileService();
+		
+		if (appliance.getFormat() == null) {
+			appliance.setFormat(VAMConfig.getImageFormat());
+		}
 		// create a new file
 		VAFile disk = fileService.createFile(appliance.getVAName(), null,
 				VAMConstants.VAF_FILE_TYPE_DISK, appliance.getFormat(), 0);
@@ -178,6 +182,16 @@ public class VAService {
 				VAMUtil.outputLog(e.getMessage());
 			}
 		}
+		
+		// if the appliance is being made, release virtual machine it uses
+		if (va.getState() == VAMConstants.STATE_MAKING) {
+			VAMUtil.releaseMakeApplianceVM(va.getSelectVm());
+		}
+		
+		// remove the appliance in the database
+		va.setState(VAMConstants.STATE_DELETING);
+		va.setSelectVm(VAMConstants.NO_MAKE_APPLIANCE_VM);
+		vaDao.update(va);
 
 		// get the appliance's disk
 		List<String> diskl = va.getDisks();
@@ -187,14 +201,6 @@ public class VAService {
 		ServiceFactory.getFileService().removeFile(null, null, diskGuid);
 		removeConfig(va);
 
-		// if the appliance is being made, release virtual machine it uses
-		if (va.getState() == VAMConstants.STATE_MAKING) {
-			VAMUtil.releaseMakeApplianceVM(va.getSelectVm());
-		}
-		// remove the appliance in the database
-		va.setState(VAMConstants.STATE_DELETING);
-		va.setSelectVm(VAMConstants.NO_MAKE_APPLIANCE_VM);
-		vaDao.update(va);
 		vaDao.remove(va.getGuid());
 
 		return true;
@@ -400,15 +406,18 @@ public class VAService {
 		appliance.setVncPort(VAMConfig.getMakeApplianceVMVncPort(selectVM));
 		appliance.setVmName(VAMConfig.getMakeApplianceVMName(selectVM));
 		appliance.setSelectVm(selectVM);
-		
 		appliance.setState(VAMConstants.STATE_MAKING);
+		if (appliance.getFormat() == null) {
+			appliance.setFormat(VAMConfig.getImageFormat());
+		}
+		
 		VAFile disk = null;
 		
 		if (appliance.getGuid() == null 
 				|| !appliance.getGuid().equals(existedAppGuid)) {
 			// create a disk
 			disk = fileService.createFile(appliance.getVAName(), null,
-					VAMConstants.VAF_FILE_TYPE_DISK, appliance.getFormat(), 0);
+				VAMConstants.VAF_FILE_TYPE_DISK, appliance.getFormat(), 0);
 			
 			// set the key information
 			String guid = VAMUtil.genGuid();
@@ -446,6 +455,9 @@ public class VAService {
 				if (!appliance.getGuid().equals(existedAppGuid)) {
 					// create snapshot
 					capacity = existedApp.getCapacity();
+					disk.setFormat(VAMConfig.getSnapshotImageFormat());
+					disk.setLocation(existedDisk.getLocation() + ".snapshot." 
+							+ disk.getGuid());
 					fileService.createSnapshot(existedDisk, disk, VAMConfig
 							.getMakeApplianceHost(), VAMConfig
 							.getMakeApplianceUser());
@@ -455,7 +467,7 @@ public class VAService {
 						throw new Exception("The appliance is in used!");
 					}
 					disk = existedDisk;
-					fileService.removeRedundantDisk(0, existedDisk.getGuid());
+					fileService.removeReplicas(existedDisk.getGuid());
 					vaDao.update(appliance);
 				}
 				
@@ -520,8 +532,6 @@ public class VAService {
 			String discPath = null;
 			if (discGuid == null) {
 				discPath = "";
-			} else if (discGuid.equals(VAMConstants.LINGCLOUD_AGENT)) {
-				discPath = VAMConfig.getLingCloudAgent();
 			} else {
 				VAFile disc = ServiceFactory.getFileService().
 					queryFile(discGuid);
@@ -665,14 +675,17 @@ public class VAService {
 
 		// create a disk
 		VAFile disk = fileService.createFile(file.getId(), null, file
-				.getFileType(), file.getFormat(), 0);
+				.getFileType(), VAMConfig.getSnapshotImageFormat(), 0);
+		disk.setLocation(file.getLocation() + ".snapshot." + disk.getGuid());
+		
 		// create a new appliance and set the disk
 		VirtualAppliance appliance = templateApp.getCopy();
 		String guid = VAMUtil.genGuid();
 		appliance.setGuid(guid);
 		appliance.setParent(templateApp.getGuid());
 		appliance.setRef(0);
-		appliance.setState(VAMConstants.STATE_COPING);
+		appliance.setState(VAMConstants.STATE_PROCESSING);
+		appliance.setFormat(VAMConfig.getSnapshotImageFormat());
 
 		List<String> diskl = new ArrayList<String>();
 		diskl.add(disk.getGuid());
@@ -736,7 +749,7 @@ public class VAService {
 			VAMUtil.outputLog(e.getMessage());
 		}
 		// remove appliance
-		va.setState(VAMConstants.STATE_DELETING);
+		va.setState(VAMConstants.STATE_PROCESSING);
 		vaDao.update(va);
 		vaDao.remove(va.getGuid());
 
@@ -810,6 +823,7 @@ public class VAService {
 			appliance.setUsername(app.getUsername());
 			appliance.setDiscs(new ArrayList<String>());
 			appliance.setState(VAMConstants.STATE_CONVERTING);
+			appliance.setFormat(VAMConfig.getImageFormat());
 			appliance = vaDao.update(appliance);
 
 			try {
@@ -821,16 +835,10 @@ public class VAService {
 					backingFile = info.getBackingFile();
 				}
 				if (format != null && format.equalsIgnoreCase(
-						VAMConstants.VAF_FORMAT_DEFAULT)
+						VAMConfig.getImageFormat())
 						&& backingFile == null) {
 					disk = fileService.getDiskCapacity(disk);
 					fileService.updateFile(disk);
-					
-					try {
-						fileService.createRedundantDisk(disk);
-					} catch (Exception e) {
-						VAMUtil.outputLog(e.getMessage());
-					}
 					
 					appliance.setState(VAMConstants.STATE_READY);
 					appliance = vaDao.update(appliance);
@@ -838,7 +846,7 @@ public class VAService {
 					// convert disk format
 					fileService.convertDiskFormat(disk, 
 							disk.getSavePath(),
-							VAMConstants.VAF_FORMAT_DEFAULT, true);
+							VAMConfig.getImageFormat(), true);
 				}
 			} catch (Exception e) {
 				// restore old state
@@ -898,8 +906,6 @@ public class VAService {
 		String discPath = null;
 		if (discGuid == null) {
 			discPath = "";
-		} else if (discGuid.equals(VAMConstants.LINGCLOUD_AGENT)) {
-			discPath = VAMConfig.getLingCloudAgent();
 		} else {
 			VAFile disc = fileService.queryFile(discGuid);
 			discPath = disc.getSavePath();
@@ -940,62 +946,6 @@ public class VAService {
 			discList.set(0, oldDisc);
 			appliance.setDiscs(discList);
 			vaDao.update(appliance);
-			throw new Exception("File operation failed");
-		}
-	}
-
-	/**
-	 * operate disk.
-	 * 
-	 * @param type
-	 *            operation type, it support MOUNT now
-	 * @param applianceGuid
-	 *            the appliance GUID
-	 * @param args
-	 *            the argument of operation, MOUNT : name, location, format,
-	 *            capacity
-	 * @throws Exception
-	 */
-	public void operateDisk(int type, String applianceGuid, String[] args)
-			throws Exception {
-		// query appliance by GUID
-		VirtualApplianceDao vaDao = DaoFactory.getVirtualApplianceDao();
-		VirtualAppliance appliance = vaDao.query(applianceGuid);
-
-		if (appliance == null) {
-			throw new Exception("The appliance with guid \"" + applianceGuid
-					+ "\" is not existed");
-		}
-
-		if (appliance.getState() != VAMConstants.STATE_MAKING) {
-			throw new Exception("The appliance is not being made");
-		}
-
-		VAFileService fileService = ServiceFactory.getFileService();
-
-		String configGuid = appliance.getConfig();
-		VAFile config = fileService.queryFile(configGuid);
-
-		try {
-			VAConfig fileConfig = new VAConfig();
-			fileConfig.setPath(config.getSavePath());
-			fileConfig.loadConfig();
-			
-			final int argsLen = 4;
-			if (type == VAMConstants.DISK_MOUNT && args.length == argsLen) {
-				if (fileConfig.getDiskCount() == 1) {
-					fileConfig.addDisk(args[0], args[1], args[2], Long
-							.parseLong(args[argsLen - 1]));
-					fileConfig.saveConfig();
-				} else if (fileConfig.getDiskCount() == 2) {
-					fileConfig.setDisk(args[0], args[1], args[2], Long
-							.parseLong(args[argsLen - 1]), 1);
-					fileConfig.saveConfig();
-				}
-			}
-
-		} catch (Exception e) {
-			VAMUtil.outputLog(e.getMessage());
 			throw new Exception("File operation failed");
 		}
 	}
@@ -1044,7 +994,9 @@ public class VAService {
 			} else {
 				// get the latest information
 				VADisk vadisk = new VADisk(disk);
-				state = vadisk.getState();
+				if (vadisk.getState() == VAMConstants.STATE_READY) {
+					state = vadisk.getState();
+				}
 				format = vadisk.getFormat();
 				capacity = vadisk.getCapacity();
 				size = vadisk.getSize();

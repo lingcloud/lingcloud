@@ -1844,7 +1844,7 @@ var name="";
  						str+="<th width=\"80\" id=\"actionlog_title\" valign=\"middle\">"+lingcloud.Appliance.manageAppliance.application+"</th>";	//applications
  						str+="<th width=\"50\" id=\"actionlog_title\" valign=\"middle\">"+lingcloud.Appliance.manageAppliance.disk+"</th>";	//capacity
  						str+="<th width=\"50\" id=\"actionlog_title\" valign=\"middle\">"+lingcloud.Appliance.manageAppliance.size+"</th>";	//size
- 						str+="<th width=\"50\" id=\"actionlog_title\" valign=\"middle\">"+lingcloud.Appliance.manageAppliance.format+"</th>";	//format
+ 						str+="<th width=\"50\" id=\"actionlog_title\" valign=\"middle\">"+lingcloud.Appliance.manageAppliance.state+"</th>";	//state
  						str+="<th width=\"30\" id=\"actionlog_title\" valign=\"middle\">"+lingcloud.Appliance.manageAppliance.detail+"</th>";	
  						str+="</tr>";
  						
