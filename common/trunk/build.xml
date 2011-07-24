@@ -10,16 +10,8 @@
 	<property name="project.ocl.version" value="0.8" />
 	<property name="project.xmm.title" value="LingCloud Molva eXtendible Machine Manager" />
 	<property name="project.xmm.version" value="0.8" />
-	<property name="project.ocl-test.title" value="LingCloud Molva Open Cloud Lease Test" />
-	<property name="project.ocl-test.version" value="0.8" />
-	<property name="project.xmm-test.title" value="LingCloud Molva eXtendible Machine Manager Test" />
-	<property name="project.xmm-test.version" value="0.8" />
 	<property name="project.portal.title" value="LingCloud Molva Portal" />
 	<property name="project.portal.version" value="0.8" />
-<!--
-	<property name="project.vmc.title" value="LingCloud Molva Virtual Machine Controller" />
-	<property name="project.vmc.version" value="0.8" />
--->
 	<property name="project.vendor.name" value="LingCloud Team" />
 
 	<property name="common.3rdparty.jre.file" value="jre-6u25-linux-x64.bin" />
@@ -42,12 +34,7 @@
 		<mkdir dir="${common.dist.dir}/build" />
 		<mkdir dir="${common.dist.dir}/build/ocl" />
 		<mkdir dir="${common.dist.dir}/build/xmm" />
-		<mkdir dir="${common.dist.dir}/build/ocl-test" />
-		<mkdir dir="${common.dist.dir}/build/xmm-test" />
 		<mkdir dir="${common.dist.dir}/build/portal" />
-<!--
-		<mkdir dir="${common.dist.dir}/build/vmc" />
--->
 		<mkdir dir="${common.dist.dir}/build/webapps" />
 		<tstamp>
 			<format property="project.timestamp" pattern="yyyy-MM-dd'T'HH:mm:ss" />
@@ -75,7 +62,7 @@
 		clean-build" />
 
 	<target name="build-subprojects" depends="build-ocl,build-xmm,
-		build-ocl-test,build-xmm-test,build-portal" />
+		build-portal" />
 
 	<target name="assemble-webapps" depends="assemble-xmm-axis,assemble-portal" />
 
@@ -114,48 +101,6 @@
 					<attribute name="Specification-Version" value="${project.xmm.version}"/>
 					<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
 					<attribute name="Implementation-Title" value="${project.xmm.title}"/>
-					<attribute name="Implementation-Version" value="${project.timestamp}"/>
-					<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
-				</section>
-			</manifest>
-		</jar>
-	</target>
-
-	<target name="build-ocl-test" depends="init,build-ocl">
-		<javac srcdir="${common.src.dir}/test/ocl" destdir="${common.dist.dir}/build/ocl-test" 
-			classpathref="common.lingcloud.classpath" debug="off" optimize="on" 
-			source="${source}" target="${target}" />
-		<jar destfile="${common.dist.dir}/lib/lingcloud-molva-ocl-test-${project.ocl-test.version}.jar" 
-			basedir="${common.dist.dir}/build/ocl-test" includes="**/*.class">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-On" value="${os.name} "/>
-				<section name="lingcloud-molva-ocl-test-${project.ocl-test.version}.jar">
-					<attribute name="Specification-Title" value="${project.ocl-test.title}"/>
-					<attribute name="Specification-Version" value="${project.ocl-test.version}"/>
-					<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
-					<attribute name="Implementation-Title" value="${project.ocl-test.title}"/>
-					<attribute name="Implementation-Version" value="${project.timestamp}"/>
-					<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
-				</section>
-			</manifest>
-		</jar>
-	</target>
-
-	<target name="build-xmm-test" depends="init,build-xmm">
-		<javac srcdir="${common.src.dir}/test/xmm" destdir="${common.dist.dir}/build/xmm-test" 
-			classpathref="common.lingcloud.classpath" debug="off" optimize="on" 
-			source="${source}" target="${target}" />
-		<jar destfile="${common.dist.dir}/lib/lingcloud-molva-xmm-test-${project.xmm-test.version}.jar" 
-			basedir="${common.dist.dir}/build/xmm-test" includes="**/*.class">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-On" value="${os.name} "/>
-				<section name="lingcloud-molva-xmm-test-${project.xmm-test.version}.jar">
-					<attribute name="Specification-Title" value="${project.xmm-test.title}"/>
-					<attribute name="Specification-Version" value="${project.xmm-test.version}"/>
-					<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
-					<attribute name="Implementation-Title" value="${project.xmm-test.title}"/>
 					<attribute name="Implementation-Version" value="${project.timestamp}"/>
 					<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
 				</section>
@@ -250,29 +195,6 @@
 			</zipfileset>
 		</war>
 	</target>
-
-<!--
-	<target name="build-vmc" depends="init">
-		<javac srcdir="${common.src.dir}/contrib/vmc" destdir="${common.dist.dir}/build/vmc" 
-			classpathref="common.lingcloud.classpath" debug="off" optimize="on" 
-			source="${source}" target="${target}" />
-		<jar destfile="${common.dist.dir}/lib/lingcloud-molva-vmc-${project.vmc.version}.jar" 
-			basedir="${common.dist.dir}/build/vmc" includes="**/*.class">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-On" value="${os.name} "/>
-				<section name="lingcloud-molva-vmc-${project.vmc.version}.jar">
-					<attribute name="Specification-Title" value="${project.vmc.title}"/>
-					<attribute name="Specification-Version" value="${project.vmc.version}"/>
-					<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
-					<attribute name="Implementation-Title" value="${project.vmc.title}"/>
-					<attribute name="Implementation-Version" value="${project.timestamp}"/>
-					<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
-				</section>
-			</manifest>
-		</jar>
-	</target>
--->
 
 	<target name="assemble-xmm-axis" depends="extract-bin,build-xmm">
 		<!-- wsdd -->
