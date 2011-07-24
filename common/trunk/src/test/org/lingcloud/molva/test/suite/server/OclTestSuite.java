@@ -10,7 +10,7 @@
  *  http://lingcloud.org
  *  
  */
-package org.lingcloud.molva.test.suite;
+package org.lingcloud.molva.test.suite.server;
 
 import org.lingcloud.molva.test.ocl.GNodeManagerTester;
 

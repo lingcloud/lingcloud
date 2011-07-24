@@ -1,5 +1,5 @@
 /*
- *  @(#)PortalTestSuiteIE.java 2011-6-26
+ *  @(#)PortalTestSuiteFirefox.java 2011-6-26
  *
  *  Copyright (C) 2008-2011,
  *  LingCloud Team,
@@ -11,7 +11,7 @@
  *  
  */
 
-package org.lingcloud.molva.test.suite;
+package org.lingcloud.molva.test.suite.client;
 
 import org.lingcloud.molva.test.util.TestConstants;
 
@@ -26,11 +26,11 @@ import junit.framework.Test;
  * @author Jian Lin<br>
  * 
  */
-public class PortalTestSuiteIE {
+public class PortalTestSuiteFirefox {
 	
     public static Test suite() {
 
-    	PortalTestSuiteImpl ts = new PortalTestSuiteImpl(TestConstants.Browser.IE);
+    	PortalTestSuiteImpl ts = new PortalTestSuiteImpl(TestConstants.Browser.FIREFOX);
     	
         TestSuite suite = ts.suiteImpl();
         

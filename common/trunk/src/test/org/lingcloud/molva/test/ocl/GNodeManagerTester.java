@@ -57,7 +57,9 @@ public class GNodeManagerTester {
 	public static void initializeForAllTest() {
 		gnodeManager = new GNodeManager();
 		homeProperty = System.getProperty(LINGCLOUD_HOME_PROPERTY);
-		System.getProperties().put(LINGCLOUD_HOME_PROPERTY, LINGCLOUD_HOME);
+		if (homeProperty == null) {
+			System.getProperties().put(LINGCLOUD_HOME_PROPERTY, LINGCLOUD_HOME);
+		}
 
 		try {
 			// initialize database connection
@@ -72,6 +74,8 @@ public class GNodeManagerTester {
 	public static void destroyForAllTest() {
 		if (homeProperty != null) {
 			System.setProperty(LINGCLOUD_HOME_PROPERTY, homeProperty);
+		} else {
+			System.getProperties().remove(LINGCLOUD_HOME_PROPERTY);
 		}
 	}
 

@@ -11,7 +11,7 @@
  *  
  */
 
-package org.lingcloud.molva.test.suite;
+package org.lingcloud.molva.test.suite.client;
 
 import org.lingcloud.molva.test.util.TestConstants;
 

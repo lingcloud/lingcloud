@@ -1,5 +1,5 @@
 /*
- *  @(#)AllUndeployTestSuiteIE.java 2011-6-26
+ *  @(#)AllDeployTestSuiteIE.java 2011-6-26
  *
  *  Copyright (C) 2008-2011,
  *  LingCloud Team,
@@ -11,7 +11,7 @@
  *  
  */
 
-package org.lingcloud.molva.test.suite;
+package org.lingcloud.molva.test.suite.client;
 
 import org.lingcloud.molva.test.util.TestConstants;
 
@@ -20,17 +20,17 @@ import junit.framework.Test;
 
 /**
  * <strong>Purpose:</strong><br>
- * The test suite for LingCloud all undeploying.
+ * The test suite for LingCloud all deploying.
  * 
  * @version 1.0.0 2011-6-26<br>
  * @author Jian Lin<br>
  * 
  */
-public class AllUndeployTestSuiteIE {
+public class AllDeployTestSuiteIE {
 	
     public static Test suite() {
 
-    	AllUndeployTestSuiteImpl ts = new AllUndeployTestSuiteImpl(TestConstants.Browser.IE);
+    	AllDeployTestSuiteImpl ts = new AllDeployTestSuiteImpl(TestConstants.Browser.IE);
     	
         TestSuite suite = ts.suiteImpl();
         

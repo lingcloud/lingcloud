@@ -1,5 +1,5 @@
 /*
- *  @(#)AllDeployTestSuiteFirefox.java 2011-6-26
+ *  @(#)AllDeployTestSuiteChrome.java 2011-6-26
  *
  *  Copyright (C) 2008-2011,
  *  LingCloud Team,
@@ -11,7 +11,7 @@
  *  
  */
 
-package org.lingcloud.molva.test.suite;
+package org.lingcloud.molva.test.suite.client;
 
 import org.lingcloud.molva.test.util.TestConstants;
 
@@ -26,11 +26,11 @@ import junit.framework.Test;
  * @author Jian Lin<br>
  * 
  */
-public class AllDeployTestSuiteFirefox {
+public class AllDeployTestSuiteChrome {
 	
     public static Test suite() {
 
-    	AllDeployTestSuiteImpl ts = new AllDeployTestSuiteImpl(TestConstants.Browser.FIREFOX);
+    	AllDeployTestSuiteImpl ts = new AllDeployTestSuiteImpl(TestConstants.Browser.CHROME);
     	
         TestSuite suite = ts.suiteImpl();
         
