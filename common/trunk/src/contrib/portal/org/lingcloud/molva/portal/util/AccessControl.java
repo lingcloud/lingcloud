@@ -12,9 +12,7 @@
  */
 package org.lingcloud.molva.portal.util;
 
-import java.util.*;
-import net.sf.jpam.*;
-
+import net.sf.jpam.Pam;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.lingcloud.molva.xmm.util.XMMUtil;
@@ -30,103 +28,138 @@ import org.lingcloud.molva.xmm.util.XMMUtil;
  */
 public class AccessControl {
 	
-	//identify if the AccessControl service is opened
+	/**
+	 *identify if the AccessControl service is opened.
+	 */
 	private boolean isEnabled;
 	
-	//the admin group that allowed to access
+	/**
+	 *the admin group that allowed to access.
+	 */
 	private String adminGroup;
-	
-	//path of the executeable script
-	private String shPath; 
-	
-	//name of the user 
-	private String username;
 		
-	//status of a user(admin, invalid or usused)
-	public enum accessControlStatus 
-	{
+	/**
+	 *path of the execute script.
+	 */
+	private String shPath; 
+
+	/**
+	 * name of the user. 
+	 */
+	private String username;
+
+	/**
+	 * @author LXC
+	 *status of a user(admin, invalid or unused)
+	 */
+	public enum accessControlStatus {
+		/**
+		 *the status is ADMIN, INVALID, UNUSED.
+		 */
 		ADMIN, INVALID, UNUSED;
 	}
 	
-	//the enum Variable
+	/**
+	 *the enum Variable. 
+	 */
 	private accessControlStatus status;
 	
+	/**
+	 * 
+	 */
 	private Log log = LogFactory.getFactory().getInstance(this.getClass());
 	
-	//Initial function which reads the profile
-	public AccessControl() throws Exception
-	{
+	/**
+	 * Initial function which reads the profile.
+	 * @throws Exception throw common info
+	 */
+	public AccessControl() throws Exception {
 		isEnabled = XMMUtil.getAccessControlEnable();
 		adminGroup = XMMUtil.getAccessControlAdminGroup();
-		shPath = XMMUtil.getUtilityScriptsPath()+"/isUserInGroup.sh";
+		shPath = XMMUtil.getUtilityScriptsPath() + "/isUserInGroup.sh";
 		setStatus(accessControlStatus.INVALID);
 	}
 	
-    //get the status of the user
-	public accessControlStatus getStatus() {
+	/**
+	 * get the status of the user.
+	 * @return status
+	 */
+	public final accessControlStatus getStatus() {
 		return status;
 	}
 	
-    //set the status of the user
-	public void setStatus(accessControlStatus status) {
-		this.status = status;
+	/**
+	 * set the status of the user.
+	 * @param statusvalue the status of the user
+	 */
+	public final void setStatus(final accessControlStatus statusvalue) {
+		this.status = statusvalue;
 	}
 
-	//the function return whether the AccessControl is opened
-	public boolean isAccessControlEnabled()
-	{
+	/**
+	 * the function return whether the AccessControl is opened.
+	 * @return isEnabled
+	 */
+	public final boolean  isAccessControlEnabled() {
 		return isEnabled;
 	}
-		
-	//the function judge whether the user is existed in system through PAM authentication
-	public boolean Authenticate(String username, String password)
-	{
+
+	/**
+	 * the function judge whether the user is existed in system 
+	 * through PAM authentication.
+	 * @param usernamevalue the user' name
+	 * @param password the user's password
+	 * @return authenticated
+	 */
+	public final boolean isAuthenticate(
+			final String usernamevalue, final String password) {
 	    Pam pam = new Pam();
-	    boolean authenticated = pam.authenticateSuccessful(username, password);
+	    boolean authenticated = 
+	    	pam.authenticateSuccessful(usernamevalue, password);
 	    return authenticated;
 	}
 	
-	//the function judge whether the existed user is belongs to admin group
-	public boolean isAdmin(String username) throws Exception
-	{
+	/**
+	 * the function judge whether the existed user is belongs to admin group.
+	 * @param usernamevalue the user's name
+	 * @return result the result
+	 * @throws Exception throw common info
+	 */
+	public final boolean isAdmin(final String usernamevalue) throws Exception {
            boolean result;
-           result = isUserInGroup(username, adminGroup);
-           log.info("the isAdmin result is:"+result+"\n");
+           result = isUserInGroup(usernamevalue, adminGroup);
+           log.info("the isAdmin result is:" + result + "\n");
            return result;
 	}
 	
-	//the function judge whether the existed user is belongs to some group
-	private boolean isUserInGroup(String username, String groupname) throws Exception
-	{
-		String cmd = shPath+" "+username+" "+groupname;
-		log.info("the cmd is:"+cmd+"\n");
+	/**
+	 * the function judge whether the existed user is belongs to some group.
+	 * @param usernamevalue the user's name
+	 * @param groupname the group name
+	 * @return true or false
+	 * @throws Exception throw common info 
+	 */
+	private  boolean isUserInGroup(
+			final String usernamevalue, final String groupname) 
+	throws Exception {
+		String cmd = shPath + " " + usernamevalue + " " + groupname;
+		log.info("the cmd is:" + cmd + "\n");
 		String result =  XMMUtil.runCommand(cmd);
-		log.info("the result is:"+result+"\n");
-		if (result.equals("true"+System.getProperty("line.separator")))
-			return true;
-		else 
-			return false;
-	}
-	
-	//the combination of the last two functions 
-	public boolean isAuthenticate(String username, String password) throws Exception
-	{
-		if(Authenticate(username, password) == true)
-		{
-			if (isAdmin(username) == true)
-				return true;
-			else 
-				return false;
-		}
-		else 
-			return false;
+		log.info("the result is:" + result + "\n");
+		return result.equals("true" + System.getProperty("line.separator"));
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	/**
+	 * @param usernamevalue the user's name
+	 */
+	public final void setUsername(final String usernamevalue) {
+		this.username = usernamevalue;
 	}
 
-	public String getUsername() {
+	/**
+	 * @return username
+	 */
+	public final String getUsername() {
 		return username;
 	}
 
