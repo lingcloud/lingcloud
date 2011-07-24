@@ -32,6 +32,9 @@ import org.apache.struts.validator.DynaValidatorForm;
 
 public class LogoutAction extends NeedLoginAction {
 
+	/**
+	 * get the common log factory. 
+	 */
 	private Log log = LogFactory.getFactory().getInstance(this.getClass());
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
@@ -49,9 +52,7 @@ public class LogoutAction extends NeedLoginAction {
 			HttpSession session = request.getSession();
 			session.removeAttribute("ACobject");
 			return mapping.findForward("success");
-		
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.error(e.toString());
 			super.addErrors(e.getMessage(), request);
 			return mapping.findForward("failure");

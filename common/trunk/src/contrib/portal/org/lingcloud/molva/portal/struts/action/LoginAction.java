@@ -35,9 +35,10 @@ import org.lingcloud.molva.portal.util.AccessControl;
 
 public class LoginAction extends NeedLoginAction {
 
+	/**
+	 *get the common log factory. 
+	 */
 	private Log log = LogFactory.getFactory().getInstance(this.getClass());
-
-	private String url;
 
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
@@ -50,8 +51,8 @@ public class LoginAction extends NeedLoginAction {
 				throw new Exception(
 						"The form is submitted failed, please retry");
 			}
-			String username = (String)loginForm.get("username");
-			String password = (String)loginForm.get("password");
+			String username = (String) loginForm.get("username");
+			String password = (String) loginForm.get("password");
 			if (XMMPortalUtil.checkParamsBlankOrNull(new String[] { username,
 					password })) {
 
@@ -61,37 +62,28 @@ public class LoginAction extends NeedLoginAction {
 			}
 			username = username.trim();
 			
-			log.info("username:"+username+"\n"+"password:"+password);
+			log.info("username:" + username + "\n" + "password:" + password);
 			
 			AccessControl ac = new AccessControl();
 			ac.setUsername(username);
-			boolean result = ac.Authenticate(username, password);
+			boolean result = ac.isAuthenticate(username, password);
 			HttpSession session = request.getSession();
-			if (result == true)
-			{
+			if (result) {
 				result = ac.isAdmin(username);
-				if (result == true)
-				{
+				if (result) {
 					log.info("the result is true");
 					ac.setStatus(AccessControl.accessControlStatus.ADMIN);
-					log.info("the ac status is set"+ac.getStatus());
+					log.info("the ac status is set" + ac.getStatus());
 					session.setAttribute("ACobject", ac);
 					log.info("the acobject is insert into session");
 					return mapping.findForward("success");
-					
-				}
-				else 
-				{
+				} else {
 					return mapping.findForward("failure");
 				}
-			}
-			else 
-			{
+			} else {
 				return mapping.findForward("failure");
-			}
-		
-		}
-		catch (Exception e) {
+			}		
+		} catch (Exception e) {
 			log.error(e.toString());
 			super.addErrors(e.getMessage(), request);
 			return mapping.findForward("failure");
