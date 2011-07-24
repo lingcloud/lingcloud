@@ -33,9 +33,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import static org.lingcloud.molva.ocl.util.ConfigUtil.LINGCLOUD_HOME_PROPERTY;
-import static org.lingcloud.molva.test.util.TestConstants.LINGCLOUD_HOME;
-
 /**
  * <strong>Purpose:</strong><br>
  * Test GNodeManager.
@@ -50,16 +47,11 @@ public class GNodeManagerTester {
 	 */
 	private static Log log = LogFactory.getLog(GNodeManagerTester.class);
 	private static GNodeManager gnodeManager = null;
-	private static String homeProperty = null;
 	private static GNode gnode = null;
 
 	@BeforeClass
 	public static void initializeForAllTest() {
 		gnodeManager = new GNodeManager();
-		homeProperty = System.getProperty(LINGCLOUD_HOME_PROPERTY);
-		if (homeProperty == null) {
-			System.getProperties().put(LINGCLOUD_HOME_PROPERTY, LINGCLOUD_HOME);
-		}
 
 		try {
 			// initialize database connection
@@ -72,11 +64,6 @@ public class GNodeManagerTester {
 
 	@AfterClass
 	public static void destroyForAllTest() {
-		if (homeProperty != null) {
-			System.setProperty(LINGCLOUD_HOME_PROPERTY, homeProperty);
-		} else {
-			System.getProperties().remove(LINGCLOUD_HOME_PROPERTY);
-		}
 	}
 
 	@Before

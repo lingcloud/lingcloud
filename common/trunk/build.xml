@@ -307,9 +307,9 @@
 	</target>
 	
 	<target name="test" depends="build-test">
-		<mkdir dir="${common.dist.dir}/test/reports" />
 		<mkdir dir="${common.dist.dir}/test/reports/html" />
 		<junit printsummary="true">
+			<sysproperty key="lingcloud.home" value="${basedir}"/>
 			<classpath refid="common.lingcloud.classpath"/>
 			<batchtest todir="${common.dist.dir}/test/reports">
 				<fileset dir="${common.src.dir}/test">
