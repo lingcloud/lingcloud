@@ -75,14 +75,14 @@
 <div id="main">
 <div id="mainright">
 <div id="loginbox">
-<%@ include file="JSP/IndexAccessControl.jsp" %>
+	<%@ include file="JSP/IndexAccessControl.jsp" %>
 </div>
-<div id="sidebar"><!-- InstanceBeginEditable name="EditRegion3" -->
-	<%@ include file="JSP/Lingcloud_roadmap.jsp" %>
-<!-- InstanceEndEditable --></div>
+<div id="sidebar">
+	<%@ include file="JSP/HomepageSidebar.jsp" %>
 </div>
-<div id="text"><!-- InstanceBeginEditable name="EditRegion4" -->
-	<%@ include file="JSP/Lingcloud_intro.jsp" %>
+</div>
+<div id="text">
+	<%@ include file="JSP/HomepageMain.jsp" %>
 </div>
 </div>
 <!-- end main --> <!-- footer -->

@@ -62,22 +62,32 @@ a:hover {
 }
 
 #main {
+	padding: 10px 20px 10px 20px;
 	font-size: 12px;
 	line-height: 16px;
 	color: #21334a;
 }
+
 #mainright {
 	float:right;
-	width:224px;
-	}
+	width:280px;
+}
+
+#loginbox {
+	padding: 10px 20px 10px 20px;
+}
+
+#loginbox h3 {
+	text-transform: capitalize;
+	font-size: 16px;
+	margin: 20px 0 7px 0;
+}
+
 #sidebar {
-	padding: 0px 37px 30px 0;
+	padding: 10px 20px 10px 20px;
 	margin-top: 10px;
 }
-#loginbox {
 
-	padding: 10px 37px 0px 0;
-}
 #sidebar h3 {
 	text-transform: capitalize;
 	font-size: 16px;

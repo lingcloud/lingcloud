@@ -7,14 +7,14 @@
     if (ac == null)
     {
     	ac = new AccessControl();
-        //if the AccessControl service if used, the login dialoge is shown
+        //if the AccessControl service if used, the login dialog is shown
     	if (ac.isAccessControlEnabled() == true)
     	{
     %>
-            <b><font size="3px"><bean:message key="org.lingcloud.molva.portal.login" /></font></b>
+            <h3><b><bean:message key="org.lingcloud.molva.portal.welcome" /></b></h3>
             <form action="login.do" method="post">
-                <bean:message key="org.lingcloud.molva.portal.username" /><br><input type="text" name="username"><br />
-				<bean:message key="org.lingcloud.molva.portal.password" /><br><input type="password" name="password"><br />
+                <bean:message key="org.lingcloud.molva.portal.username" /> <input type="text" name="username" style="width:160px"><br />
+				<bean:message key="org.lingcloud.molva.portal.password" /> <input type="password" name="password" style="width:160px"><br />
 				<input type="submit" value="<bean:message key="org.lingcloud.molva.portal.login" />">
 			</form>
     <%
@@ -24,7 +24,7 @@
      	else
      	{
      	    ac.setStatus(AccessControl.accessControlStatus.UNUSED);
-     		session.setAttribute("ACobject",ac);	
+     		session.setAttribute("ACobject", ac);	
         }
     }
     
@@ -35,17 +35,20 @@
     	if (ac.getStatus() == AccessControl.accessControlStatus.ADMIN)
     	{
     %>
-    <bean:message key="org.lingcloud.molva.portal.welcomeadmin" /><%=ac.getUsername()%>
-    <form action="logout.do" method="post">
-		<input type="submit" value="<bean:message key="org.lingcloud.molva.portal.logout" />">
-	</form>
+		    <h3><b><bean:message key="org.lingcloud.molva.portal.welcome" /></b></h3>
+		    <bean:message key="org.lingcloud.molva.portal.welcomeadmin" /><br />
+		    <bean:message key="org.lingcloud.molva.portal.username" /> <%=ac.getUsername()%><br />
+		    <form action="logout.do" method="post">
+				<input type="submit" value="<bean:message key="org.lingcloud.molva.portal.logout" />">
+			</form>
     <%
     	}
        //if the AccessControl is not opened, there shows "welcome lingcloud user"
        if (ac.getStatus() == AccessControl.accessControlStatus.UNUSED)
        {
     %>
-    <bean:message key="org.lingcloud.molva.portal.welcomeuser" />
+		    <h3><b><bean:message key="org.lingcloud.molva.portal.welcome" /></b></h3>
+		    <bean:message key="org.lingcloud.molva.portal.welcomeuser" />
     <% 
        }
     }
