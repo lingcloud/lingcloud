@@ -199,26 +199,26 @@
 		</war>
 	</target>
 	
-	<target name="build-test" depends="init,build-ocl, build-xmm">
-			<javac srcdir="${common.src.dir}/test" destdir="${common.dist.dir}/build/test" 
-				classpathref="common.lingcloud.classpath" debug="off" optimize="on" 
-				source="${source}" target="${target}" />
-			<jar destfile="${common.dist.dir}/lib/lingcloud-molva-test-${project.test.version}.jar" 
-				basedir="${common.dist.dir}/build/test" includes="**/*.class">
-				<manifest>
-					<attribute name="Built-By" value="${user.name}" />
-					<attribute name="Built-On" value="${os.name} "/>
-					<section name="lingcloud-molva-test-${project.test.version}.jar">
-						<attribute name="Specification-Title" value="${project.test.title}"/>
-						<attribute name="Specification-Version" value="${project.test.version}"/>
-						<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
-						<attribute name="Implementation-Title" value="${project.test.title}"/>
-						<attribute name="Implementation-Version" value="${project.timestamp}"/>
-						<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
-					</section>
-				</manifest>
-			</jar>
-		</target>
+	<target name="build-test" depends="init,build-ocl,build-xmm">
+		<javac srcdir="${common.src.dir}/test" destdir="${common.dist.dir}/build/test" 
+			classpathref="common.lingcloud.classpath" debug="off" optimize="on" 
+			source="${source}" target="${target}" />
+		<jar destfile="${common.dist.dir}/lib/lingcloud-molva-test-${project.test.version}.jar" 
+			basedir="${common.dist.dir}/build/test" includes="**/*.class">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-On" value="${os.name} "/>
+				<section name="lingcloud-molva-test-${project.test.version}.jar">
+					<attribute name="Specification-Title" value="${project.test.title}"/>
+					<attribute name="Specification-Version" value="${project.test.version}"/>
+					<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
+					<attribute name="Implementation-Title" value="${project.test.title}"/>
+					<attribute name="Implementation-Version" value="${project.timestamp}"/>
+					<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
+				</section>
+			</manifest>
+		</jar>
+	</target>
 
 	<target name="assemble-xmm-axis" depends="extract-bin,build-xmm">
 		<!-- wsdd -->
@@ -309,13 +309,13 @@
 	<target name="test" depends="build-test">
 		<mkdir dir="${common.dist.dir}/test/reports/html" />
 		<junit printsummary="true">
-			<sysproperty key="lingcloud.home" value="${basedir}"/>
-			<classpath refid="common.lingcloud.classpath"/>
+			<sysproperty key="lingcloud.home" value="${basedir}" />
+			<classpath refid="common.lingcloud.classpath" />
 			<batchtest todir="${common.dist.dir}/test/reports">
 				<fileset dir="${common.src.dir}/test">
-					<include name="**/server/*TestSuite.java"/>
+					<include name="**/server/*TestSuite.java" />
 				</fileset>
-				<formatter type="xml"/>
+				<formatter type="xml" />
 			</batchtest>
 		</junit>
 		<junitreport todir="${common.dist.dir}/test/reports">
@@ -325,4 +325,5 @@
 			<report format="frames" todir="${common.dist.dir}/test/reports/html"/>
 		</junitreport>
 	</target>
+	
 </project>
