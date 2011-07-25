@@ -1438,7 +1438,7 @@ files in <%=f.getName()%>. Compression ratio: <%=(f.length() * 100) / size%>%
 <%@ include file="UploadFile.jsp"%>
 </head>
 <body>
-
+<%@ include file="OtherAccessControl.jsp" %>
 <!-- container -->
 <div id="container"><!-- header -->
 <%@ include file="BannerAndMenu.jsp" %>
