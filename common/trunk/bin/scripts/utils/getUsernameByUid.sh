@@ -9,23 +9,15 @@
 # http://lingcloud.org
 #
 
-USERNAME="$1"
-GROUPNAME="$2"
+_UID="$1"
 
-for n in `id -Gn "$USERNAME"`
-do
-	if [ "$?" != "0" ]
-	then
-		break
-	fi
+echo "$_UID" | egrep -q "^[0-9]+$"
+if [ "$?" != "0" ]
+then
+	exit 1
+fi
 
-	if [ "$n" = "$GROUPNAME" ]
-	then
-		echo "true"
-		exit 0
-	fi
-done
+perl -e "(\$login,\$pass,\$uid,\$gid) = getpwuid($_UID); print \"\$login\\n\";"
 
-echo "false"
-exit 1
+exit $?
 
