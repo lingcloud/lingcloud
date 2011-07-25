@@ -1,5 +1,5 @@
 /*
- *  @(#)XmmImplTestSuite.java  Jul 23, 2011
+ *  @(#)XMMClientTestSuite.java  Jul 23, 2011
  *
  *  Copyright (C) 2008-2011,
  *  LingCloud Team,
@@ -12,28 +12,26 @@
  */
 package org.lingcloud.molva.test.suite.server;
 
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.lingcloud.molva.test.xmm.*;
 
-import org.lingcloud.molva.test.xmm.XMMImplTester;
+import junit.framework.*;
 
 /**
  * <strong>Purpose:</strong><br>
- * The test suite for LingCloud XMMImpl.
+ * The test suite for LingCloud XMMClient.
  *
  * @version 1.0.0 2011-7-24<br>
  * @author Liang Li<br>
  *
  */
-public class XmmImplTestSuite {
-	
+public class XMMClientTestSuite {
+
 	public static Test suite() {
 		
 		TestSuite suite = new TestSuite();
 		suite.addTest(
 				new JUnit4TestAdapter(
-						XMMImplTester.class));
+						XMMClientTester.class));
 		
 		return suite;
 	}
