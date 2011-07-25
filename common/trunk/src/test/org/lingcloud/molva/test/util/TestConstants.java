@@ -41,6 +41,37 @@ public final class TestConstants {
 
 	public static final long RETRY_INTERVAL = 5000;
 	
+	/**
+	 * For XMM test suite constants.
+	 */
+	/**
+	 * VM and general partition Names for the test suite.
+	 * They will be created in the test initialzation
+	 * and will be destoryed after test.
+	 */
+	public static final String TEST_EVN_NAME_VMPARTION = "vm-partition-for-test";
+	public static final String TEST_EVN_NAME_GENPARTION = "gen-partition-for-test";
+	/**
+	 * Host IP for test suite.
+	 * They will be added to VM 
+	 * and general partitions respectively. 
+	 * They must be replaced by the existed host's IP.
+	 */
+	public static final String TEST_EVN_IPADD_VMHOST = "10.0.0.11";
+	public static final String TEST_EVN_IPADD_GENHOST = "10.0.0.12";
+	/**
+	 * VM and general vitual cluster Names for the test suite.
+	 * They will be created in the test initialzation
+	 * and will be destoryed after test.
+	 */
+	public static final String TEST_EVN_NAME_VMCLUSTER = "vm-cluster-for-test";
+	public static final String TEST_EVN_NAME_GENCLUSTER = "gen-cluster-for-test";
+	/**
+	 * Virtual appliance's GUID for the test suite.
+	 * It must be replaced by the existed appliance's GUID.
+	 */
+	public static final String TEST_EVN_GUID_APP = "virtual appliance guid";
+	
 	private TestConstants() {
 		
 	}
