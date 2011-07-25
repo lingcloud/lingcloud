@@ -64,8 +64,11 @@ MAKE_APPLIANCE_IP_POOL=10.0.0.231-235
 # whether enable access control for portal (true/false)
 ACCESS_CONTROL_ENABLE=false
 
-# the admin group name for for access control
+# the admin group name for access control
 ACCESS_CONTROL_ADMIN=lingcloudadmin
+
+# the user group name for access control
+ACCESS_CONTROL_USER=lingclouduser
 
 # Display language of UI (e.g. en, zh)
 UI_LANGUAGE=en

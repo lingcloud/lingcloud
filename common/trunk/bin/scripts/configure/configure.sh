@@ -145,7 +145,8 @@ then
 	get_val "MAKE_APPLIANCE_HOST" "the host used to make appliance"
 	get_val "MAKE_APPLIANCE_IP_POOL" "the public IP pool for virtual appliances being made"
 	get_val "ACCESS_CONTROL_ENABLE" "whether enable access control for portal (true/false)"
-	get_val "ACCESS_CONTROL_ADMIN" "the admin group name for for access control"
+	get_val "ACCESS_CONTROL_ADMIN" "the admin group name for access control"
+	get_val "ACCESS_CONTROL_USER" "the user group name for access control"
 	get_val "UI_LANGUAGE" "Display language of UI (e.g. en, zh)"
 
 	get_val "NFS_SERVER" "NFS server"
