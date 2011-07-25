@@ -1800,39 +1800,15 @@ function showVNC(basePath, guid, nodetype) {
     	hasAppletLoaded = true;
         return false;
     }
-    ajax.open("GET", basePath + "JSP/ShowVNC.jsp?guid=" + guid + "&nodetype=" + nodetype , true);
-    ajax.onreadystatechange = function () {
-        if (ajax.readyState == 4) {
-            if (ajax.status == 200) {
-                var xmlDoc = ajax.responseText;
-                if (xmlDoc === null) {
-                    return;
-                }
-                xmlDoc=xmlDoc.trim();
-                if(xmlDoc.indexOf("error=",0) > -1){
-                	var error = xmlDoc.substr(xmlDoc.indexOf("error=")+"error=".length, xmlDoc.length);
-                	hasAppletLoaded = true; //has loaded, but failed
-                	jAlert(error,lingcloud.error.errorTip);
-                	return;
-                }
-                jShow(xmlDoc,"VNC " + lingcloud.Infrastructure.connection);
-            } else {
-            	hasAppletLoaded = true; //has loaded, but failed
-                alert(lingcloud.error.responseNotFound + ajax.statusText);
-            }
-        }
-    };
-    ajax.send(null);
-    //to cancel the request and clear the applet
-    setTimeout(function(){
-    	if(!hasAppletLoaded){
-    		ajax.abort();
-    		var tdiv = document.getElementById(targetDiv);
-    		tdiv.innerHTML = "";
-    		$("#popup_cancel").trigger('click');
-    		jAlert(lingcloud.error.connectTimeout, lingcloud.error.errorTip);
-    	}
-    }, 60000);
+    var str = "<form id = \"vncsettings\">";
+    str += "<table ><tbody>";
+    str += "<input type=\"hidden\" name=\"basePath\" value=\"" + basePath + "\" />";
+    str += "<input type=\"hidden\" name=\"guid\" value=\"" + guid + "\" />";
+    str += "<input type=\"hidden\" name=\"nodetype\" value=\"" + nodetype + "\" />";
+    str += "</tbody></table></form>\n";
+    str += "<table id=\"loadingTable\" style=\"DISPLAY:none\" width=550px><tbody><tr><td><img src=" + basePath + "images/table_loading.gif /></td></tr></tbody></table>";
+    
+    loading4ShowVNC(basePath + "JSP/ShowVNC.jsp?guid=" + guid + "&nodetype=" + nodetype,"",  "vnccontainer");
 }
 
 

@@ -4,7 +4,7 @@
 <%@ page import="org.lingcloud.molva.xmm.pojos.*"%>
 <%@ page import="java.awt.Toolkit"%>
 <%@ page import="org.apache.struts.Globals"%>
-<%@ page import="java.util.*" %>
+<%@ page import="java.util.*"%>
 <%@page import="org.apache.commons.logging.Log"%>
 <%@page import="org.apache.commons.logging.LogFactory"%>
 <%@ page import="org.lingcloud.molva.xmm.util.XMMConstants"%>
@@ -14,8 +14,10 @@
 	String basePath = request.getScheme() + "://"
 			+ request.getServerName() + ":" + request.getServerPort()
 			+ path + "/";
-	final Log log = LogFactory.getFactory().getInstance(this.getClass());			
-	Locale loc = (Locale) request.getSession().getAttribute(Globals.LOCALE_KEY);
+	final Log log = LogFactory.getFactory()
+			.getInstance(this.getClass());
+	Locale loc = (Locale) request.getSession().getAttribute(
+			Globals.LOCALE_KEY);
 	String guid = (String) request.getParameter("guid");
 	String nodetype = (String) request.getParameter("nodetype");
 
@@ -52,15 +54,8 @@
 			String pass = (String) request.getSession().getAttribute(
 					"Password");
 			//ip:port
-//			if (screensize.startsWith("Full")) {
-//				int width = 0;
-//				int height = 0;
-//				width = Toolkit.getDefaultToolkit().getScreenSize().width;
-//				height = Toolkit.getDefaultToolkit().getScreenSize().height;
-//				screensize = width + "x" + height;
-//			}
 			String ipport = XMMPortalUtil.getProperIpPort4VNC(node,
-					pass, "800x600");
+					pass, "1024x768");
 			if (ipport == null || "".equals(ipport)) {
 				throw new Exception("The node " + node.getName()
 						+ " is not ready for vnc login.");
@@ -69,14 +64,24 @@
 			String ip = ipport.split(":")[0];
 			String port = ipport.split(":")[1];
 			StringBuilder buf = new StringBuilder();
-			ResourceBundle bundle = ResourceBundle.getBundle("org.lingcloud.molva.portal.struts.ApplicationResources",loc);
-						
+
 			buf
-					.append("<table align=\"center\">");
-			buf.append("<tr><td>" + ip + " : </td><td>" + port + "</td></tr>");
-			buf.append("</table><center>");
-			buf.append(bundle.getString("org.lingcloud.molva.portal.vnctip"));
-			buf.append("</center>");
+					.append("<APPLET CODE=\"com.glavsoft.viewer.Viewer\" ARCHIVE=\""
+							+ basePath
+							+ "JSP/VncApplet/tightvnc-jviewer.jar\" WIDTH=\"1px\" HEIGHT=\"1px\">");
+			buf.append("<PARAM NAME=\"Host\" VALUE=\"" + ip + "\">");
+			buf.append("<PARAM NAME=\"Port\" VALUE=\"" + port + "\">");
+
+			buf.append("<PARAM NAME=\"OpenNewWindow\" VALUE=\"Yes\">");
+			buf.append("<PARAM NAME=\"ShowControls\" VALUE=\"No\">");
+			buf.append("<PARAM NAME=\"ViewOnly\" VALUE=\"No\">");
+			buf.append("<PARAM NAME=\"ShareDesktop\" VALUE=\"Yes\">");
+			buf.append("<PARAM NAME=\"AllowCopyRect\" VALUE=\"Yes\">");
+			buf.append("<PARAM NAME=\"Encoding\" VALUE=\"Yes\">");
+			buf.append("<PARAM NAME=\"LocalPointer\" VALUE=\"No\">");
+			buf.append("<PARAM NAME=\"colorDepth\" VALUE=\"24\">");
+			buf.append("<PARAM NAME=\"ScalingFactor\" VALUE=\"100\">");
+			buf.append("</APPLET>");
 			out.write(buf.toString());
 			out.flush();
 		}

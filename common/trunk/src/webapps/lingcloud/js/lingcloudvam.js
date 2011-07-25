@@ -1608,11 +1608,23 @@ showDialogForOperateAppliance = function (basePath, appGuid, action) {
 };
 
 showDialogForShowVNC = function (basePath, host, port) {
-	var str = "<table align=\"center\">"
-		+ "<tr><td>" + host + " : </td><td>" + port + "</td></tr>"
-		+ "</table>"
-		+ "<center>" + lingcloud.tip.vnctip +"</center>";
-	jShow(str,"VNC " + lingcloud.Infrastructure.connection);
+	var str = "<APPLET CODE=\"com.glavsoft.viewer.Viewer\" ARCHIVE=\""+basePath+"JSP/VncApplet/tightvnc-jviewer.jar\" WIDTH=\"1px\" HEIGHT=\"1px\">";
+	str += "<PARAM NAME=\"Host\" VALUE=\"" + host + "\">";
+	str += "<PARAM NAME=\"Port\" VALUE=\"" + port + "\">";
+	str += "<PARAM NAME=\"OpenNewWindow\" VALUE=\"Yes\">";
+	str += "<PARAM NAME=\"ShowControls\" VALUE=\"No\">";
+	str += "<PARAM NAME=\"ViewOnly\" VALUE=\"No\">";
+	str += "<PARAM NAME=\"ShareDesktop\" VALUE=\"Yes\">";
+	str += "<PARAM NAME=\"AllowCopyRect\" VALUE=\"Yes\">";
+	str += "<PARAM NAME=\"Encoding\" VALUE=\"Yes\">";
+	str += "<PARAM NAME=\"LocalPointer\" VALUE=\"No\">";
+	str += "<PARAM NAME=\"colorDepth\" VALUE=\"24\">";
+	str += "<PARAM NAME=\"ScalingFactor\" VALUE=\"100\">";
+	str += "</APPLET>";
+	var tdiv = document.getElementById("vnccontainer");
+    tdiv.innerHTML = str;
+    // tdiv.style.display = "";
+	//loading4ShowVNC(basePath + "JSP/ShowVNC4Host.jsp", "", "vnccontainer");
 };
 
 loadApplianceInfo = function (basePath, loadingTable, targetTd, guid) {
