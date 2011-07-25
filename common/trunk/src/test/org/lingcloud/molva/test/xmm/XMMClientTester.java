@@ -1,3 +1,15 @@
+/*
+ *  @(#)XMMClientTester.java  Jul 23, 2011
+ *
+ *  Copyright (C) 2008-2011,
+ *  LingCloud Team,
+ *  Institute of Computing Technology,
+ *  Chinese Academy of Sciences.
+ *  P.O.Box 2704, 100190, Beijing, China.
+ *
+ *  http://lingcloud.org
+ *  
+ */
 package org.lingcloud.molva.test.xmm;
 
 import java.util.*;
@@ -16,7 +28,16 @@ import org.lingcloud.molva.xmm.amm.VirtualClusterAMM;
 import org.lingcloud.molva.xmm.client.*;
 import org.lingcloud.molva.xmm.deploy.policy.ONEVMDeployPolicier;
 
+import static org.lingcloud.molva.test.xmm.XMMImplTester.*;
 
+/**
+ * <strong>Purpose:</strong><br>
+ * The tester for LingCloud XMMClient.
+ *
+ * @version 1.0.0 2011-7-24<br>
+ * @author Liang Li<br>
+ *
+ */
 public class XMMClientTester {
 	private static Log log = LogFactory.getLog(XMMClientTester.class);
 	
@@ -103,7 +124,7 @@ public class XMMClientTester {
 		/**
 		 * Create VM partition.
 		 */
-		name = TestConstants.TEST_EVN_NAME_VMPARTION;
+		name = TEST_EVN_NAME_VMPARTION;
 		controller = PartitionAC.class.getName();
 		nodetype = PartitionAC.VM;
 		preInstalledSoft = "No software.";
@@ -117,7 +138,7 @@ public class XMMClientTester {
 		/**
 		 * Create general partition
 		 */
-		name = TestConstants.TEST_EVN_NAME_GENPARTION;
+		name = TEST_EVN_NAME_GENPARTION;
 		controller = PartitionAC.class.getName();
 		nodetype = PartitionAC.GENERAL;
 		preInstalledSoft = "No software.";
@@ -153,7 +174,7 @@ public class XMMClientTester {
 		/**
 		 * Add a physical node to the VM partition.
 		 */
-		privateip = TestConstants.TEST_EVN_IPADD_VMHOST;
+		privateip = TestConstants.TEST_XEN_SERVER;
 		publicip = privateip;
 		controller = PVNPNController.class.getName();
 		description = "Added Phyical Node for general partition test.";
@@ -165,7 +186,7 @@ public class XMMClientTester {
 		/**
 		 * Add a physical node to the general partition.
 		 */
-		privateip = TestConstants.TEST_EVN_IPADD_GENHOST;
+		privateip = TestConstants.TEST_COMMON_SERVER;
 		publicip = privateip;
 		controller = PPNPNController.class.getName();
 		description = "Phyical Node for general partition test.";
@@ -202,10 +223,10 @@ public class XMMClientTester {
 		 * Add a virtual cluster for a VM partition.
 		 */
 		parguid = vmPartition.getGuid();
-		clustername = TestConstants.TEST_EVN_NAME_VMCLUSTER;
+		clustername = TEST_EVN_NAME_VMCLUSTER;
 
 		NodeRequirement nr = new NodeRequirement();
-		nr.setVirtualApplicanceID(TestConstants.TEST_EVN_GUID_APP);
+		nr.setVirtualApplicanceID(TEST_EVN_GUID_APP);
 		nr.setCpuNum(2);
 		nr.setMemorySize(512);
 		nr.setNeedPublicIP(true);
@@ -228,9 +249,9 @@ public class XMMClientTester {
 		 * Add a virtual cluster for a general partition.
 		 */
 		parguid = genPartition.getGuid();
-		clustername = TestConstants.TEST_EVN_NAME_GENCLUSTER;
-		pnnodeip = new String[] { TestConstants.TEST_EVN_IPADD_GENHOST 
-		};
+		clustername = TEST_EVN_NAME_GENCLUSTER;
+		pnnodeip = new String[] { TestConstants.TEST_COMMON_SERVER 
+							};
 		nrmap.clear();
 		for (int i = 0; i < pnnodeip.length; i++) {
 			NodeRequirement tmpNr = new NodeRequirement();
@@ -251,10 +272,10 @@ public class XMMClientTester {
 		
 		xmmClient.destroyVirtualCluster(vmCluster.getGuid());
 		log.info("Destory the test cluster in the VM partition : "
-				+ TestConstants.TEST_EVN_NAME_VMCLUSTER);
+				+ TEST_EVN_NAME_VMCLUSTER);
 		
 		xmmClient.destroyVirtualCluster(genCluster.getGuid());
 		log.info("Destory the test cluster in the general partition : "
-				+ TestConstants.TEST_EVN_NAME_GENCLUSTER);
+				+ TEST_EVN_NAME_GENCLUSTER);
 	}
 }
