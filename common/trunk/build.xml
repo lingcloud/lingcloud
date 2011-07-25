@@ -5,6 +5,7 @@
 
 	<property name="target" value="1.5" />
 	<property name="source" value="1.5" />
+	<property name="javac.optimize" value="on" />
 
 	<property name="project.ocl.title" value="LingCloud Molva Open Cloud Lease" />
 	<property name="project.ocl.version" value="0.8" />
@@ -22,13 +23,44 @@
 	<property name="common.3rdparty.tomcat.dir" value="apache-tomcat-7.0.12" />
 	<property name="common.3rdparty.axis.file" value="axis-bin-1_4.tar.gz" />
 	<property name="common.3rdparty.axis.dir" value="axis-1_4" />
+	
+	<property name="common.3rdparty.emma.enabled" value="true" />
 
 	<path id="common.lingcloud.classpath">
 		<fileset dir="${common.dist.dir}/lib" includes="**/*.jar" />
 		<fileset dir="lib/3rdparty" includes="**/*.jar" />
 	</path>
 
-	<target name="init">
+	<path id="common.3rdparty.emma.lib">
+		<pathelement location="bin/3rdparty/emma/emma.jar" />
+		<pathelement location="bin/3rdparty/emma/emma_ant.jar" />
+	</path>
+
+	<path id="common.lingcloud.instrument.source">
+		<pathelement location="${common.src.dir}/ocl" />
+		<pathelement location="${common.src.dir}/xmm" />
+	</path>
+
+	<path id="common.lingcloud.instrument.classpath">
+		<pathelement location="${common.dist.dir}/lib/lingcloud-molva-ocl-${project.ocl.version}.jar" />
+		<pathelement location="${common.dist.dir}/lib/lingcloud-molva-xmm-${project.xmm.version}.jar" />
+	</path>
+
+	<target name="check-test-on">
+		<condition property="debug.on">
+			<isset property="test.run"/>
+		</condition>
+	</target>
+
+	<target name="set-debug-on" if="debug.on" depends="check-test-on">
+		<property name="javac.debug" value="on" />
+	</target>
+	
+	<target name="set-debug-off" unless="debug.on" depends="check-test-on">
+		<property name="javac.debug" value="off" />
+	</target>
+
+	<target name="init" depends="set-debug-on,set-debug-off">
 		<mkdir dir="${common.dist.dir}" />
 		<mkdir dir="${common.dist.dir}/lib" />
 		<mkdir dir="${common.dist.dir}/bin" />
@@ -42,6 +74,7 @@
 		<tstamp>
 			<format property="project.timestamp" pattern="yyyy-MM-dd'T'HH:mm:ss" />
 		</tstamp>
+		<echo>javac debug is "${javac.debug}"</echo>
 	</target>
 
 	<target name="clean">
@@ -71,7 +104,7 @@
 
 	<target name="build-ocl" depends="init">
 		<javac srcdir="${common.src.dir}/ocl" destdir="${common.dist.dir}/build/ocl" 
-			classpathref="common.lingcloud.classpath" debug="off" optimize="on" 
+			classpathref="common.lingcloud.classpath" debug="${javac.debug}" optimize="${javac.optimize}" 
 			source="${source}" target="${target}" />
 		<jar destfile="${common.dist.dir}/lib/lingcloud-molva-ocl-${project.ocl.version}.jar" 
 			basedir="${common.dist.dir}/build/ocl" includes="**/*.class">
@@ -92,7 +125,7 @@
 
 	<target name="build-xmm" depends="init">
 		<javac srcdir="${common.src.dir}/xmm" destdir="${common.dist.dir}/build/xmm" 
-			classpathref="common.lingcloud.classpath" debug="off" optimize="on" 
+			classpathref="common.lingcloud.classpath" debug="${javac.debug}" optimize="${javac.optimize}" 
 			source="${source}" target="${target}" />
 		<jar destfile="${common.dist.dir}/lib/lingcloud-molva-xmm-${project.xmm.version}.jar" 
 			basedir="${common.dist.dir}/build/xmm" includes="**/*.class">
@@ -114,7 +147,7 @@
 	<target name="build-portal" depends="init,extract-bin,build-ocl,build-xmm">
 		<!-- build jar -->
 		<javac srcdir="${common.src.dir}/contrib/portal" destdir="${common.dist.dir}/build/portal" 
-			classpathref="common.lingcloud.classpath" debug="off" optimize="on" 
+			classpathref="common.lingcloud.classpath" debug="${javac.debug}" optimize="${javac.optimize}" 
 			source="${source}" target="${target}" />
 		<copy todir="${common.dist.dir}/build/portal">
 			<fileset dir="${common.src.dir}/contrib/portal" includes="**/*.properties" />
@@ -201,7 +234,7 @@
 	
 	<target name="build-test" depends="init,build-ocl,build-xmm">
 		<javac srcdir="${common.src.dir}/test" destdir="${common.dist.dir}/build/test" 
-			classpathref="common.lingcloud.classpath" debug="off" optimize="on" 
+			classpathref="common.lingcloud.classpath" debug="${javac.debug}" optimize="${javac.optimize}" 
 			source="${source}" target="${target}" />
 		<jar destfile="${common.dist.dir}/lib/lingcloud-molva-test-${project.test.version}.jar" 
 			basedir="${common.dist.dir}/build/test" includes="**/*.class">
@@ -305,25 +338,69 @@
 		<delete file="${common.dist.dir}/bin/${common.3rdparty.axis.file}" />
 		<delete dir="${common.dist.dir}/bin/${common.3rdparty.axis.dir}" />
 	</target>
-	
-	<target name="test" depends="build-test">
+
+	<target name="test-init">
+		<delete dir="${common.dist.dir}/test/reports" />
+		<delete dir="${common.dist.dir}/test/coverage" />
 		<mkdir dir="${common.dist.dir}/test/reports/html" />
-		<junit printsummary="true">
+		<mkdir dir="${common.dist.dir}/test/coverage" />
+		<mkdir dir="${common.dist.dir}/build/instrument" />
+		<property name="test.run" value="test" />
+	</target>
+	
+	<target name="test-junit" depends="test-init,build-test,test-instrument">
+		<junit fork="true" forkmode="once" printsummary="withOutAndErr"
+			errorproperty="test.error" showoutput="on">
+			<jvmarg value="-Demma.coverage.out.file=${common.dist.dir}/test/coverage/metadata.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
 			<sysproperty key="lingcloud.home" value="${basedir}" />
+			<classpath location="${common.dist.dir}/build/instrument" />
 			<classpath refid="common.lingcloud.classpath" />
+			<classpath refid="common.3rdparty.emma.lib" />
+			<formatter type="xml" />
 			<batchtest todir="${common.dist.dir}/test/reports">
 				<fileset dir="${common.src.dir}/test">
 					<include name="**/server/*TestSuite.java" />
 				</fileset>
-				<formatter type="xml" />
 			</batchtest>
 		</junit>
+	</target>
+
+	<target name="test-junit-report" depends="test-junit">
 		<junitreport todir="${common.dist.dir}/test/reports">
 			<fileset dir="${common.dist.dir}/test/reports">
-				<include name="TEST-*.xml"/>
+				<include name="TEST-*.xml" />
 			</fileset>
-			<report format="frames" todir="${common.dist.dir}/test/reports/html"/>
+			<report format="frames" todir="${common.dist.dir}/test/reports/html" />
 		</junitreport>
+	</target>	
+	
+	<taskdef resource="emma_ant.properties" classpathref="common.3rdparty.emma.lib" />
+
+	<target name="test-coverage-report" depends="test-junit">
+		<emma enabled="${common.3rdparty.emma.enabled}">
+			<report sourcepathref="common.lingcloud.instrument.source" 
+				sort="+block,+name,+method,+class" 
+				metrics="method:70,block:80,line:80,class:100">
+				<fileset dir="${common.dist.dir}/test/coverage">
+					<include name="*.emma" />
+				</fileset>
+				<html outfile="${common.dist.dir}/test/coverage/index.html" 
+					depth="method" columns="name,class,method,block,line" />
+			</report>
+		</emma>
 	</target>
 	
+	<target name="test-instrument" depends="test-init,build-ocl,build-xmm">
+		<emma enabled="${common.3rdparty.emma.enabled}">
+			<instr instrpathref="common.lingcloud.instrument.classpath" 
+				destdir="${common.dist.dir}/build/instrument" 
+				metadatafile="${common.dist.dir}/test/coverage/metadata.emma" 
+				merge="true">
+			</instr>
+		</emma>
+	</target>
+
+	<target name="test" depends="test-init,test-junit,test-junit-report,
+		test-coverage-report,clean-build"/>
 </project>
