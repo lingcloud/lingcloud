@@ -23,7 +23,6 @@
 	<property name="common.3rdparty.tomcat.dir" value="apache-tomcat-7.0.12" />
 	<property name="common.3rdparty.axis.file" value="axis-bin-1_4.tar.gz" />
 	<property name="common.3rdparty.axis.dir" value="axis-1_4" />
-	
 	<property name="common.3rdparty.emma.enabled" value="true" />
 
 	<path id="common.lingcloud.classpath">
@@ -46,17 +45,11 @@
 		<pathelement location="${common.dist.dir}/lib/lingcloud-molva-xmm-${project.xmm.version}.jar" />
 	</path>
 
-	<target name="check-test-on">
-		<condition property="debug.on">
-			<isset property="test.run"/>
-		</condition>
-	</target>
-
-	<target name="set-debug-on" if="debug.on" depends="check-test-on">
+	<target name="set-debug-on" if="test.run">
 		<property name="javac.debug" value="on" />
 	</target>
 	
-	<target name="set-debug-off" unless="debug.on" depends="check-test-on">
+	<target name="set-debug-off" unless="test.run">
 		<property name="javac.debug" value="off" />
 	</target>
 
@@ -345,7 +338,7 @@
 		<mkdir dir="${common.dist.dir}/test/reports/html" />
 		<mkdir dir="${common.dist.dir}/test/coverage" />
 		<mkdir dir="${common.dist.dir}/build/instrument" />
-		<property name="test.run" value="test" />
+		<property name="test.run" value="true" />
 	</target>
 	
 	<target name="test-junit" depends="test-init,build-test,test-instrument">
