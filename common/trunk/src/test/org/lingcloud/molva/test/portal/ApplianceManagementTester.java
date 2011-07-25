@@ -59,6 +59,7 @@ public class ApplianceManagementTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		verifyFalse(selenium.isTextPresent("category1"));		
 	}
+	@Test
     public void testApplianceManagement() throws Exception{
     	selenium.open("/lingcloud/");
 		selenium.click("link=Virtual Appliance");

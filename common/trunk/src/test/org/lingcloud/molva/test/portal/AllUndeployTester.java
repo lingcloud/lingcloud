@@ -52,6 +52,7 @@ public class AllUndeployTester extends SeleneseTestCase {
 		verifyFalse(selenium.isTextPresent("partion2"));
 
 	}
+	@Test
 	public void testDeleteGeneralPartitionNode() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -65,7 +66,7 @@ public class AllUndeployTester extends SeleneseTestCase {
 		verifyFalse(selenium.isTextPresent(TestConstants.TEST_COMMON_SERVER));
 
 	}
-
+	@Test
 	public void testDeleteGeneralPartition() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -76,7 +77,7 @@ public class AllUndeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		verifyFalse(selenium.isTextPresent("partion2"));
 	}
-
+	@Test
 	public void testDeleteVMCluster() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -89,7 +90,7 @@ public class AllUndeployTester extends SeleneseTestCase {
 		selenium.click("//a[contains(text(),'partion1')]");
 		verifyFalse(selenium.isTextPresent("cluster1"));
 	}
-
+	@Test
 	public void testDeleteVMNode() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -103,7 +104,7 @@ public class AllUndeployTester extends SeleneseTestCase {
 		verifyFalse(selenium.isTextPresent(TestConstants.TEST_XEN_SERVER));
 
 	}
-
+	@Test
 	public void testDeleteVMPartition() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -114,7 +115,7 @@ public class AllUndeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		verifyFalse(selenium.isTextPresent("partion1"));
 	}
-
+	@Test
 	public void testDeleteAppliance() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");	
 		selenium.click("link=Virtual Appliance");
@@ -134,7 +135,7 @@ public class AllUndeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		verifyFalse(selenium.isTextPresent("appliance1"));
 	}
-
+	@Test
 	public void testDeleteCDImage() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");	
 		selenium.click("link=Virtual Appliance");
@@ -149,7 +150,7 @@ public class AllUndeployTester extends SeleneseTestCase {
 		verifyFalse(selenium.isTextPresent("image1"));
 
 	}
-
+	@Test
 	public void testDeleteCategory() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualDisc.jsp");
 		selenium.click("link=Virtual Appliance");

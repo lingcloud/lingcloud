@@ -51,7 +51,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("category1"));
 
 	}
-
+	@Test
 	public void testAddAndModifyCDImage() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualDisc.jsp#");
 		selenium.click("link=Virtual Appliance");
@@ -97,7 +97,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("Windows xp"));
 		verifyTrue(selenium.isTextPresent("Ready"));
 	}
-
+	@Test
 	public void testAddAndModifyAppliance() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualDisc.jsp#");
 		selenium.click("link=Virtual Appliance");
@@ -173,7 +173,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("application3"));
 
 	}
-
+	@Test
 	public void testAddVMPartition() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -190,7 +190,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("description3"));
 		verifyTrue(selenium.isTextPresent("software1"));
 	}
-
+	@Test
 	public void testAddVMNode() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -205,7 +205,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		
 		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
 		{
-			selenium.click("css=#ptNodeRrd1 > td > span > img[title=Refresh]");
+			selenium.click("css=a > img[title=Refresh]");
 			Thread.sleep(TestConstants.RETRY_INTERVAL);
             if(selenium.isTextPresent("RUNNING"))		
 			break;
@@ -214,7 +214,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent(TestConstants.TEST_XEN_SERVER));
 
 	}
-
+	@Test
 	public void testAddVMCluster() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -255,7 +255,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("RUNNING"));
 		
 	}
-
+	@Test
 	public void testStopVMCluster() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -277,7 +277,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		}
 		verifyTrue(selenium.isTextPresent("BOOT"));
 	}
-
+	@Test
 	public void testStartVMCluster() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
@@ -299,7 +299,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("RUNNING"));
 
 	}
-
+	@Test
 	public void testAddGeneralPartition() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");	
 		selenium.click("link=Infrastructure");
@@ -317,7 +317,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("description4"));
 
 	}
-
+	@Test
 	public void testAddGeneralNode() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");		
 		selenium.click("link=Infrastructure");
@@ -332,7 +332,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent(TestConstants.TEST_COMMON_SERVER));
 
 	}
-
+	@Test
 	public void testAddGeneralCluster() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");	
 		selenium.click("link=Infrastructure");
