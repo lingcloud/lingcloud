@@ -84,7 +84,7 @@ public class XMMPortalUtil {
 
 	private static ResourceBundle resource = null;
 
-	private static Locale locale = new Locale("zh", "CN");
+	private static Locale locale = new Locale("en", "US");
 
 	public static final int OK = 0;
 
