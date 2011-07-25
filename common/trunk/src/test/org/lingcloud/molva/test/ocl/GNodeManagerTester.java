@@ -77,6 +77,12 @@ public class GNodeManagerTester {
 			gnodeManager.unregister(gnode.getGuid());
 		}
 	}
+	
+	@Test(expected = Exception.class)
+	public void locate() throws Exception {
+		log.info("begin locate...");
+		gnodeManager.locate("guid");
+	}
 
 	@Test
 	public void register() {
@@ -89,7 +95,7 @@ public class GNodeManagerTester {
 			assertTrue(gn.getGuid() == null);
 			GNode gnDb = gnodeManager.locate(gnode.getGuid());
 			assertNotNull(gnDb);
-			// assertTrue(gnode.getGuid().equals(gnDb.getGuid()));
+			assertTrue(gnode.getGuid().equals(gnDb.getGuid()));
 		} catch (Exception e) {
 			log.error("test failed. Reason: " + e);
 			e.printStackTrace();

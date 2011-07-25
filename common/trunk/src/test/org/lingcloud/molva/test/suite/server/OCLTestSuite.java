@@ -14,9 +14,9 @@ package org.lingcloud.molva.test.suite.server;
 
 import org.lingcloud.molva.test.ocl.GNodeManagerTester;
 
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * <strong>Purpose:</strong><br>
@@ -26,11 +26,8 @@ import junit.framework.TestSuite;
  * @author Ruijian Wang<br>
  *
  */
-public class OclTestSuite {
-	public static Test suite() {
-		TestSuite suite = new TestSuite("The test suite for LingCloud Ocl");
-        suite.addTest(new JUnit4TestAdapter(GNodeManagerTester.class));
-        
-        return suite;
-	}
+@RunWith(Suite.class)
+@SuiteClasses({GNodeManagerTester.class })
+public class OCLTestSuite {
+	
 }
