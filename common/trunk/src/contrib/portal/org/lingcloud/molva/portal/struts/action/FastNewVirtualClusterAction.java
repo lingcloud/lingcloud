@@ -193,11 +193,12 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 
 			
 			boolean isEnabled = XMMUtil.getAccessControlEnable();
+			String tenantId = (String) fastNewClusterForm.get("tenantId");
 			/**
 			 * if the AccessControl is opened,authorize the user.
 			 */
-			if (isEnabled) {
-				String tenantId = (String) fastNewClusterForm.get("tenantId");
+			if (isEnabled && !("".equals(tenantId))) {
+				
 				String userGroup = XMMUtil.getAccessControlUserGroup();
 				String shPath = XMMUtil.getUtilityScriptsPath() 
 				                + "/isUserInGroup.sh";
@@ -206,49 +207,54 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 				String result =  XMMUtil.runCommand(cmd);
 				log.info("the result is:" + result + "\n");
 				/**
-				 * if the user belongs to  the  user group, get the uid and replace 
-				 * the user name
+				 * if the user belongs to  the  user group, 
+				 * get the uid and replace the user name
 				 * otherwise turn back to the original page 
 				 */
-				if (result.equals("true" + System.getProperty("line.separator"))) {
-				shPath = XMMUtil.getUtilityScriptsPath() + "/getUidByUsername.sh";
-				cmd = shPath + " " + tenantId;
-				result =  XMMUtil.runCommand(cmd);
-				int length = result.length();
-				int sublength = System.getProperty("line.separator").length();
-				String uid = result.substring(0, length - sublength);
-				log.info("the user's uid is " + uid + "\n");
-				fastNewClusterForm.set("tenantId", uid);
-				log.info("the user is ok to create vc\n");
-				
-				createVirtualCluster(fastNewClusterForm);
-				
-				/*
-				 * set object to request so that other pages can use.
-				 */
-				// request.setAttribute("thisPage", thisPage);
-				if (targetDiv == null || "".equals(targetDiv)) {
-					targetDiv = "asset_info_div";
-				}
-				request.setAttribute("targetDiv", targetDiv.trim());
-				request.getSession().removeAttribute("fastNewVirtualClusterForm");
-				String forwardAction = request.getParameter("forwardAction");
-				if (forwardAction != null && !("".equals(forwardAction))) {
-					log.info("get a forwardAction : " + forwardAction);
-					response.sendRedirect(forwardAction);
-					return null;
+				if (result.equals("true" 
+						+ System.getProperty("line.separator"))) {
+					shPath = XMMUtil.getUtilityScriptsPath() 
+							+ "/getUidByUsername.sh";
+					cmd = shPath + " " + tenantId;
+					result =  XMMUtil.runCommand(cmd);
+					int length = result.length();
+					int sublength = System.getProperty(
+							"line.separator").length();
+					String uid = result.substring(0, length - sublength);
+					log.info("the user's uid is " + uid + "\n");
+					fastNewClusterForm.set("tenantId", uid);
+					log.info("the user is ok to create vc\n");
+					
+					createVirtualCluster(fastNewClusterForm);
+					
+					/*
+					 * set object to request so that other pages can use.
+					 */
+					// request.setAttribute("thisPage", thisPage);
+					if (targetDiv == null || "".equals(targetDiv)) {
+						targetDiv = "asset_info_div";
+					}
+					request.setAttribute("targetDiv", targetDiv.trim());
+					request.getSession().removeAttribute(
+							"fastNewVirtualClusterForm");
+					String forwardAction = request.getParameter(
+							"forwardAction");
+					if (forwardAction != null && !("".equals(forwardAction))) {
+						log.info("get a forwardAction : " + forwardAction);
+						response.sendRedirect(forwardAction);
+						return null;
+					} else {
+						return mapping.findForward("success");
+					}
+					
+					
 				} else {
-					return mapping.findForward("success");
+					String errormessage = 
+						"The user does not belong to the user group.";
+					log.info("the user is failed to create vc\n");
+					request.setAttribute("errormsg", errormessage);
+					return mapping.findForward("failure");
 				}
-				
-				
-			} else {
-				String errormessage = 
-					"The user does not belong to the user group.";
-				log.info("the user is failed to create vc\n");
-				request.setAttribute("errormsg", errormessage);
-				return mapping.findForward("failure");
-			}
 			/**
 			 * if the  AccessControl is not opened, 
 			 */
