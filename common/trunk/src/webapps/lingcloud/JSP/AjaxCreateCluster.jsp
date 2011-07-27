@@ -10,6 +10,9 @@
 <%@ page import="org.apache.commons.logging.LogFactory"%>
 <%@ page import="org.lingcloud.molva.xmm.deploy.policy.VirtualMachineDeployPolicier" %>
 <%@ page import="org.lingcloud.molva.xmm.util.XMMConstants" %>
+
+<%@ page import="org.lingcloud.molva.xmm.util.XMMUtil" %>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ page isELIgnored="false"%>
@@ -131,6 +134,22 @@ final Log log = LogFactory.getFactory().getInstance(this.getClass());
 				<td width="200"><input type="text" name="clustername" size="20"
 					maxlength="20" />*</td>
 			</tr>
+			
+			<%
+
+				boolean isEnabled = XMMUtil.getAccessControlEnable();
+				if (isEnabled) {
+			%>
+					<tr class="actionlog_title">
+						<th width="80" valign="middle"><bean:message
+							key="org.lingcloud.molva.xmm.virtualCluster.Renter" /></th>
+						<td width="200"><input type="text" name="tenantId" size="20"
+							maxlength="20" />*</td>
+					</tr>
+			<%	
+				}
+			%>
+
 			<tr class="actionlog_title">
 				<input type="hidden" name="amm" value="VirtualClusterAMM" />
 				<%if (PartitionAC.VM.equals(nodeType)) {

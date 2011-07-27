@@ -10,7 +10,7 @@
         //if the AccessControl service if used, the login dialog is shown
     	if (ac.isAccessControlEnabled() == true)
     	{
-    		    response.sendRedirect("LoginErrorJump.jsp");
+    		    response.sendRedirect(basePath + "JSP/LoginErrorJump.jsp");
                 return;
      	}
      	//if the AccessControl service if closed, the page shows that we welcome anyone

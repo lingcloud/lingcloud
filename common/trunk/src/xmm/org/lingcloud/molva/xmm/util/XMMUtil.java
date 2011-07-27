@@ -455,4 +455,8 @@ public class XMMUtil {
 	public static String getUtilityScriptsPath() throws Exception {
 		return getValueInCfgFile("utilityScriptsPath");
 	}
+	
+	public static String getAccessControlUserGroup() throws Exception {
+		return getValueInCfgFile("accessControlUserGroup");
+	}
 }

@@ -34,6 +34,7 @@ import org.lingcloud.molva.xmm.pojos.NodeRequirement;
 import org.lingcloud.molva.xmm.pojos.VirtualCluster;
 import org.lingcloud.molva.ocl.util.ParaChecker;
 import org.lingcloud.molva.xmm.util.XMMConstants;
+import org.lingcloud.molva.xmm.util.XMMUtil;
 
 /**
  * <strong>Purpose:To create a virtual cluster.</strong><br>
@@ -161,6 +162,11 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 				+ " is added successfully and fastly.");
 	}
 
+
+	/* (non-Javadoc)
+	 * The action is used to create cluster.
+	 * @see org.lingcloud.molva.portal.struts.action.NeedLoginAction#dowork(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	public ActionForward dowork(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
@@ -185,25 +191,88 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 			}
 			log.info("User want to fast new a cluster from url : " + url);
 
-			createVirtualCluster(fastNewClusterForm);
 			
-			/*
-			 * set object to request so that other pages can use.
+			boolean isEnabled = XMMUtil.getAccessControlEnable();
+			/**
+			 * if the AccessControl is opened,authorize the user.
 			 */
-			// request.setAttribute("thisPage", thisPage);
-			if (targetDiv == null || "".equals(targetDiv)) {
-				targetDiv = "asset_info_div";
-			}
-			request.setAttribute("targetDiv", targetDiv.trim());
-			request.getSession().removeAttribute("fastNewVirtualClusterForm");
-			String forwardAction = request.getParameter("forwardAction");
-			if (forwardAction != null && !("".equals(forwardAction))) {
-				log.info("get a forwardAction : " + forwardAction);
-				response.sendRedirect(forwardAction);
-				return null;
+			if (isEnabled) {
+				String tenantId = (String) fastNewClusterForm.get("tenantId");
+				String userGroup = XMMUtil.getAccessControlUserGroup();
+				String shPath = XMMUtil.getUtilityScriptsPath() 
+				                + "/isUserInGroup.sh";
+				String cmd = shPath + " " + tenantId + " " + userGroup;
+				log.info("the tenant authorize cmd is:" + cmd + "\n");
+				String result =  XMMUtil.runCommand(cmd);
+				log.info("the result is:" + result + "\n");
+				/**
+				 * if the user belongs to  the  user group, get the uid and replace 
+				 * the user name
+				 * otherwise turn back to the original page 
+				 */
+				if (result.equals("true" + System.getProperty("line.separator"))) {
+				shPath = XMMUtil.getUtilityScriptsPath() + "/getUidByUsername.sh";
+				cmd = shPath + " " + tenantId;
+				result =  XMMUtil.runCommand(cmd);
+				int length = result.length();
+				int sublength = System.getProperty("line.separator").length();
+				String uid = result.substring(0, length - sublength);
+				log.info("the user's uid is " + uid + "\n");
+				fastNewClusterForm.set("tenantId", uid);
+				log.info("the user is ok to create vc\n");
+				
+				createVirtualCluster(fastNewClusterForm);
+				
+				/*
+				 * set object to request so that other pages can use.
+				 */
+				// request.setAttribute("thisPage", thisPage);
+				if (targetDiv == null || "".equals(targetDiv)) {
+					targetDiv = "asset_info_div";
+				}
+				request.setAttribute("targetDiv", targetDiv.trim());
+				request.getSession().removeAttribute("fastNewVirtualClusterForm");
+				String forwardAction = request.getParameter("forwardAction");
+				if (forwardAction != null && !("".equals(forwardAction))) {
+					log.info("get a forwardAction : " + forwardAction);
+					response.sendRedirect(forwardAction);
+					return null;
+				} else {
+					return mapping.findForward("success");
+				}
+				
+				
 			} else {
-				return mapping.findForward("success");
+				String errormessage = 
+					"The user does not belong to the user group.";
+				log.info("the user is failed to create vc\n");
+				request.setAttribute("errormsg", errormessage);
+				return mapping.findForward("failure");
 			}
+			/**
+			 * if the  AccessControl is not opened, 
+			 */
+			} else {
+				String tenant = "";
+				fastNewClusterForm.set("tenantId", tenant);
+				createVirtualCluster(fastNewClusterForm);
+
+				if (targetDiv == null || "".equals(targetDiv)) {
+					targetDiv = "asset_info_div";
+				}
+				request.setAttribute("targetDiv", targetDiv.trim());
+				request.getSession().removeAttribute(
+						"fastNewVirtualClusterForm");
+				String forwardAction = request.getParameter("forwardAction");
+				if (forwardAction != null && !("".equals(forwardAction))) {
+					log.info("get a forwardAction : " + forwardAction);
+					response.sendRedirect(forwardAction);
+					return null;
+				} else {
+					return mapping.findForward("success");
+				}
+			}
+
 		} catch (Exception e) {
 			log.error(e.toString());
 			// request.getSession().invalidate();
