@@ -1379,36 +1379,36 @@ callbackForFastCreateCluster = function (result) {
         var pips = form.publicIpSupport;
         // a trick to judge create for pm or vm.
         if (pips == null || pips[0] == null || pips[1] == null) {
-        	//alert("PM");
-        	if (vntype[0].checked){
-
-        		// form.pnnode is not really good.
-        		var pnnodes = document.getElementsByName("pnnodeip"); //not pnnode
-        		if(pnnodes == null || pnnodes.length == 0){
-        			alert(lingcloud.error.pnNodeNotNull);
-        			return;
-        		}
-        		var pnnodes_str = "";
-        		for(var i = 0; i < pnnodes.length; i++){
-        			//alert(pnnodes[i].value.trim());
-        			if(pnnodes[i].checked){
-        				pnnodes_str += pnnodes[i].value.trim()+",";
-        			}
-        		}
-        		
-        		if(pnnodes_str === ""){
-        			alert(lingcloud.error.pnNodeNotNull);
-        			return;
-        		}
-        		//alert(pnnodes_str);
-        		//return;
-        	}else if (vntype[1].checked){
-        		//alert("use exist");
-        		if (form.vnguid.value.trim().length != 40) {
-            		alert(lingcloud.error.virtualNetworkNotValid);
-           			return;
-        		}
-        	}
+//        	//alert("PM");
+//        	if (vntype[0].checked){
+//
+//        		// form.pnnode is not really good.
+//        		var pnnodes = document.getElementsByName("pnnodeip"); //not pnnode
+//        		if(pnnodes == null || pnnodes.length == 0){
+//        			alert(lingcloud.error.pnNodeNotNull);
+//        			return;
+//        		}
+//        		var pnnodes_str = "";
+//        		for(var i = 0; i < pnnodes.length; i++){
+//        			//alert(pnnodes[i].value.trim());
+//        			if(pnnodes[i].checked){
+//        				pnnodes_str += pnnodes[i].value.trim()+",";
+//        			}
+//        		}
+//        		
+//        		if(pnnodes_str === ""){
+//        			alert(lingcloud.error.pnNodeNotNull);
+//        			return;
+//        		}
+//        		//alert(pnnodes_str);
+//        		//return;
+//        	}else if (vntype[1].checked){
+//        		//alert("use exist");
+//        		if (form.vnguid.value.trim().length != 40) {
+//            		alert(lingcloud.error.virtualNetworkNotValid);
+//           			return;
+//        		}
+//        	}
         }else{
         	//alert("VM");
     		//alert("auto create");

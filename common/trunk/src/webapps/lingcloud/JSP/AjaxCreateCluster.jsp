@@ -144,7 +144,7 @@ final Log log = LogFactory.getFactory().getInstance(this.getClass());
 						<th width="80" valign="middle"><bean:message
 							key="org.lingcloud.molva.xmm.virtualCluster.Renter" /></th>
 						<td width="200"><input type="text" name="tenantId" size="20"
-							maxlength="20" />*</td>
+							maxlength="20" /></td>
 					</tr>
 			<%	
 				}
@@ -381,7 +381,8 @@ final Log log = LogFactory.getFactory().getInstance(this.getClass());
 				<tr class="actionlog_title">
 					<th width="80" valign="middle"><bean:message
 						key="org.lingcloud.molva.xmm.virtualNetwork.config" /></th>
-					<td width="530"><bean:message
+					<td width="530">
+					<!--<bean:message
 						key="org.lingcloud.molva.xmm.virtualNetwork.autocreate" /><input
 						type="radio" name="vntype"
 						value="<%=XMMPortalUtil.VN_AUTO_CREATE%>"
@@ -390,14 +391,20 @@ final Log log = LogFactory.getFactory().getInstance(this.getClass());
 						key="org.lingcloud.molva.xmm.virtualNetwork.useexist" /><input
 						type="radio" name="vntype" value="<%=XMMPortalUtil.VN_USE_EXIST%>"
 						onclick="javascript:changeShowTable('useexist_table','autocreate_table')" />
-
+					-->
+					<input
+						type="hidden" name="vntype"
+						value="<%=XMMPortalUtil.VN_AUTO_CREATE%>"
+						onclick="javascript:changeShowTable('autocreate_table','useexist_table')"
+						checked />
 					<table id="autocreate_table" width="530">
 						<tbody>
 							<tr>
-								<td><bean:message
-									key="org.lingcloud.molva.xmm.machine.select" />:<br />
+								<td>
 								<%if(pnlist == null || pnlist.size() <= 0) {%> <bean:message
-									key="org.lingcloud.molva.xmm.physicalNode.empty" /> <%}else{										
+									key="org.lingcloud.molva.xmm.physicalNode.empty" /> <%}else{	
+								%><bean:message
+									key="org.lingcloud.molva.xmm.machine.select" />:<br /><%
 										for(int i=0; i<pnlist.size(); i++){
 											PhysicalNode pn = pnlist.get(i);
 											if(i!=0&&i%4==0){
