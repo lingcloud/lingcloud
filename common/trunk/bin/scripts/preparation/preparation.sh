@@ -359,7 +359,7 @@ do_set "SET_PAM_CONF" "setup PAM configuration for JPam"
 if [ "$?" = "0" ]
 then
 	get_val "PAM_CONF_AC_TYPE" "access control type (pam_XXX.so)"
-	command cp -v "conf/net-sf-jpam.$PAM_CONF_AC_TYPE" "/etc/pam.d/net-sf-jpam" || onerror "failed to copy net-sf-jpam"
+	command cp -v "conf/pam/net-sf-jpam.$PAM_CONF_AC_TYPE" "/etc/pam.d/net-sf-jpam" || onerror "failed to copy net-sf-jpam"
 fi
 
 # Done
