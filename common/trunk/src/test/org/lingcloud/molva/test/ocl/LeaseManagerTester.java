@@ -599,7 +599,7 @@ public class LeaseManagerTester {
 			if (l.getLifecycleState() == LeaseLifeCycleState.EFFECTIVE) {
 				checkState(
 						lease,
-						MAX_TRY_TIMES,
+						MAX_TRY_TIMES * 2,
 						SLEEP_TIME,
 						new LeaseLifeCycleState[] { 
 								LeaseLifeCycleState.EXPIRED },

@@ -13,6 +13,7 @@
 package org.lingcloud.molva.test.suite.server;
 
 import org.lingcloud.molva.test.ocl.GNodeManagerTester;
+import org.lingcloud.molva.test.ocl.LeaseManagerTester;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -27,7 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({GNodeManagerTester.class })
+@SuiteClasses({GNodeManagerTester.class, LeaseManagerTester.class })
 public class OCLTestSuite {
 	
 }
