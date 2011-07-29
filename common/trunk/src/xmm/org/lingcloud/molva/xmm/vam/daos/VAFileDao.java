@@ -15,11 +15,9 @@ package org.lingcloud.molva.xmm.vam.daos;
 
 import java.util.List;
 
-import org.lingcloud.molva.xmm.vam.pojos.VADisk;
 import org.lingcloud.molva.xmm.vam.pojos.VAFile;
 import org.lingcloud.molva.xmm.vam.pojos.VAObject;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
-import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 
 /**
  * <strong>Purpose:</strong><br>

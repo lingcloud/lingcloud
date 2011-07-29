@@ -45,7 +45,8 @@ public class StreamGobblerPool {
 					return gobbler;
 				}
 			}
-			Thread.sleep(VAMConstants.SECOND);
+			
+			wait();
 		}
 	}
 	
@@ -54,9 +55,10 @@ public class StreamGobblerPool {
 	 * @param gobbler
 	 * 		stream gobbler object
 	 */
-	public void releaseStreamGobbler(StreamGobbler gobbler) {
+	public synchronized void releaseStreamGobbler(StreamGobbler gobbler) {
 		if (gobbler != null) {
 			gobbler.release();
+			notifyAll();
 		}
 	}
 }

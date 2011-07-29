@@ -37,13 +37,11 @@ public class StreamGobbler extends Thread {
 	private boolean active;
 	private Date lastActiveTime;
 	private static final int HOUR = 60 * 60 * 1000;
-	private Object streamLock;
 
 	private void init() {
 		isList = new LinkedList<InputStream>();
 		acquire = false;
 		active = false;
-		streamLock = new Object();
 	}
 	
 	public StreamGobbler() {
