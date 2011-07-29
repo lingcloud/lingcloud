@@ -63,7 +63,7 @@ public class FileManager {
 				controller.resume(file);
 			}
 		} catch (Exception e) {
-			VAMUtil.outputLog(e.getMessage());
+			VAMUtil.infoLog(e.getMessage());
 			e.printStackTrace();
 		}
 	}

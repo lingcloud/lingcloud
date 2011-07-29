@@ -134,14 +134,14 @@ public class StreamGobbler extends Thread {
 					BufferedReader br = new BufferedReader(isr);
 					String line = null;
 					while ((line = br.readLine()) != null) {
-						VAMUtil.outputLog(threadName + ": " + type + " > "
+						VAMUtil.errorLog(threadName + ": " + type + " > "
 								+ line);
 					}
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
-				VAMUtil.outputLog(e.getMessage());
+				VAMUtil.errorLog(e.getMessage());
 			}
 			active = false;
 		}

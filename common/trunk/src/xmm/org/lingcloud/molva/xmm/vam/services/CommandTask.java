@@ -118,7 +118,7 @@ class CommandTask implements IFileTask {
 	public void run() {
 		String threadName = Thread.currentThread().getName();
 		// output start mark
-		VAMUtil.outputLog(threadName + ":Task start.");
+		VAMUtil.infoLog(threadName + ":Task start.");
 
 		boolean isSuccess = true;
 
@@ -147,7 +147,7 @@ class CommandTask implements IFileTask {
 					String[] shell = new String[] { "/bin/sh", "-c",
 							cmdList.get(i) };
 
-					VAMUtil.outputLog(threadName + ":" + cmdList.get(i));
+					VAMUtil.infoLog(threadName + ":" + cmdList.get(i));
 
 					// execute the command
 					proc = rt.exec(shell);
@@ -180,7 +180,7 @@ class CommandTask implements IFileTask {
 
 		} catch (Exception e) {
 			isSuccess = false;
-			VAMUtil.outputLog(e.getMessage());
+			VAMUtil.errorLog(e.getMessage());
 		}
 
 		errorGobblerPool.releaseStreamGobbler(errorGobbler);
@@ -214,11 +214,11 @@ class CommandTask implements IFileTask {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			VAMUtil.outputLog(Thread.currentThread().getName() + ": "
+			VAMUtil.errorLog(Thread.currentThread().getName() + ": "
 					+ e.getMessage());
 		}
 		// output end mark
-		VAMUtil.outputLog(Thread.currentThread().getName() 
+		VAMUtil.infoLog(Thread.currentThread().getName() 
 				+ ": task complete.");
 	}
 }

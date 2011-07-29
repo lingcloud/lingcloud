@@ -124,7 +124,7 @@ public class ApplianceService {
 				fileService.removeFile(null, null, disk.getGuid());
 				vaDao.remove(appliance.getGuid());
 			} catch (Exception ex) {
-				VAMUtil.outputLog(ex.getMessage());
+				VAMUtil.errorLog(ex.getMessage());
 			}
 			throw new Exception(e);
 		}
@@ -179,7 +179,7 @@ public class ApplianceService {
 				operateAppliance(va.getGuid(),
 						VAMConstants.APPLIANCE_OPERATION_STOP);
 			} catch (Exception e) {
-				VAMUtil.outputLog(e.getMessage());
+				VAMUtil.errorLog(e.getMessage());
 			}
 		}
 		
@@ -233,7 +233,7 @@ public class ApplianceService {
 				// remove XEN configuration file
 				VAMUtil.deleteFile(config.getXenCfgPath());
 			} catch (Exception e) {
-				VAMUtil.outputLog(e.getMessage());
+				VAMUtil.errorLog(e.getMessage());
 			}
 		}
 	}
@@ -283,7 +283,7 @@ public class ApplianceService {
 				try {
 					va.setState(checkState(va));
 				} catch (Exception e) {
-					VAMUtil.outputLog(e.getMessage());
+					VAMUtil.errorLog(e.getMessage());
 				}
 
 				resl.add(va);
@@ -340,7 +340,7 @@ public class ApplianceService {
 				try {
 					va.setState(checkState(va));
 				} catch (Exception e) {
-					VAMUtil.outputLog(e.getMessage());
+					VAMUtil.errorLog(e.getMessage());
 				}
 				// }
 				resl.add(va);
@@ -494,7 +494,7 @@ public class ApplianceService {
 					vaDao.update(appliance);
 				}
 			} catch (Exception ex) {
-				VAMUtil.outputLog(ex.getMessage());
+				VAMUtil.errorLog(ex.getMessage());
 			}
 			throw new Exception(e);
 		}
@@ -637,7 +637,7 @@ public class ApplianceService {
 		if (res != null
 				&& (type == VAMConstants.APPLIANCE_OPERATION_START 
 						|| type == VAMConstants.APPLIANCE_OPERATION_STOP)) {
-			VAMUtil.outputLog(res);
+			VAMUtil.infoLog(res);
 		}
 
 		return res;
@@ -706,7 +706,7 @@ public class ApplianceService {
 				fileService.removeFile(null, null, disk.getGuid());
 				vaDao.remove(appliance.getGuid());
 			} catch (Exception ex) {
-				VAMUtil.outputLog(ex.getMessage());
+				VAMUtil.errorLog(ex.getMessage());
 			}
 			throw new Exception(e);
 		}
@@ -746,7 +746,7 @@ public class ApplianceService {
 			// remove file
 			ServiceFactory.getFileService().removeFile(host, user, diskGuid);
 		} catch (Exception e) {
-			VAMUtil.outputLog(e.getMessage());
+			VAMUtil.errorLog(e.getMessage());
 		}
 		// remove appliance
 		va.setState(VAMConstants.STATE_PROCESSING);
@@ -809,7 +809,7 @@ public class ApplianceService {
 				operateAppliance(appliance.getGuid(),
 					VAMConstants.APPLIANCE_OPERATION_STOP);
 			} catch (Exception e) {
-				VAMUtil.outputLog(e.getMessage());
+				VAMUtil.errorLog(e.getMessage());
 			}
 
 			// update appliance information
@@ -854,7 +854,7 @@ public class ApplianceService {
 					appliance.setState(state);
 					appliance = vaDao.update(appliance);
 				} catch (Exception ex) {
-					VAMUtil.outputLog(ex.getMessage());
+					VAMUtil.errorLog(ex.getMessage());
 				}
 				throw new Exception(e);
 			}
@@ -866,7 +866,7 @@ public class ApplianceService {
 					removeConfig(appliance);
 				}
 			} catch (Exception e) {
-				VAMUtil.outputLog(e.getMessage());
+				VAMUtil.errorLog(e.getMessage());
 			}
 
 			saveAppliance = appliance;
@@ -942,7 +942,7 @@ public class ApplianceService {
 
 			fileConfig.saveConfig();
 		} catch (Exception e) {
-			VAMUtil.outputLog(e.getMessage());
+			VAMUtil.errorLog(e.getMessage());
 			discList.set(0, oldDisc);
 			appliance.setDiscs(discList);
 			vaDao.update(appliance);

@@ -82,12 +82,21 @@ public class VAMUtil {
 	}
 
 	/**
-	 * write log to the log file.
+	 * write info log to the log file.
 	 * 
 	 * @param log
 	 */
-	public static void outputLog(String log) {
+	public static void infoLog(String log) {
 		logger.info(log);
+	}
+	
+	/**
+	 * write error log to the log file.
+	 * 
+	 * @param log
+	 */
+	public static void errorLog(String log) {
+		logger.error(log);
 	}
 
 	/**
@@ -803,13 +812,13 @@ public class VAMUtil {
 
 			if (proc.exitValue() != 0) {
 				if (!res.equals("")) {
-					VAMUtil.outputLog(res);
+					VAMUtil.errorLog(res);
 				}
 				res = null;
 			}
 		} catch (Exception e) {
 			res = null;
-			VAMUtil.outputLog(e.getMessage());
+			VAMUtil.errorLog(e.getMessage());
 		}
 
 		getInstance().errorStreamPool.releaseStreamGobbler(errorGobbler);
@@ -855,7 +864,7 @@ public class VAMUtil {
 
 			}
 		} catch (Exception e) {
-			VAMUtil.outputLog(e.getMessage());
+			VAMUtil.errorLog(e.getMessage());
 		}
 
 		return disk;

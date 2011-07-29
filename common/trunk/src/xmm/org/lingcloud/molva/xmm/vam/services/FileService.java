@@ -815,7 +815,7 @@ public class FileService {
 			}
 
 		} catch (IOException e) {
-			VAMUtil.outputLog(e.getMessage());
+			VAMUtil.errorLog(e.getMessage());
 		}
 		VADisk vadisk = new VADisk(vafile);
 		vadisk.setCapacity(capacity);

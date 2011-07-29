@@ -187,7 +187,7 @@ public class FileController extends Controller {
 				FileOperation.getInstance().removeFile(null, null, null,
 						vadisk.getSrcPath());
 			} catch (Exception e) {
-				VAMUtil.outputLog(e.getMessage());
+				VAMUtil.errorLog(e.getMessage());
 			}
 		}
 	}
