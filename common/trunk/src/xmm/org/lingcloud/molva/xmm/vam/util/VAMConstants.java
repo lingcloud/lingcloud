@@ -261,7 +261,7 @@ public class VAMConstants {
 	
 	public static final int MAX_LIGHT_THREAD = 5;
 	
-	public static final int MAX_IDLE_THREAD = 1;
+	public static final int MAX_IDLE_THREAD = 5;
 	
 	public static final int THREAD_TYPE_BUSY = 1;
 	

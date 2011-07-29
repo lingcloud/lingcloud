@@ -31,24 +31,24 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * @author Ruijian Wang<br>
  *
  */
-public class VACategoryService {
+public class CategoryService {
 	/**
 	 * single instance design pattern.
 	 */
-	private static VACategoryService instance = null;
+	private static CategoryService instance = null;
 	
 	/**
 	 * get the category service instance.
 	 * @return VACategoryService instance
 	 */
-	public static VACategoryService getInstance() {
+	public static CategoryService getInstance() {
 		if (instance == null) {
-			instance = new VACategoryService();
+			instance = new CategoryService();
 		}
 		return instance;
 	}
 	
-	private VACategoryService() {
+	private CategoryService() {
 		
 	}
 	

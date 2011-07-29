@@ -88,7 +88,7 @@ public class VACategoryDao extends VADao {
 		}
 
 		// register the category
-		vao = super.addData(cate);
+		vao = super.addData(cate, true);
 		if (vao == null) {
 			return null;
 		}
@@ -152,7 +152,7 @@ public class VACategoryDao extends VADao {
 			return false;
 		}
 		// remove the category with GUID in the database
-		vao = super.removeData(guid);
+		vao = super.removeData(guid, true);
 		if (vao == null) {
 			return false;
 		}

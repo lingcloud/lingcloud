@@ -15,7 +15,6 @@ package org.lingcloud.molva.xmm.vam.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -50,15 +49,18 @@ public class VAMUtil {
 	private static VAMUtil instance = new VAMUtil();
 
 	private static VirtualApplianceManager vam = null;
-	
+
+	private StreamGobblerPool errorStreamPool = null;
+
 	/**
 	 * The logger for this class.
 	 */
-	private static Log logger = LogFactory.getFactory()
-									.getInstance(VAMUtil.class);
+	private static Log logger = LogFactory.getFactory().getInstance(
+			VAMUtil.class);
 
 	private VAMUtil() {
-
+		errorStreamPool = new StreamGobblerPool(VAMConstants.MAX_IDLE_THREAD,
+				"ERROR");
 	}
 
 	/**
@@ -177,8 +179,8 @@ public class VAMUtil {
 	 */
 	public static String getMoveFileCommand(String host, String user,
 			String src, String dst) {
-		String cmd = "ssh " + user + "@" + host + " mv -f \"" + escapePath(src) 
-			+ "\" \"" + escapePath(dst) + "\"";
+		String cmd = "ssh " + user + "@" + host + " mv -f \"" + escapePath(src)
+				+ "\" \"" + escapePath(dst) + "\"";
 		return cmd;
 	}
 
@@ -197,8 +199,8 @@ public class VAMUtil {
 	 */
 	public static String getCopyFileCommand(String host, String user,
 			String src, String dst) {
-		String cmd = "ssh " + user + "@" + host + " 'cp' \"" + escapePath(src) 
-			+ "\" \"" + escapePath(dst) + "\"";
+		String cmd = "ssh " + user + "@" + host + " 'cp' \"" + escapePath(src)
+				+ "\" \"" + escapePath(dst) + "\"";
 		return cmd;
 	}
 
@@ -316,7 +318,7 @@ public class VAMUtil {
 	 */
 	public static String getCreateSnapshotCommand(String host, String user,
 			String format, String path, String backingPath) {
-		String cmd = "ssh " + user + "@" + host + " qemu-img create -f " 
+		String cmd = "ssh " + user + "@" + host + " qemu-img create -f "
 				+ format + " -b \"" + backingPath + "\" \"" + path + "\"";
 		return cmd;
 	}
@@ -365,8 +367,8 @@ public class VAMUtil {
 	 *            the user name of the host running virtual machines
 	 * @return list virtual machines info command.
 	 */
-	public static String getVirtualMachineInfoCommand(String host, 
-			String user) {
+	public static String getVirtualMachineInfoCommand(String host
+			, String user) {
 		String cmd = "ssh " + user + "@" + host + " xm list";
 		return cmd;
 	}
@@ -577,7 +579,7 @@ public class VAMUtil {
 	 * @param format
 	 *            the disk format, it can be VAMConstants.VAF_FORMAT_QCOW,
 	 *            VAMConstants.VAF_FORMAT_QCOW_2, VAMConstants.VAF_FORMAT_RAW,
-	 *        	  VAMConstants.VAF_FORMAT_VMDK now
+	 *            VAMConstants.VAF_FORMAT_VMDK now
 	 * @return whether disk format is correct
 	 * @throws Exception
 	 */
@@ -607,7 +609,7 @@ public class VAMUtil {
 	 * @return file list
 	 * @throws Exception
 	 */
-	
+
 	public static List<String> listDirectory(String dirPath, String fileType,
 			String format) throws Exception {
 		List<String> resl = new ArrayList<String>();
@@ -769,41 +771,48 @@ public class VAMUtil {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static String executeCommand(String command) throws IOException,
-			InterruptedException {
+	public static String executeCommand(String command) throws Exception {
 		// create a process input stream thread
-		StreamGobbler errorGobbler = new StreamGobbler("ERROR");
+		StreamGobbler errorGobbler = getInstance().errorStreamPool
+				.acquireStreamGobbler();
 		errorGobbler.setName("MainThread");
-		errorGobbler.start();
 
-		// execute command
-		Runtime rt = Runtime.getRuntime();
-		Process proc;
-		String[] shell = new String[] { "/bin/sh", "-c", command };
-
-		proc = rt.exec(shell);
-		errorGobbler.end();
-		errorGobbler.addStream(proc.getErrorStream());
-
-		// get input stream
-		InputStreamReader isr = new InputStreamReader(proc.getInputStream());
-		BufferedReader br = new BufferedReader(isr);
-		String line = null;
 		String res = "";
 
-		// read the output
-		while ((line = br.readLine()) != null) {
-			res += line + "\r\n";
-		}
+		try {
+			// execute command
+			Runtime rt = Runtime.getRuntime();
+			Process proc;
+			String[] shell = new String[] { "/bin/sh", "-c", command };
 
-		proc.waitFor();
+			proc = rt.exec(shell);
+			errorGobbler.addStream(proc.getErrorStream());
 
-		if (proc.exitValue() != 0) {
-			if (!res.equals("")) {
-				VAMUtil.outputLog(res);
+			// get input stream
+			InputStreamReader isr = new InputStreamReader(
+					proc.getInputStream());
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+
+			// read the output
+			while ((line = br.readLine()) != null) {
+				res += line + "\r\n";
 			}
+
+			proc.waitFor();
+
+			if (proc.exitValue() != 0) {
+				if (!res.equals("")) {
+					VAMUtil.outputLog(res);
+				}
+				res = null;
+			}
+		} catch (Exception e) {
 			res = null;
+			VAMUtil.outputLog(e.getMessage());
 		}
+
+		getInstance().errorStreamPool.releaseStreamGobbler(errorGobbler);
 
 		return res;
 	}
@@ -824,7 +833,7 @@ public class VAMUtil {
 		}
 
 		String command = VAMUtil.getDiskInfoCommand(
-				VAMConfig.getMakeApplianceHost(), 
+				VAMConfig.getMakeApplianceHost(),
 				VAMConfig.getMakeApplianceUser(), filePath);
 
 		try {
@@ -865,7 +874,7 @@ public class VAMUtil {
 	public static boolean isBlankOrNull(String value) {
 		return ((value == null) || (value.trim().length() == 0));
 	}
-	
+
 	private static String escapePath(String path) {
 		String res = path.replaceAll(" ", "\\\\ ");
 		return res;

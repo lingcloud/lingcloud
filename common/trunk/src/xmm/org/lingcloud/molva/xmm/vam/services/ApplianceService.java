@@ -37,24 +37,24 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * @author Ruijian Wang<br>
  * 
  */
-public class VAService {
+public class ApplianceService {
 	/**
 	 * single instance design pattern.
 	 */
-	private static VAService instance = null;
+	private static ApplianceService instance = null;
 
 	/**
 	 * get virtual appliance service instance.
 	 * @return VAService instance
 	 */
-	public static VAService getInstance() {
+	public static ApplianceService getInstance() {
 		if (instance == null) {
-			instance = new VAService();
+			instance = new ApplianceService();
 		}
 		return instance;
 	}
 
-	private VAService() {
+	private ApplianceService() {
 
 	}
 
@@ -88,7 +88,7 @@ public class VAService {
 	public VirtualAppliance addAppliance(VirtualAppliance appliance,
 			String filepath, boolean deleteFile)
 			throws Exception {
-		VAFileService fileService = ServiceFactory.getFileService();
+		FileService fileService = ServiceFactory.getFileService();
 		
 		if (appliance.getFormat() == null) {
 			appliance.setFormat(VAMConfig.getImageFormat());
@@ -393,7 +393,7 @@ public class VAService {
 		
 		
 		// create a configuration
-		VAFileService fileService = ServiceFactory.getFileService();
+		FileService fileService = ServiceFactory.getFileService();
 
 		VAFile config = fileService.createFile(appliance.getVAName(), null,
 				VAMConstants.VAF_FILE_TYPE_CONFIG,
@@ -585,7 +585,7 @@ public class VAService {
 						+ "\" is not existed or available");
 			}
 
-			VAFileService fileService = ServiceFactory.getFileService();
+			FileService fileService = ServiceFactory.getFileService();
 
 			String diskGuid = appliance.getDisks().get(0);
 			VAFile disk = fileService.queryFile(diskGuid);
@@ -670,7 +670,7 @@ public class VAService {
 		}
 
 		// query the disk file
-		VAFileService fileService = ServiceFactory.getFileService();
+		FileService fileService = ServiceFactory.getFileService();
 		VAFile file = fileService.queryFile(templateApp.getDisks().get(0));
 
 		// create a disk
@@ -778,7 +778,7 @@ public class VAService {
 		int state = checkState(appliance);
 
 		// get the appliance disk
-		VAFileService fileService = ServiceFactory.getFileService();
+		FileService fileService = ServiceFactory.getFileService();
 		List<String> diskList = appliance.getDisks();
 		if (diskList == null || diskList.size() == 0) {
 			throw new Exception("Can't get the appliance's disk");
@@ -901,7 +901,7 @@ public class VAService {
 			throw new Exception("The appliance is not being made");
 		}
 
-		VAFileService fileService = ServiceFactory.getFileService();
+		FileService fileService = ServiceFactory.getFileService();
 
 		String discPath = null;
 		if (discGuid == null) {

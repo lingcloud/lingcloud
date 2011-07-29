@@ -196,4 +196,21 @@ public class VAObject extends Asset {
 		this.getAttributes().put(VAMConstants.VAO_DELETE_FILE, 
 				"" + deleteFile);
 	}
+	
+	/**
+	 * get the controller.
+	 * @return controller name
+	 */
+	public String getController() {
+		return (String) super.getAssetController();
+	}
+	
+	/**
+	 * set the controller.
+	 * @param controller
+	 * 		controller name
+	 */
+	public void setController(String controller) {
+		super.setAssetController(controller);
+	}
 }

@@ -76,7 +76,7 @@ public class VAFileDao extends VADao {
 		}
 
 		// register the file
-		vao = super.addData(file);
+		vao = super.addData(file, true);
 		if (vao == null) {
 			return null;
 		}
@@ -155,7 +155,7 @@ public class VAFileDao extends VADao {
 			return false;
 		}
 		// remove the file with GUID in the database
-		VAObject file = super.removeData(guid);
+		VAObject file = super.removeData(guid, true);
 		if (file == null) {
 			return false;
 		}

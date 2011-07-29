@@ -12,6 +12,7 @@
  */
 package org.lingcloud.molva.xmm.vam.pojos;
 
+import org.lingcloud.molva.xmm.vam.controllers.FileController;
 import org.lingcloud.molva.xmm.vam.util.VAMConfig;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
 import org.lingcloud.molva.xmm.vam.util.VAMUtil;
@@ -37,6 +38,7 @@ public class VAFile extends VAObject {
 	 */
 	public VAFile() {
 		super.setType(VAMConstants.VIRTUAL_APPLIANCE_FILE);
+		super.setController(FileController.class.getName());
 	}
 
 	/**
@@ -67,6 +69,7 @@ public class VAFile extends VAObject {
 		setState(state);
 
 		super.setType(VAMConstants.VIRTUAL_APPLIANCE_FILE);
+		super.setController(FileController.class.getName());
 	}
 
 	/**

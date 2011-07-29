@@ -324,10 +324,4 @@ public interface VirtualApplianceManager {
 	 * @throws Exception
 	 */
 	boolean removeCategory(String guid) throws Exception;
-
-	/**
-	 * destroy the operation threads.
-	 *
-	 */
-	void destroyThreads();
 }

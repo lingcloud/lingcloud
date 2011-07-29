@@ -22,9 +22,9 @@ package org.lingcloud.molva.xmm.vam.services;
  *
  */
 public class ServiceFactory {
-	private static VAFileService fileService = null;
-	private static VACategoryService cateService = null;
-	private static VAService vaService = null;
+	private static FileService fileService = null;
+	private static CategoryService cateService = null;
+	private static ApplianceService vaService = null;
 	
 	private ServiceFactory() {
 		
@@ -34,9 +34,9 @@ public class ServiceFactory {
 	 * get a file service instance.
 	 * @return file service instance
 	 */
-	public static VAFileService getFileService() {
+	public static FileService getFileService() {
 		if (fileService == null) {
-			fileService = VAFileService.getInstance();
+			fileService = FileService.getInstance();
 		}
 		return fileService;
 	}
@@ -45,9 +45,9 @@ public class ServiceFactory {
 	 * get a category service instance.
 	 * @return category service instance
 	 */
-	public static VACategoryService getCategoryService() {
+	public static CategoryService getCategoryService() {
 		if (cateService == null) {
-			cateService = VACategoryService.getInstance();
+			cateService = CategoryService.getInstance();
 		}
 		return cateService;
 	}
@@ -56,9 +56,9 @@ public class ServiceFactory {
 	 * get a virtual appliance service instance.
 	 * @return virtual appliance service instance
 	 */
-	public static VAService getVirtualApplianceService() {
+	public static ApplianceService getVirtualApplianceService() {
 		if (vaService == null) {
-			vaService = VAService.getInstance();
+			vaService = ApplianceService.getInstance();
 		}
 		return vaService;
 	}

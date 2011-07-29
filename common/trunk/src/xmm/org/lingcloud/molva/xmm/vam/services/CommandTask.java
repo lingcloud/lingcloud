@@ -15,24 +15,24 @@ package org.lingcloud.molva.xmm.vam.services;
 
 import java.util.List;
 
+import org.lingcloud.molva.xmm.vam.controllers.Controller;
 import org.lingcloud.molva.xmm.vam.pojos.VAObject;
 import org.lingcloud.molva.xmm.vam.util.StreamGobbler;
+import org.lingcloud.molva.xmm.vam.util.StreamGobblerPool;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
 import org.lingcloud.molva.xmm.vam.util.VAMUtil;
-
-
 
 /**
  * 
  * <strong>Purpose:</strong><br>
  * TODO.
  * 
- * @version 1.0.1 2010-6-5<br>
+ * @version 1.0.1 2011-07-28<br>
  * @author Ruijian Wang<br>
  * 
  */
-interface ITask {
-	void task();
+interface IFileTask extends Runnable {
+
 }
 
 /**
@@ -44,13 +44,13 @@ interface ITask {
  * @author Ruijian Wang<br>
  * 
  */
-class CommandTask implements ITask {
+class CommandTask implements IFileTask {
 
 	private VAObject object;
 
 	private List<String> cmdList;
 
-	private TaskFunction function;
+	private Controller controller;
 
 	private int failedState;
 
@@ -58,9 +58,28 @@ class CommandTask implements ITask {
 
 	private int type;
 
-	private StreamGobbler errorGobbler;
+	private static StreamGobblerPool errorGobblerPool = null;
 
-	private StreamGobbler outputGobbler;
+	private static StreamGobblerPool outputGobblerPool = null;
+
+	static {
+		int poolSize = VAMConstants.THREAD_TYPE_BUSY
+				+ VAMConstants.THREAD_TYPE_LIGHT + 2;
+		errorGobblerPool = new StreamGobblerPool(poolSize, "ERROR");
+		outputGobblerPool = new StreamGobblerPool(poolSize, "OUTPUT");
+	}
+
+	public CommandTask(VAObject object, List<String> cmdList,
+			Controller controller, int successfulState, int failedState,
+			int type) {
+		super();
+		this.object = object;
+		this.cmdList = cmdList;
+		this.controller = controller;
+		this.failedState = failedState;
+		this.successfulState = successfulState;
+		this.type = type;
+	}
 
 	public void setCmdList(List<String> cmdList) {
 		this.cmdList = cmdList;
@@ -72,11 +91,11 @@ class CommandTask implements ITask {
 		} else {
 			this.object = null;
 		}
-		
+
 	}
 
-	public void setFunction(TaskFunction function) {
-		this.function = function;
+	public void setController(Controller controller) {
+		this.controller = controller;
 	}
 
 	public void setFailedState(int failedState) {
@@ -90,53 +109,46 @@ class CommandTask implements ITask {
 	public void setType(int type) {
 		this.type = type;
 	}
-	
+
 	public CommandTask() {
-		
+
 	}
 
-	public void setErrorGobbler(StreamGobbler errorGobbler) {
-		this.errorGobbler = errorGobbler;
-	}
-
-	public void setOutputGobbler(StreamGobbler outputGobbler) {
-		this.outputGobbler = outputGobbler;
-	}
-	
-	// task function
-	public void task() {
+	@Override
+	public void run() {
 		String threadName = Thread.currentThread().getName();
 		// output start mark
 		VAMUtil.outputLog(threadName + ":Task start.");
 
 		boolean isSuccess = true;
-		
+
 		Runtime rt = Runtime.getRuntime();
 		Process proc;
-		
+
+		StreamGobbler errorGobbler = null;
+		StreamGobbler outputGobbler = null;
+
 		try {
-			
-			if (function != null && !function.check(object)) {
-				// output end mark
-				VAMUtil.outputLog(Thread.currentThread().getName()
-						 + ": task complete.");
-				return;
-			}
-			
+			errorGobbler = errorGobblerPool.acquireStreamGobbler();
+			errorGobbler.setName(Thread.currentThread().getName());
+			outputGobbler = outputGobblerPool.acquireStreamGobbler();
+			outputGobbler.setName(Thread.currentThread().getName());
+
 			int n = cmdList.size();
 			int cnt = -n;
+
 			// execute all command
 			for (int i = 0; i < n; i++) {
-				
+
 				boolean success = false;
 				// if execute failed, retry
-				for (int retry = 0; 
-					retry < VAMConstants.RECONNECTION_TIMES; retry++) {
-					String[] shell = new String[] { "/bin/sh", 
-							"-c", cmdList.get(i) };
-					
+				for (int retry = 0; retry < VAMConstants.RECONNECTION_TIMES; 
+					retry++) {
+					String[] shell = new String[] { "/bin/sh", "-c",
+							cmdList.get(i) };
+
 					VAMUtil.outputLog(threadName + ":" + cmdList.get(i));
-					// System.out.println(threadName + ":" + cmdList.get(i));
+
 					// execute the command
 					proc = rt.exec(shell);
 
@@ -171,7 +183,9 @@ class CommandTask implements ITask {
 			VAMUtil.outputLog(e.getMessage());
 		}
 
-		
+		errorGobblerPool.releaseStreamGobbler(errorGobbler);
+		outputGobblerPool.releaseStreamGobbler(outputGobbler);
+
 		try {
 			if (object != null) {
 				// update state
@@ -180,31 +194,31 @@ class CommandTask implements ITask {
 				} else {
 					object.setState(failedState);
 				}
-				
+
 				// run call back
-				if (function != null) {
+				if (controller != null) {
 					if (type == VAMConstants.TASK_TYPE_REMOVE) {
-						function.removeCallBack(object);
+						controller.remove(object);
 					} else if (type == VAMConstants.TASK_TYPE_CREATE) {
-						function.createCallBack(object);
+						controller.create(object);
 					} else if (type == VAMConstants.TASK_TYPE_COPY) {
-						function.copyCallBack(object);
+						controller.copy(object);
 					} else if (type == VAMConstants.TASK_TYPE_CONVERT) {
-						function.convertCallBack(object);
+						controller.convert(object);
 					} else if (type == VAMConstants.TASK_TYPE_MOVE) {
-						function.moveCallBack(object);
+						controller.move(object);
 					} else {
-						function.updateCallBack(object);
+						controller.update(object);
 					}
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			VAMUtil.outputLog(Thread.currentThread().getName() 
-					+ ": " + e.getMessage());
+			VAMUtil.outputLog(Thread.currentThread().getName() + ": "
+					+ e.getMessage());
 		}
 		// output end mark
-		VAMUtil.outputLog(Thread.currentThread().getName()
-				 + ": task complete.");
+		VAMUtil.outputLog(Thread.currentThread().getName() 
+				+ ": task complete.");
 	}
 }

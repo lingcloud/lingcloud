@@ -38,8 +38,9 @@ public class VADao {
 
 	/**
 	 * get a object from database by GUID.
+	 * 
 	 * @param guid
-	 * 		the GUID of object
+	 *            the GUID of object
 	 * @return the basic object of virtual appliance
 	 * @throws Exception
 	 */
@@ -56,12 +57,16 @@ public class VADao {
 
 	/**
 	 * add a object to database.
+	 * 
 	 * @param vao
-	 * 		the basic object of virtual appliance
+	 *            the basic object of virtual appliance
+	 * @param isOnlyAddMetaInfo
+	 * 		whether only add the meta info
 	 * @return the basic object of virtual appliance
 	 * @throws Exception
 	 */
-	public VAObject addData(VAObject vao) throws Exception {
+	public VAObject addData(VAObject vao, boolean isOnlyRemoveMetaInfo)
+			throws Exception {
 		if (vao == null) {
 			return null;
 		}
@@ -74,8 +79,9 @@ public class VADao {
 
 	/**
 	 * update the object in database.
+	 * 
 	 * @param vao
-	 * 		the basic object of virtual appliance
+	 *            the basic object of virtual appliance
 	 * @return the basic object of virtual appliance
 	 * @throws Exception
 	 */
@@ -92,12 +98,16 @@ public class VADao {
 
 	/**
 	 * remove the object in database by GUID.
+	 * 
 	 * @param guid
-	 * 		the GUID of object
-	 * @return	the basic object of virtual appliance
+	 *            the GUID of object
+	 * @param isOnlyRemoveMetaInfo
+	 * 		whether only remove the meta info
+	 * @return the basic object of virtual appliance
 	 * @throws Exception
 	 */
-	public VAObject removeData(String guid) throws Exception {
+	public VAObject removeData(String guid, boolean isOnlyRemoveMetaInfo)
+			throws Exception {
 		if (guid == null) {
 			return null;
 		}
@@ -110,12 +120,13 @@ public class VADao {
 
 	/**
 	 * search objects matching the given condition in database.
+	 * 
 	 * @param searchFields
-	 * 		the search fields
+	 *            the search fields
 	 * @param operators
-	 * 		the operators of every field
+	 *            the operators of every field
 	 * @param values
-	 * 		the search values of every field
+	 *            the search values of every field
 	 * @return the basic object list of virtual appliance
 	 * @throws Exception
 	 */

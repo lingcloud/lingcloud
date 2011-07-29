@@ -15,7 +15,6 @@ package org.lingcloud.molva.xmm.vam.pojos;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
 import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 
@@ -40,6 +39,7 @@ public class VirtualAppliance extends VAObject {
 	 */
 	public VirtualAppliance() {
 		super.setType(VAMConstants.VIRTUAL_APPLIANCE);
+		super.setController(VirtualAppliance.class.getName());
 	}
 	
 	/**

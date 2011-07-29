@@ -43,24 +43,24 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * @author Ruijian Wang<br>
  * 
  */
-public class VAFileService implements TaskFunction {
+public class FileService {
 	/**
 	 * single instance design pattern.
 	 */
-	private static VAFileService instance = null;
+	private static FileService instance = null;
 
 	/**
 	 * get file service instance.
 	 * @return VAFileService instance
 	 */
-	public static VAFileService getInstance() {
+	public static FileService getInstance() {
 		if (instance == null) {
-			instance = new VAFileService();
+			instance = new FileService();
 		}
 		return instance;
 	}
 
-	private VAFileService() {
+	private FileService() {
 
 	}
 
@@ -255,7 +255,7 @@ public class VAFileService implements TaskFunction {
 
 					FileOperation.getInstance().moveFile(
 							VAMConfig.getNfsHost(), VAMConfig.getNfsUser(),
-							disk, storeLoc, disk.getSavePath(), this);
+							disk, storeLoc, disk.getSavePath());
 				} else {
 					convertDiskFormat(vafile, storeLoc,
 							VAMConfig.getImageFormat(), deleteSrcFile);
@@ -264,7 +264,7 @@ public class VAFileService implements TaskFunction {
 			} else if (storeLoc != null) { // move file
 				FileOperation.getInstance().moveFile(VAMConfig.getNfsHost(),
 						VAMConfig.getNfsUser(), vafile, storeLoc,
-						vafile.getSavePath(), this);
+						vafile.getSavePath());
 			}
 		} catch (Exception e) {
 			// remove the file in the database
@@ -307,7 +307,7 @@ public class VAFileService implements TaskFunction {
 			// create disk
 			FileOperation.getInstance().createDisk(VAMConfig.getNfsHost(),
 					VAMConfig.getNfsUser(), vafile, vafile.getSavePath(),
-					capacity, this);
+					capacity);
 		} catch (Exception e) {
 			// remove file in the database
 			DaoFactory.getVAFileDao().remove(vafile.getGuid());
@@ -357,7 +357,7 @@ public class VAFileService implements TaskFunction {
 			// copy disk
 			FileOperation.getInstance().copyDisk(VAMConfig.getNfsHost(),
 					VAMConfig.getNfsUser(), vafile, srcFile.getSavePath(),
-					vafile.getSavePath(), this);
+					vafile.getSavePath());
 		} catch (Exception e) {
 			// remove file in the database
 			DaoFactory.getVAFileDao().remove(vafile.getGuid());
@@ -413,7 +413,7 @@ public class VAFileService implements TaskFunction {
 			// convert disk format
 			FileOperation.getInstance().convertDiskFormat(
 					VAMConfig.getNfsHost(), VAMConfig.getNfsUser(), vafile,
-					srcPath, vafile.getSavePath(), format, this);
+					srcPath, vafile.getSavePath(), format);
 		} catch (Exception e) {
 			// restore the old information
 			vafile.setLocation(oldLocation);
@@ -491,7 +491,7 @@ public class VAFileService implements TaskFunction {
 			
 			// create snapshot
 			FileOperation.getInstance().createSnapshot(dstFile, host, user,
-					path, backingPath, this);
+					path, backingPath);
 		} catch (Exception e) {
 			// remove file in the database
 			fileDao.remove(dstFile.getGuid());
@@ -628,7 +628,7 @@ public class VAFileService implements TaskFunction {
 		try {
 			// remove file
 			FileOperation.getInstance().removeFile(host, user, vafile,
-					vafile.getSavePath(), this);
+					vafile.getSavePath());
 		} catch (RuntimeException e) {
 			// restore state
 			vafile.setState(oldState);
@@ -838,196 +838,23 @@ public class VAFileService implements TaskFunction {
 		return fileDao.getActiveReference(guid);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #updateCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
+	/**
+	 * get the files whose state is not ready.
+	 * @return file list
+	 * @throws Exception
 	 */
-	public void updateCallBack(VAObject obj) throws Exception {
+	public List<VAFile> getProcessingFiles() throws Exception {
 		// get file data access object
 		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		VAFile file = new VAFile(obj);
-
-		// update the file
-		file = fileDao.query(obj.getGuid());
-		// a small bug, 2010-08-23.should check the object whether is null.
-		if (file == null || file.getState() == VAMConstants.STATE_READY) {
-			return;
-		}
-		file.setState(obj.getState());
-		fileDao.update(file);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #createCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
-	 */
-	public void removeCallBack(VAObject obj) throws Exception {
-		// get file data access object
-		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		if (obj.getState() == VAMConstants.STATE_ERROR) {
-			return;
-		}
-
-		// if the file type is not disk do nothing
-		VAFile vafile = new VAFile(obj);
-		if (vafile.getFileType().equals(VAMConstants.VAF_FILE_TYPE_DISK)) {
-			String baseGuid;
-			if (vafile.getParent().equals(VAMConstants.NULL)) { // base disk
-				baseGuid = vafile.getGuid();
-				
-				// remove redundant disk
-				removeReplicas(baseGuid);
-			} 
-		}
-
-		// remove the file
-		fileDao.remove(obj.getGuid());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #removeCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
-	 */
-	public void createCallBack(VAObject obj) throws Exception {
-		if (obj.getState() == VAMConstants.STATE_ERROR) {
-			return;
-		}
-
-		// get data access object
-		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		VAFile vafile = fileDao.query(obj.getGuid());
-
-		// if can't find the file in the database, remove the file
-		if (vafile == null) {
-			vafile = (VAFile) obj;
-			FileOperation.getInstance().removeFile(null, null, null,
-					vafile.getSavePath(), null);
-			return;
+		
+		List<VAFile> result = new ArrayList<VAFile>();
+		List<VAObject> list = fileDao.getNotReadyFiles();
+		for (VAObject obj : list) {
+			if (obj.getState() == VAMConstants.STATE_PROCESSING) {
+				result.add(new VAFile(obj));
+			}
 		}
 		
-		vafile.setState(obj.getState());
-		fileDao.update(vafile);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #copyCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
-	 */
-	public void copyCallBack(VAObject obj) throws Exception {
-		// get data access object
-		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		// if can't find the file , remove it
-		VAFile vafile = fileDao.query(obj.getGuid());
-		if (vafile == null) {
-			vafile = (VAFile) obj;
-			FileOperation.getInstance().removeFile(null, null, null,
-					vafile.getSavePath(), null);
-			return;
-		}
-
-		vafile.setState(obj.getState());
-		fileDao.update(vafile);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #convertCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
-	 */
-	public void convertCallBack(VAObject obj) throws Exception {
-		// get data access object
-		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		// if can't find the file , remove it
-		VAFile vafile = fileDao.query(obj.getGuid());
-		if (vafile == null) {
-			vafile = (VAFile) obj;
-			FileOperation.getInstance().removeFile(null, null, null,
-					vafile.getSavePath(), null);
-			return;
-		}
-		// update state
-		vafile.setState(obj.getState());
-
-		if (vafile.getState() != VAMConstants.STATE_READY) {
-			fileDao.update(vafile);
-			return;
-		}
-
-		// update disk information
-		VADisk vadisk = getDiskCapacity(vafile);
-
-		if (!vafile.getParent().equals(VAMConstants.NULL)) {
-			vadisk.setParent(VAMConstants.NULL);
-		}
-
-		fileDao.update(vadisk);
-
-		// delete file after operation
-		if (vadisk.isDeleteFileAfterOperation()) {
-			try {
-				FileOperation.getInstance().removeFile(null, null, null,
-						vadisk.getSrcPath(), null);
-			} catch (Exception e) {
-				VAMUtil.outputLog(e.getMessage());
-			}
-		}
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #moveCallBack(org.lingcloud.molva.xmm.vam.pojos.VAObject)
-	 */
-	public void moveCallBack(VAObject obj) throws Exception {
-		// get data access object
-		VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-		// if can't find the file , remove it
-		VAFile vafile = fileDao.query(obj.getGuid());
-		if (vafile == null) {
-			vafile = (VAFile) obj;
-			FileOperation.getInstance().removeFile(null, null, null,
-					vafile.getSavePath(), null);
-			return;
-		}
-		vafile.setState(obj.getState());
-		fileDao.update(vafile);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.lingcloud.molva.xmm.vam.services.TaskFunction
-	 * #check(org.lingcloud.molva.xmm.vam.pojos.VAObject)
-	 */
-	public boolean check(VAObject obj) throws Exception {
-		if (obj != null) {
-			if (obj.getOperationType() 
-					== VAMConstants.VAO_OPERATION_TYPE_COPY_FILE) {
-				// get data access object
-				VAFileDao fileDao = DaoFactory.getVAFileDao();
-
-				VAFile vafile = fileDao.query(obj.getGuid());
-				return vafile.getState() != VAMConstants.STATE_READY;
-			}
-		}
-
-		return true;
+		return result;
 	}
 }

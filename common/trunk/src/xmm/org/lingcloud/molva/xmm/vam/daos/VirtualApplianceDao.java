@@ -75,7 +75,7 @@ public class VirtualApplianceDao extends VADao {
 		}
 
 		// register the appliance
-		vao = super.addData(appliance);
+		vao = super.addData(appliance, false);
 		if (vao == null) {
 			return null;
 		}
@@ -155,7 +155,7 @@ public class VirtualApplianceDao extends VADao {
 			return false;
 		}
 		// remove the appliance with GUID in the database
-		VAObject instances = super.removeData(guid);
+		VAObject instances = super.removeData(guid, false);
 		if (instances == null) {
 			return false;
 		}
@@ -342,7 +342,7 @@ public class VirtualApplianceDao extends VADao {
 		// if can't get the object add one
 		if (resls.size() == 0) {
 			vmState = new VMState();
-			vao = super.addData(vmState);
+			vao = super.addData(vmState, true);
 		} else {
 			vao = (VAObject) resls.get(0);
 		}
