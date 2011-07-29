@@ -202,9 +202,17 @@ fi
 do_set "SET_INSTALL_DEPENDENCIES" "install dependencies (e.g. mysql)"
 if [ "$?" = "0" ]
 then
-	get_file "INSTALL_DEPENDENCIES_SCRIPT" "install dependencies script"
+	get_file "INSTALL_DEPENDENCIES_SCRIPT" "dependencies install script"
 	echo "ARGS: $INSTALL_DEPENDENCIES_SCRIPT_ARGS"
 	bash "$INSTALL_DEPENDENCIES_SCRIPT" $INSTALL_DEPENDENCIES_SCRIPT_ARGS || onerror "failed to install dependencies"
+fi
+
+do_set "SET_INSTALL_MONITOR" "install the monitor system"
+if [ "$?" = "0" ]
+then
+	get_file "INSTALL_MONITOR_SCRIPT" "the monitor system install script"
+	echo "ARGS: $INSTALL_MONITOR_SCRIPT_ARGS"
+	bash "$INSTALL_DEPENDENCIES_SCRIPT" $INSTALL_MONITOR_SCRIPT_ARGS || onerror "failed to install the monitor system"
 fi
 
 do_set "SET_LOCAL_HOSTNAME" "set local hostname"

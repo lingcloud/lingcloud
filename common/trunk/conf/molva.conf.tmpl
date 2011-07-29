@@ -121,13 +121,17 @@ accessControlUserGroup=${ACCESS_CONTROL_USER}
 # display language of UI (e.g. en, zh)
 uiLanguage="${UI_LANGUAGE}"
 
-# Monitor is not available in the current version
-#
-# # whether enable monitor cluster (true/false)
-# isMonitorClusterEnabled=true
-# 
-# # monitor server url
-# monitorServerUrl=${MONITOR_SERVER}
-# 
-# # the command configuring monitor
-# monitorConfigCommand=ssh -o StrictHostKeyChecking=no root@${MONITOR_SERVER} bash -c /usr/local/LingCloud/manager-monitored-cluster.sh
+# monitor system type, only ganglia is supported in the current version
+monitorSystemType=${MONITOR_SYSTEM_TYPE}
+
+# the monitor server host
+monitorServerHost=${MONITOR_SERVER}
+
+# the monitor server port
+monitorServerPort=8649
+
+# the monitor install location
+monitorDir="${NFS_MOUNT_DIR}/monitor"
+
+# the RRDtool command
+cmdRRDtool=/usr/local/rrdtool/bin/rrdtool

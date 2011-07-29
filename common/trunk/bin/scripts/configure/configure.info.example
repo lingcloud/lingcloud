@@ -113,3 +113,13 @@ NAMING_MYSQL_USERNAME="$MYSQL_USERNAME"
 
 # existed MySQL password for Molva naming
 NAMING_MYSQL_PASSWORD="$MYSQL_PASSWORD"
+
+################################################################################
+# Configuration for Monitor
+################################################################################
+
+# monitor system type
+MONITOR_SYSTEM_TYPE=ganglia
+
+# monitor server
+MONITOR_SERVER=${LINGCLOUD_SERVER}
