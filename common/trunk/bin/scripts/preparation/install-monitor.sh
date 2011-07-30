@@ -151,7 +151,7 @@ ganglia)
 		# Install Ganglia
 		tar xzvf ganglia-*.tar.gz
 		pushd ganglia-*/
-		./configure --prefix="$GANGLIA_HOME "		\
+		./configure --prefix="$GANGLIA_HOME"		\
 			--sysconfdir="$GANGLIA_HOME/etc"	\
 			CFLAGS="-I/usr/include" 		\
 			CPPFLAGS="-I/usr/include" 		\
