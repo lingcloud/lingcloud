@@ -64,13 +64,13 @@ class GangliaBridge extends MonitorBridge {
 	
 	public static void main(String args[]) {
 		try {
-			System.setProperty("lingcloud.home", "/home/lang/workspace/lingcloud");
+			System.setProperty("lingcloud.home", "/opt");
 			MonitorBridge b = new GangliaBridge();
 			Map<String, Host> hs = new HashMap<String, Host>(); 
 			
 			hs = b.getHostMap(hs);
 			
-			System.out.println(hs.get("172.22.1.11"));
+			// System.out.println(hs.get("10.0.0.10"));
 		}catch(Exception e) {
 			log.error(e);
 		}
@@ -90,9 +90,9 @@ class GangliaBridge extends MonitorBridge {
 				
 				meth.invoke(this, srvMap, hostNode);
 			}catch(NoSuchMethodException e) {
-				log.error(e);
+				log.warn("Can't find method in GangliaBridge: " + methName + " - " + e);
 			}catch (Exception e) {
-				log.error(e);
+				log.warn("Invoke method in GangliaBridge : " + methName + " - " + e);
 			}
 		}
 		
