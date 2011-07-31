@@ -65,7 +65,7 @@
 <script type="text/javascript" src="<%=basePath%>js/lingcloudTab.js"></script>
 
 
-<!--[if IE]><script language="javascript" type="text/javascript" src="<%=basePath%>js/excanvas.min.js"></script><![endif]-->
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="<%=basePath%>js/excanvas.min.js"></script><![endif]-->
 
 <link rel="stylesheet" type="text/css"
 	href="<%=basePath%>css/jquery.jqplot.min.css" />
@@ -78,7 +78,8 @@
 
 <!-- BEGIN: load jqplot -->
 <script language="javascript" type="text/javascript"
-	src="<%=basePath%>js/plugins/jquery.jqplot.min.js"></script>
+	src="<%=basePath%>js/jquery.jqplot.min.js"></script>
+	
 <script language="javascript" type="text/javascript"
 	src="<%=basePath%>js/plugins/jqplot.barRenderer.min.js"></script>
 <script type="text/javascript"
