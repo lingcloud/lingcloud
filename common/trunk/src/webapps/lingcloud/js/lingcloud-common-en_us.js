@@ -241,6 +241,134 @@ var lingcloud = {
 			confirmTip:'Are you sure you want to delete this disc?'
 		}
 	},
+	Monitor:{
+		name:'LingCloud Monitor',				
+
+		service: {
+			pcnode:'Host Node',
+			cpu:'CPU Load',
+			mem:'Memory Usage',
+			disk:'Disk Usage',
+			net:'Net Traffic',
+			ping:'Ping',
+			process:'Total Processes',
+			xen:'Xend',
+			lingcloud:'LingCloud',
+			user:'Current Users',
+			zombie:'Zombie Process',
+			vm:'Virtual Machines',
+			
+			swap:'Swap Usage',
+			http:'HTTP',
+			ssh:'SSH',
+			mysql:'MySQL'
+			
+			
+		},
+		status: {
+			ok:		'OK',		
+			warn:	'Warning',			
+			crit:	'Critical',	
+			unkw:	'Unknown'		
+		},
+		monitorSummary: {
+			name:'System Summary',				
+			selectTime:'Please select time',
+			tips14Move:' machine(s) with the ',
+			tips24Move:' ',
+			sumInfor: {
+				total: 'Total',			
+				parNode: 'Partition',		
+				hostNode: 'Host Node',		
+				
+				parHealth:'Health',		
+				hostNum: 'Host Num'	
+			}
+			
+		},
+		monitorDetail: {
+			name:'Detail Infor',		
+
+			tHost: 'Host',		
+			tSrv: 'Metric',	
+			tStat: 'Status',
+			tCheck: 'Last Check Time',	
+			tInfor: 'Status Information'		
+		},
+		vmInfor:{
+			vmTittle:'Virtual Machine RunTime Information',
+			
+			vmInfor:'Virtual Machince',
+			vmCpu:'CPU Usage',
+			vmMem:'Mem Resource',
+			vmDisk:'Disk Usage',
+			vmNet:'Network',
+			infor:{
+				vmName:'VM Name',
+				chkTime:'Check Time',
+				hostName:'Host Name',
+				status:'Status'
+			},
+			status:{
+				r:'Running',
+				b:'Blocked',
+				d:'Dying',
+				c:'Crash',
+				s:'Suspend',
+				p:'Pause',
+				u:'Unknown'
+			},
+			cpu:{
+				vcpu:'Virt CPU',
+				time:'CPU Time',
+				usage:'Usage',
+				uptime:'Run Time'
+			},
+			mem:{
+				mem:'Usage',
+				usage:'Percent',
+				max:'Limited',
+				maxPer:'Percent'
+			},
+			disk:{
+				usage:'Usage',
+				max:'Max',
+				dir:'Dir',
+				size:'Size'
+			},
+			net:{
+				nets:'Virt Nets',
+				ip:'Addr',
+				tx:'Transmit',
+				sx:'Receive'
+			}
+		},
+		monitorMgt: {
+			name:'Monitor Manager',					
+			perf:'Performance',			
+			process:'Process',			
+			network:'Network',		
+			app:	'Application',			
+			user:	'User',			
+			select:	'Select/Unselect All',			
+			inverse:'Inverse',			
+			interval:'Check Interval',			
+			item:	'Items/Page',		
+			btnSave:'Save',		
+			subSucc:'Save successfully.',
+			subFail:'Save Failed.',
+			timeUnit:'sec'
+		},
+		
+		errors: {
+			noRes:'Sorry, no result!',
+			noVm:'No virtual machines on node !',
+			rppNotValid:'The number of items per page must be a valid integer!',
+			refreshIntervalNotValid:'The refresh interval must be a valid integer!',
+			hostNameNotValid:'Wrong hostname!',
+			itemNameNotValid:'Wrong itemName!'
+		}
+	},
 	calendar:{
 			today:'Today',
 			confirm:'Confirm',

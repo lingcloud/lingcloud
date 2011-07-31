@@ -10,7 +10,7 @@
  * http://lingcloud.org 
  *  
  */
-package org.lingcloud.molva.portal.util;
+package org.lingcloud.molva.xmm.util;
 
 import java.util.ArrayList;
 

@@ -230,6 +230,134 @@ var lingcloud = {
 			confirmTip:'\u60A8\u786E\u5B9A\u8981\u5220\u9664\u8FD9\u4E2A\u5149\u76D8\u6620\u50cf\u5417\u003f'
 		}
 	},
+	Monitor:{
+		name:'\u7CFB\u7EDF\u76D1\u63A7',				
+		service: {
+			pcnode:'\u7269\u7406\u8282\u70B9',
+			cpu:'CPU\u8D1F\u8F7D',
+			mem:'\u5185\u5B58\u4F7F\u7528',
+			disk:'\u78C1\u76D8\u4F7F\u7528',
+			net:'\u7F51\u7EDC\u6D41\u91CF',
+			ping:'\u7F51\u7EDC\u5EF6\u8FDF',
+			process:'\u603B\u8FDB\u7A0B\u6570',
+			xen:'\u865A\u62DF\u5316\u670D\u52A1',
+			lingcloud:'\u51CC\u4E91\u7CFB\u7EDF',
+			user:'\u5F53\u524D\u767B\u5F55\u7528\u6237',
+			zombie:'\u50F5\u5C38\u8FDB\u7A0B\u6570',
+			vm:'\u865A\u62DF\u673A',
+			
+			swap:'\u4EA4\u6362\u533A\u4F7F\u7528',
+			http:'HTTP\u670D\u52A1',
+			ssh:'SSH\u8FDC\u7A0B\u767B\u5F55',
+			mysql:'MySQL\u6570\u636E\u5E93\u670D\u52A1'
+		},
+		status: {
+			ok:		'\u5065\u5EB7',	
+			warn:	'\u8B66\u544A',				
+			crit:	'\u4E25\u91CD',				
+			unkw:	'\u672A\u77E5'				
+		},
+		monitorSummary: {
+			name:'\u8FD0\u884C\u60C5\u51B5\u7EDF\u8BA1',
+			selectTime:'\u8BF7\u9009\u62E9\u65F6\u95F4',
+			tips14Move:'\u53F0\u673A\u5668\u6709',
+			tips24Move:'\u7684',
+			sumInfor: {
+				total: '\u603B\u5171',			
+				parNode: '\u4E2A\u5206\u533A',		
+				hostNode: '\u7269\u7406\u8282\u70B9',		
+				
+				parHealth:'\u5206\u533A\u5065\u5EB7\u7A0B\u5EA6',	
+				hostNum: '\u7269\u7406\u673A\u603B\u6570'			
+			}
+			
+		},
+		monitorDetail: {
+			name:'\u8BE6\u7EC6\u76D1\u63A7\u4FE1\u606F',					
+			
+			tHost: '\u7269\u7406\u4E3B\u673A',				
+			tSrv: '\u76d1\u63a7\u9879',					
+			tStat: '\u72B6\u6001',					
+			tCheck: '\u4E0A\u6B21\u76D1\u6D4B\u65F6\u95F4',				
+			tInfor: '\u670D\u52A1\u9879\u72B6\u6001\u4FE1\u606F'			
+		},
+		vmInfor:{
+			vmTittle: '\u865A\u62DF\u673A\u5B9E\u65F6\u4FE1\u606F',
+			
+			vmInfor:'\u865A\u62DF\u673A\u4FE1\u606F',
+			vmCpu:'CPU\u4F7F\u7528',
+			vmMem:'\u5185\u5B58\u8D44\u6E90',
+			vmDisk:'\u786C\u76D8\u4F7F\u7528',
+			vmNet:'\u7F51\u7EDC\u8D44\u6E90',
+			infor:{
+				vmName:'\u865A\u62DF\u673A',
+				chkTime:'\u68C0\u6D4B\u65F6\u95F4',
+				hostName:'\u5BBF\u4E3B\u673A',
+				status:'\u8FD0\u884C\u72B6\u6001'
+			},
+			status:{
+				r:'\u8FD0\u884C',
+				b:'\u963B\u585E',
+				d:'\u5782\u6B7B',
+				c:'\u5D29\u6E83',
+				s:'\u5173\u95ED',
+				p:'\u6682\u505C',
+				u:'\u672A\u77E5'
+			},
+			cpu:{
+				vcpu:'\u865A\u62DFCPU\u6570',
+				time:'CPU\u65F6\u95F4',
+				usage:'\u5F53\u524D\u4F7F\u7528',
+				uptime:'\u8FD0\u884C\u65F6\u95F4'
+			},
+			mem:{
+				mem:'\u5185\u5B58\u4F7F\u7528',
+				usage:'\u767E\u5206\u6BD4',
+				max:'\u6700\u5927\u9650\u5236',
+				maxPer:'\u767E\u5206\u6BD4'
+			},
+			disk:{
+				usage:'\u786C\u76D8\u4F7F\u7528',
+				max:'\u6700\u5927\u9650\u5236',
+				dir:'\u6587\u4EF6\u8DEF\u5F84',
+				size:'\u6240\u5360\u7A7A\u95F4'
+			},
+			net:{
+				nets:'\u865A\u62DF\u7F51\u5361',
+				ip:'IP\u5730\u5740',
+				tx:'\u53D1\u9001\u6570\u636E',
+				sx:'\u63A5\u6536\u6570\u636E'
+			}
+		},
+		monitorMgt: {
+			name:'\u76D1\u63A7\u7BA1\u7406',					
+			
+			perf:'\u6027\u80FD',				
+			process:'\u8FDB\u7A0B',				
+			network:'\u8054\u7F51',				
+			app:	'\u5E94\u7528\u7A0B\u5E8F',			
+			user:	'\u7528\u6237',				
+			
+			select:	'\u5168\u9009/\u5168\u4E0D\u9009',				
+			inverse:'\u53CD\u9009',				
+			
+			interval:'\u76D1\u63A7\u5237\u65B0\u95F4\u9694',			
+			item:	'\u6BCF\u9875\u8BB0\u5F55\u6761\u6570',				
+			
+			btnSave:'\u4FDD\u5B58\u4FEE\u6539',		
+			
+			subSucc:'\u63D0\u4EA4\u6210\u529F!',
+			subFail:'\u63D0\u4EA4\u5931\u8D25!',
+			timeUnit:'\u79D2'
+		},
+		errors: {
+			noRes:'\u5BF9\u4E0D\u8D77\uFF0C\u6CA1\u6709\u7ED3\u679C!',
+			noVm:'\u5F53\u524D\u6CA1\u6709\u865A\u62DF\u673A!',
+			rppNotValid:'\u6BCF\u9875\u8BB0\u5F55\u6570\u5FC5\u987B\u662F\u5408\u6CD5\u6574\u6570!',
+			refreshIntervalNotValid:'\u76D1\u63A7\u5237\u65B0\u95F4\u9694\u5FC5\u987B\u662F\u5408\u6CD5\u6574\u6570!'
+			
+		}
+	},
 	calendar:{
 			today:'\u4ECA\u5929',
 			confirm:'\u786E\u5B9A',

@@ -18,6 +18,8 @@
 		key="org.lingcloud.molva.xmm.portal.virtualCluster" /></a></li>
 	<li><a href="<%=basePath%>JSP/ViewVirtualAppliance.jsp"<%if (highlight == "appliance") {%> class="current"<%}%>><bean:message
 		key="org.lingcloud.molva.xmm.portal.virtualAppliance" /></a></li>
+	<li><a href="<%=basePath%>JSP/ViewMonitor.jsp"<%if (highlight == "monitor") {%> class="current"<%}%>><bean:message
+		key="org.lingcloud.molva.xmm.portal.systemMonitor" /></a></li>
 	<select style="float:right"
 		onchange="changeLocale('<%=basePath%>', this.selectedIndex);">
 		<%

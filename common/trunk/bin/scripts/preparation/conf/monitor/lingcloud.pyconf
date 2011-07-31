@@ -65,7 +65,7 @@ collection_group {
 	metric {
 		name = "mysql"
 		value_threshold = "1.0"
-		title = "Mysql Service"
+		title = "MySQL Service"
 	}
 	metric {
 		name = "xend"
@@ -75,7 +75,7 @@ collection_group {
 	metric {
 		name = "lingcloud"
 		value_threshold = "1.0"
-		title = "lingcloud Service"
+		title = "LingCloud Service"
 	}
 
 }
