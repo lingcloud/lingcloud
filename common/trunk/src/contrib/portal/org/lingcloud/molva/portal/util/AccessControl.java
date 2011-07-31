@@ -31,7 +31,7 @@ public class AccessControl {
 	/**
 	 *identify if the AccessControl service is opened.
 	 */
-	private boolean isEnabled;
+	private static boolean isEnabled;
 	
 	/**
 	 *the admin group that allowed to access.
@@ -100,7 +100,7 @@ public class AccessControl {
 	 * the function return whether the AccessControl is opened.
 	 * @return isEnabled
 	 */
-	public final boolean  isAccessControlEnabled() {
+	public static final boolean  isAccessControlEnabled() {
 		return isEnabled;
 	}
 

@@ -1,9 +1,8 @@
     <%
     //get the AccessControl object which is saved in session,the object includes user's status
     AccessControl ac = (AccessControl)session.getAttribute("ACobject");
-    AccessControl actest = new AccessControl();
     //if the accessControl is open
-    if (actest.isAccessControlEnabled() == true)
+    if (AccessControl.isAccessControlEnabled() == true)
     {
         //if there is not a ac object
     	if (ac == null)
