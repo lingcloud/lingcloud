@@ -212,7 +212,7 @@ if [ "$?" = "0" ]
 then
 	get_file "INSTALL_MONITOR_SCRIPT" "the monitor system install script"
 	echo "ARGS: $INSTALL_MONITOR_SCRIPT_ARGS"
-	bash "$INSTALL_DEPENDENCIES_SCRIPT" $INSTALL_MONITOR_SCRIPT_ARGS || onerror "failed to install the monitor system"
+	bash "$INSTALL_MONITOR_SCRIPT" $INSTALL_MONITOR_SCRIPT_ARGS || onerror "failed to install the monitor system"
 fi
 
 do_set "SET_LOCAL_HOSTNAME" "set local hostname"
