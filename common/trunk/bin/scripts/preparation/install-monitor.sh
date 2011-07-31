@@ -168,11 +168,16 @@ ganglia)
 		popd
 
 		# Configure for Ganglia
+		GANGLIA_PYTHON_MODULE_DIR="$GANGLIA_HOME/lib64/ganglia/python_modules"
+		mkdir -p "$GANGLIA_HOME/rrds"
+		mkdir -p "$GANGLIA_PYTHON_MODULE_DIR"
+		chown nobody:nobody "$GANGLIA_HOME/rrds"
+		
 		command cp conf/monitor/start-gm*.sh "$GANGLIA_HOME/sbin"
 		command cp conf/monitor/gm*.conf "$GANGLIA_HOME/etc"
-		mkdir -p "$GANGLIA_HOME/rrds"
-		mkdir -p "$GANGLIA_HOME/lib64/ganglia/python_modules"
-		chown nobody:nobody "$GANGLIA_HOME/rrds"
+		command cp conf/monitor/*.pyconf "$GANGLIA_HOME/etc/conf.d"
+		command cp conf/monitor/*.py "$GANGLIA_PYTHON_MODULE_DIR"
+		
 		echo "rrd_rootdir \"$GANGLIA_HOME/rrds\"" >> "$GANGLIA_HOME/etc/gmetad.conf"
 		sed -i "s;^GANGLIA_HOME=.*;GANGLIA_HOME=$GANGLIA_HOME;g" $GANGLIA_HOME/sbin/start-g*.sh
 
