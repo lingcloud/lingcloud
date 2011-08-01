@@ -36,12 +36,27 @@ public class AccessControl {
 	/**
 	 *the admin group that allowed to access.
 	 */
-	private String adminGroup;
+	private static String adminGroup;
+	
+	/**
+	 * the userGroup.
+	 */
+	private static String userGroup;
 		
 	/**
-	 *path of the execute script.
+	 *path of the execute isUserInGroup script.
 	 */
-	private String shPath; 
+	private static String shPathIsUserInGroup; 
+	
+	/**
+	 *path of the execute getUidByUsername script.
+	 */
+	private static String shPathGetID;
+	
+	/**
+	 *path of the execute getUsernameByUid script.
+	 */
+	private static String shPathGetUname;
 
 	/**
 	 * name of the user. 
@@ -70,14 +85,39 @@ public class AccessControl {
 	private Log log = LogFactory.getFactory().getInstance(this.getClass());
 	
 	/**
-	 * get access control switch from molva.conf.
+	 * get access control info from molva.conf.
 	 */
 	static {
+		
 		try {
 			isEnabled = XMMUtil.getAccessControlEnable();
 		} catch (Exception e) {
 			isEnabled = false;
 		}
+
+		try {
+			adminGroup = XMMUtil.getAccessControlAdminGroup();
+		} catch (Exception e) {
+			adminGroup = null;
+		}
+
+		try {
+			userGroup = XMMUtil.getAccessControlUserGroup();
+		} catch (Exception e) {
+			userGroup = null;
+		}
+		
+		try {
+			String shpath = XMMUtil.getUtilityScriptsPath();
+			shPathGetID = shpath + "/getUidByUsername.sh";
+			shPathGetUname = shpath + "/getUsernameByUid.sh";
+			shPathIsUserInGroup = shpath + "/isUserInGroup.sh";
+		} catch (Exception e) {
+			shPathGetID = null;
+			shPathGetUname = null;
+			shPathIsUserInGroup = null;	
+		}
+		
 	}
 	
 	/**
@@ -85,8 +125,6 @@ public class AccessControl {
 	 * @throws Exception throw common info
 	 */
 	public AccessControl() throws Exception {
-		adminGroup = XMMUtil.getAccessControlAdminGroup();
-		shPath = XMMUtil.getUtilityScriptsPath() + "/isUserInGroup.sh";
 		setStatus(accessControlStatus.INVALID);
 	}
 	
@@ -113,6 +151,39 @@ public class AccessControl {
 	public static final boolean  isAccessControlEnabled() {
 		return isEnabled;
 	}
+	
+	/**
+	 * the function return the shPathGetID.
+	 * @return shPathGetID
+	 */
+	public static final String  getshPathGetID() {
+		return shPathGetID;
+	}
+	
+	/**
+	 * the function return the shPathGetUname.
+	 * @return shPathGetUname
+	 */
+	public static final String  getshPathGetUname() {
+		return shPathGetUname;
+	}
+	
+	/**
+	 * the function return the shPathIsUserInGroup.
+	 * @return shPathIsUserInGroup
+	 */
+	public static final String  getshPathIsUserInGroup() {
+		return shPathIsUserInGroup;
+	}
+	
+	/**
+	 * the function return the userGroup.
+	 * @return userGroup
+	 */
+	public static final String  getuserGroup() {
+		return userGroup;
+	}
+	
 
 	/**
 	 * the function judge whether the user is existed in system 
@@ -152,7 +223,8 @@ public class AccessControl {
 	private  boolean isUserInGroup(
 			final String usernamevalue, final String groupname) 
 	throws Exception {
-		String cmd = shPath + " " + usernamevalue + " " + groupname;
+		String cmd = shPathIsUserInGroup + " " 
+		+ usernamevalue + " " + groupname;
 		log.info("the cmd is:" + cmd + "\n");
 		String result =  XMMUtil.runCommand(cmd);
 		log.info("the result is:" + result + "\n");

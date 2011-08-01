@@ -35,6 +35,7 @@ import org.lingcloud.molva.xmm.pojos.VirtualCluster;
 import org.lingcloud.molva.ocl.util.ParaChecker;
 import org.lingcloud.molva.xmm.util.XMMConstants;
 import org.lingcloud.molva.xmm.util.XMMUtil;
+import org.lingcloud.molva.portal.util.AccessControl;
 
 /**
  * <strong>Purpose:To create a virtual cluster.</strong><br>
@@ -192,17 +193,18 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 			log.info("User want to fast new a cluster from url : " + url);
 
 			
-			boolean isEnabled = XMMUtil.getAccessControlEnable();
+			boolean isEnabled = AccessControl.isAccessControlEnabled();
 			String tenantId = (String) fastNewClusterForm.get("tenantId");
 			/**
 			 * if the AccessControl is opened,authorize the user.
 			 */
 			if (isEnabled && !("".equals(tenantId))) {
 				
-				String userGroup = XMMUtil.getAccessControlUserGroup();
-				String shPath = XMMUtil.getUtilityScriptsPath() 
-				                + "/isUserInGroup.sh";
-				String cmd = shPath + " " + tenantId + " " + userGroup;
+				String userGroup = AccessControl.getuserGroup();
+				String shPathIsUserInGroup = 
+					AccessControl.getshPathIsUserInGroup();
+				String cmd = shPathIsUserInGroup + " " 
+				+ tenantId + " " + userGroup;
 				log.info("the tenant authorize cmd is:" + cmd + "\n");
 				String result =  XMMUtil.runCommand(cmd);
 				log.info("the result is:" + result + "\n");
@@ -213,9 +215,8 @@ public class FastNewVirtualClusterAction extends NeedLoginAction {
 				 */
 				if (result.equals("true" 
 						+ System.getProperty("line.separator"))) {
-					shPath = XMMUtil.getUtilityScriptsPath() 
-							+ "/getUidByUsername.sh";
-					cmd = shPath + " " + tenantId;
+					String shPathGetID = AccessControl.getshPathGetID();
+					cmd = shPathGetID + " " + tenantId;
 					result =  XMMUtil.runCommand(cmd);
 					int length = result.length();
 					int sublength = System.getProperty(

@@ -12,7 +12,7 @@
 <%@ page import="org.lingcloud.molva.xmm.util.XMMConstants" %>
 
 <%@ page import="org.lingcloud.molva.xmm.util.XMMUtil" %>
-
+<%@ page import="org.lingcloud.molva.portal.util.AccessControl" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ page isELIgnored="false"%>
@@ -137,7 +137,7 @@ final Log log = LogFactory.getFactory().getInstance(this.getClass());
 			
 			<%
 
-				boolean isEnabled = XMMUtil.getAccessControlEnable();
+				boolean isEnabled = AccessControl.isAccessControlEnabled();
 				if (isEnabled) {
 			%>
 					<tr class="actionlog_title">

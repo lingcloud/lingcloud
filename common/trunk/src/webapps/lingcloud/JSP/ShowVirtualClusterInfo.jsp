@@ -11,7 +11,7 @@
 <%@ page import="org.lingcloud.molva.xmm.vam.util.VAMConstants"%>
 
 <%@ page import="org.lingcloud.molva.xmm.util.XMMUtil"%>
-
+<%@ page import="org.lingcloud.molva.portal.util.AccessControl" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ page isELIgnored="false"%>
@@ -168,8 +168,8 @@
 			<%
 				String tenantId = tmvc.getTenantId();
 				if (!(tenantId == null || "".equals(tenantId))) {
-					String shPath = XMMUtil.getUtilityScriptsPath() + "/getUsernameByUid.sh";
-					String cmd = shPath + " " + tenantId;
+					String shPathGetUname = AccessControl.getshPathGetUname();
+					String cmd = shPathGetUname + " " + tenantId;
 					String result =  XMMUtil.runCommand(cmd);
 					int length = result.length();
 					int sublength = System.getProperty("line.separator").length();
