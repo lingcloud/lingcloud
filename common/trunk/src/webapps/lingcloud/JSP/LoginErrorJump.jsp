@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%
 String path = request.getContextPath();
-String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
+String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path +  "/";
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -18,9 +18,11 @@ function clock()
 } 
 </script>
 <head>
-<link href="<%=basePath%>css/style.css" rel="stylesheet" type="text/css" />
-<meta http-equiv="Refresh" content="3;url=<%=basePath%>/index.jsp">
 <title><bean:message key="org.lingcloud.molva.xmm.title" /></title>
+<link rel="shortcut icon" href="<%=basePath%>images/icon.png"
+	type="image/x-icon" />
+<link href="<%=basePath%>css/style.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Refresh" content="3;url=<%=basePath%>index.jsp">
 </head>
 <body>
 <div id="body">

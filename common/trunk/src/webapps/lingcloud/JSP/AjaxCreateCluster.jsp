@@ -173,7 +173,7 @@ final Log log = LogFactory.getFactory().getInstance(this.getClass());
 								<td><bean:message
 									key="org.lingcloud.molva.xmm.virtualNetwork.size" />:&nbsp; <input
 									type="text" name="nodenum" size="2" maxlength="2"
-									onmouseout="javascript:changeNodeNum('detail_table','simple_table',callbackNodeDetailForCreateCluster,'<%=basePath%>','detail_div','<%=par.getGuid() %>')"></input>&nbsp;nodes
+									onmouseout="javascript:changeNodeNum('detail_table','simple_table',callbackNodeDetailForCreateCluster,'<%=basePath%>','detail_div','<%=par.getGuid() %>')"></input>&nbsp;
 								* &nbsp;&nbsp;<font color="red"><bean:message
 									key="org.lingcloud.molva.xmm.virtualNetwork.autosize.limit" /></font><br />
 								<input type="radio" name="publicIpSupport"
@@ -223,17 +223,14 @@ final Log log = LogFactory.getFactory().getInstance(this.getClass());
 				<tr class="actionlog_title">
 					<th width="80" valign="middle"><bean:message
 						key="org.lingcloud.molva.xmm.machine.config" /></th>
-					<td width="630"><bean:message
-						key="org.lingcloud.molva.xmm.machine.simple.setting" /><input
-						type="radio" name="nodeinfotype"
+					<td width="630"><input type="radio" name="nodeinfotype"
 						value="<%=XMMPortalUtil.NODE_INFO_TYPE_SIMPLE%>"
-						onclick="javascript:changeShowTable('simple_table','detail_table')"
-						checked /> &nbsp;&nbsp;&nbsp;&nbsp;<bean:message
-						key="org.lingcloud.molva.xmm.machine.detail.setting" /><input
-						type="radio" name="nodeinfotype"
+						onclick="javascript:changeShowTable('simple_table','detail_table')" checked />
+						<bean:message key="org.lingcloud.molva.xmm.machine.simple.setting" /> &nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="radio" name="nodeinfotype"
 						value="<%=XMMPortalUtil.NODE_INFO_TYPE_DETAIL%>"
 						onclick="javascript:changeShowTable('detail_table','simple_table',callbackNodeDetailForCreateCluster,'<%=basePath%>','detail_div','<%=par.getGuid() %>')" />
-
+						<bean:message key="org.lingcloud.molva.xmm.machine.detail.setting" />
 					<table id="simple_table">
 						<tbody>
 							<tr>
@@ -461,14 +458,14 @@ final Log log = LogFactory.getFactory().getInstance(this.getClass());
 			</tr>
 
 			<tr>
-				<td width="140px"><bean:message
+				<td width="65px"><bean:message
 					key="org.lingcloud.molva.xmm.virtualCluster.RentStart" />:</td>
-				<td width="220px"><input readonly type="text" size="26"
+				<td width="190px"><input readonly type="text" size="18"
 					name="effectiveTime" onClick="getDateString(this,rentStartTime)"
 					value="click here..." /></td>
-				<td width="140px"><bean:message
+				<td width="65px"><bean:message
 					key="org.lingcloud.molva.xmm.virtualCluster.RentEnd" />:</td>
-				<td width="220px"><input readonly type="text" size="26"
+				<td width="190px"><input readonly type="text" size="18"
 					name="expireTime" onClick="getDateString(this,rentEndTime)"
 					value="click here..." /></td>
 			</tr>

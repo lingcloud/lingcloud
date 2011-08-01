@@ -171,17 +171,17 @@
 			src="<%=basePath%>images/add.png" align="center" />
 		<h3><bean:message key="org.lingcloud.molva.xmm.partition.create" /></h3>
 		</a></td>
-		<td width="185px" align="center"><a
+		<td width="150px" align="center"><a
 			href="javascript:showDialogForDeletePartition('<%=basePath%>');">
 		<img src="<%=basePath%>images/delete.png" align="center" />
 		<h3><bean:message key="org.lingcloud.molva.xmm.partition.destroy" /></h3>
 		</a></td>
-		<td width="150px" align="center"><a
+		<td width="170px" align="center"><a
 			href="javascript:showDialogForAddNewPNNode('<%=basePath%>');"><img
 			src="<%=basePath%>images/increase.png" align="center" />
 		<h3><bean:message key="org.lingcloud.molva.xmm.PNNode.add" /></h3>
 		</a></td>
-		<td width="150px" align="center"><a
+		<td width="170px" align="center"><a
 			href="javascript:showDialogForDeletePNNode('<%=basePath%>');"><img
 			src="<%=basePath%>images/decrease.png" align="center" />
 		<h3><bean:message key="org.lingcloud.molva.xmm.PNNode.delete" /></h3>
@@ -204,7 +204,7 @@
 		<h3><bean:message key="org.lingcloud.molva.xmm.virtualCluster.stop" />
 		</h3>
 		</a></td>
-		<td width="180px" align="center"><a
+		<td width="150px" align="center"><a
 			href="javascript:showDialogForFreeCluster('<%=basePath%>');"><img
 			src="<%=basePath%>images/vcdelete.png" align="center" />
 		<h3><bean:message key="org.lingcloud.molva.xmm.virtualCluster.destroy" />
