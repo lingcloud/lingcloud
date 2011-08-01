@@ -60,21 +60,31 @@ public class AccessControl {
 	}
 	
 	/**
-	 *the enum Variable. 
+	 * the enum Variable. 
 	 */
 	private accessControlStatus status;
 	
 	/**
-	 * 
+	 * log.
 	 */
 	private Log log = LogFactory.getFactory().getInstance(this.getClass());
+	
+	/**
+	 * get access control switch from molva.conf.
+	 */
+	static {
+		try {
+			isEnabled = XMMUtil.getAccessControlEnable();
+		} catch (Exception e) {
+			isEnabled = false;
+		}
+	}
 	
 	/**
 	 * Initial function which reads the profile.
 	 * @throws Exception throw common info
 	 */
 	public AccessControl() throws Exception {
-		isEnabled = XMMUtil.getAccessControlEnable();
 		adminGroup = XMMUtil.getAccessControlAdminGroup();
 		shPath = XMMUtil.getUtilityScriptsPath() + "/isUserInGroup.sh";
 		setStatus(accessControlStatus.INVALID);
