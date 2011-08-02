@@ -81,8 +81,10 @@ var lingcloud = {
 		virtualNodeOp:{
 			title:'Operate Virtual Node',
 			save:'save this virtual node',
-			stop:'stop this virtual node',
 			start:'start this virtual node',
+			stop:'stop this virtual node',
+			boot:'boot this virtual node',
+			shutdown:'shutdown this virtual node',
 			migrate:'migrate this virtual node',
 			migrateTitle:'Migrate Virtual Node',
 			empty:'No Physical Node',

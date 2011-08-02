@@ -595,10 +595,10 @@ showDialogForOperateVirtualNode = function (basePath, action, vNodeGuid, hostId)
 	var title = lingcloud.Infrastructure.virtualNodeOp.title;
 	if (action === "save") {
 		strAction = lingcloud.Infrastructure.virtualNodeOp.save;
-	} else if (action === "stop") {
-		strAction = lingcloud.Infrastructure.virtualNodeOp.stop;
-	} else if (action === "start") {
-		strAction = lingcloud.Infrastructure.virtualNodeOp.start;
+	} else if (action === "shutdown") {
+		strAction = lingcloud.Infrastructure.virtualNodeOp.shutdown;
+	} else if (action === "boot") {
+		strAction = lingcloud.Infrastructure.virtualNodeOp.boot;
 	} else if (action === "migrate") {
 		strAction = lingcloud.Infrastructure.virtualNodeOp.migrate;
 		title = lingcloud.Infrastructure.virtualNodeOp.migrateTitle;
@@ -622,7 +622,7 @@ showDialogForOperateVirtualNode = function (basePath, action, vNodeGuid, hostId)
     	str += "<input type=\"hidden\" name=\"hostId\" value=\"" + "172.22.1.13" + "\" />";
     }else {
     	str += "<table width=\"400px\"><tbody><tr><td>&nbsp;&nbsp;"
-    			+ lingcloud.Appliance.operateAppliance.confirmTip 
+    			+ lingcloud.Infrastructure.virtualNodeOp.confirmTip 
     			+ strAction + "?</td></tr></tbody></table>";
     }
     

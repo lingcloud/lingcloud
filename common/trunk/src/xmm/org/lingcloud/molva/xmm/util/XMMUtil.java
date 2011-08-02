@@ -200,6 +200,10 @@ public class XMMUtil {
 	public static String getTestPhysicalNodeCmdInCfgFile() throws Exception {
 		return getValueInCfgFile("testPhysicalNodeCmd");
 	}
+	
+	public static String getOperateVirtualNodeCmdInCfgFile() throws Exception {
+		return getValueInCfgFile("operateVirtualNodeCmd");
+	}
 
 	public static boolean getPublicIpEnableInCfgFile() throws Exception {
 		return Boolean.parseBoolean(getValueInCfgFile("publicIpEnable"));

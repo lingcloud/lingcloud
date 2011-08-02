@@ -10,53 +10,59 @@
 #
 
 failed="false"
-sucess="true"
+success="true"
+
+# 
+IP_OR_MAC="$1"
+OPERATION="$2"
 
 function stop_pnnode
 {
 	# $1 is the ip of the physical machine
-	ssh $1 halt -p
+	ssh $IP_OR_MAC halt -p
 	if [ "$?" != "0" ]
 	then
 		echo "$failed"
 	else
-		echo "$sucess"
+		echo "$success"
 	fi
 }
 
 function start_pnnode
 {
 	# $1 is the mac of the physical machine
-	ether-wake $1
+	ether-wake $IP_OR_MAC
 	if [ "$?" != "0" ]
 	then
 		echo "$failed"
 	else
-		echo "$sucess"
+		echo "$success"
 	fi
 }
 
 function ping_pnnode
 {
 	# $1 is the ip of the physical machine
-	ping -w 2 $1 >/dev/null 2>/dev/null
+	ping -w 2 $IP_OR_MAC >/dev/null 2>/dev/null
 	if [ "$?" != "0" ]
 	then
 		echo "$failed"
 	else
-		echo "$sucess"
+		echo "$success"
 	fi
 }
 
-if [ "$2" = "stop" ]
+if [ "$OPERATION" = "stop" ]
 then
-	stop_pnnode $1
+	stop_pnnode
 else
-	if [ "$2" = "start" ]
+	if [ "$OPERATION" = "start" ]
 	then
-		start_pnnode $1
+		start_pnnode
 	else
-		ping_pnnode $1
+		if [ "$OPERATION" = "ping" ]
+		then ping_pnnode
+		fi
 	fi
 fi
 

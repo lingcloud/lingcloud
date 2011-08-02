@@ -875,6 +875,9 @@ public class VirtualClientImpl implements VirtualClient {
 		if (vid < 0) {
 			return vnode;
 		}
+		if (vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.SHUTDOWN.toString())){
+			return vnode;
+		}
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
 		OneResponse onrc = newvir.info();
 		if (onrc.isError()) {
@@ -971,5 +974,68 @@ public class VirtualClientImpl implements VirtualClient {
 			Cluster.add(client, cid, hid);
 		}
 	}
+	
+	public VirtualNode bootVirtualNode(VirtualNode vnode) throws Exception{
+		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
+		int vid = Integer.parseInt(vir.getId());
+		VirtualMachine newvir = new VirtualMachine(vid, this.client);
+		OneResponse onrc = newvir.info();
+		if (onrc.isError()) {
+			throw new Exception("Error occurred when view the boot VM("
+					+ vnode.getName() + "), the detail msg as: "
+					+ onrc.getErrorMessage());
+		} else {
+			if(newvir.lcmStateStr().equals(VirtualMachine
+					.LCM_STATE[VirtualMachine.LCM_STATE_UNKNOWN]) &&
+					newvir.stateStr().equals(VirtualMachine
+							.VM_STATES[VirtualMachine.VM_STATE_ACTIVE])){ 
+				OneResponse sonrc = newvir.restart();
+				if (sonrc.isError()) {
+					throw new Exception("Error occurred when boot the VM("
+							+ vnode.getName() + "), the detail msg as: "
+							+ onrc.getErrorMessage());
+				}
+				vnode.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
+						.toString());
+				
+				log.info("The VM(" + vnode.getName() + ") is boot.");
+			}
+		}
+		return vnode;
+	}
 
+	public VirtualNode shutdownVirtualNode(VirtualNode vnode) throws Exception{
+		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
+		int vid = Integer.parseInt(vir.getId());
+		VirtualMachine newvir = new VirtualMachine(vid, this.client);
+		OneResponse onrc = newvir.info();
+		if (onrc.isError()) {
+			throw new Exception("Error occurred when view the shutdowned VM("
+					+ vnode.getName() + "), the detail msg as: "
+					+ onrc.getErrorMessage());
+		} else {
+			StringBuffer cmdSB = new StringBuffer();
+			String cmd = XMMUtil.getOperateVirtualNodeCmdInCfgFile();
+			if (cmd == null || "".equals(cmd)) {
+				log.error("can't get operateVirtualNodeCmd in Cfg file.");
+				throw new Exception("can't get operateVirtualNodeCmd "
+						+ "in Cfg file.");
+			}
+			cmdSB.append(cmd).append(" " + vnode.getParentPhysialNodeName() + " " + "one-" + vid + " shutdown");
+			String stdout = XMMUtil.runCommand(cmdSB.toString());
+			if (stdout.trim().equals("true")) {
+				log.info("shutdown virtual node " + vnode.getName()
+						+ " sucess.");
+			} else {
+				log.info("shutdown virtual node " + vnode.getName()
+						+ " Failed: " + stdout);
+				throw new Exception("shutdown virtual node " + vnode.getName() + " Failed: " + stdout);
+			}
+			vnode.setRunningStatus(XMMConstants.MachineRunningState.HALT
+					.toString());
+			
+			log.info("The VM(" + vnode.getName() + ") is shutdown.");
+		}
+		return vnode;
+	}
 }

@@ -409,7 +409,16 @@ public class VirtualMachine extends PoolElement {
 
 		String state = this.stateStr();
 		String lcmState = this.lcmStateStr();
-		if (state.equals(VM_STATES[VM_STATE_INIT])
+		if (vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.SHUTDOWN.toString())){
+			;
+		} else if (vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.HALT.toString())){
+			
+			if(state.equals(VM_STATES[VM_STATE_ACTIVE])
+				&& lcmState.equals(LCM_STATE[LCM_STATE_UNKNOWN])){
+			newvi.setRunningStatus(XMMConstants.MachineRunningState.SHUTDOWN
+					.toString());
+			}
+		} else if (state.equals(VM_STATES[VM_STATE_INIT])
 				|| state.equals(VM_STATES[VM_STATE_PENDING])
 				|| lcmState.equals(LCM_STATE[LCM_STATE_INIT])
 				|| lcmState.equals(LCM_STATE[LCM_STATE_PROLOG])) {
@@ -440,7 +449,7 @@ public class VirtualMachine extends PoolElement {
 					.toString());
 		}else if (lcmState.contains("SAVE")) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.SAVING
-					.toString());
+					.toString());	
 		}else {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.ERROR
 					.toString());

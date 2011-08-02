@@ -46,6 +46,10 @@ public interface VirtualClient {
 
 	VirtualNode stopVirtualNode(VirtualNode vnode) throws Exception;
 	
+	VirtualNode bootVirtualNode(VirtualNode vnode) throws Exception;
+
+	VirtualNode shutdownVirtualNode(VirtualNode vnode) throws Exception;
+	
 	public VirtualNode migrateVirtualNode(VirtualNode vnode, PhysicalNode pNode) throws Exception;
 
 	void freeVirtualNode(VirtualNode vnode, boolean isForcibly)

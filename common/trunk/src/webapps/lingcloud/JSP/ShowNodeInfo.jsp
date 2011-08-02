@@ -95,20 +95,21 @@
 			%>
 		<tr class="actionlog">
 			<td align="center" width="25">
+			<% if (node instanceof VirtualNode) { %>
 				<a
 				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.refresh"/>"
 				href="javascript:showNodeInfo('<%=basePath%>','<%=virid%>','<%=nodetype%>');"><img
 				src="<%=basePath%>/images/refresh.png" style="border: medium none;"
 				width="16" height="16" /></a><br />
 				<a
-				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.start"/>"
-				href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','start','<%=virid%>');"><img
-				src="<%=basePath%>/images/vcstart.png" style="border: medium none;"
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.boot"/>"
+				href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','boot','<%=virid%>');"><img
+				src="<%=basePath%>/images/poweron.png" style="border: medium none;"
 				width="16" height="16" /></a><br />
 				<a
-				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.stop"/>"
-				href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','stop','<%=virid%>');"><img
-				src="<%=basePath%>/images/vcstop.png" style="border: medium none;"
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.shutdown"/>"
+				href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','shutdown','<%=virid%>');"><img
+				src="<%=basePath%>/images/poweroff.png" style="border: medium none;"
 				width="16" height="16" /></a><br />
 				<!--
 				<a
@@ -122,7 +123,25 @@
 				href="javascript:showDialogForOperateVirtualNode('<%=basePath%>','migrate','<%=virid%>');"><img
 				src="<%=basePath%>/images/migrate.png" style="border: medium none;"
 				width="16" height="16" /></a><br />
-				
+			<% } else if (node instanceof PhysicalNode) { 
+				PhysicalNode pnnode = new PhysicalNode(node.toAsset()); 
+			%>
+				<a
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.refresh"/>"
+				href="javascript:showNodeInfo('<%=basePath%>','<%=virid%>','<%=nodetype%>');"><img
+				src="<%=basePath%>/images/refresh.png" style="border: medium none;"
+				width="16" height="16" /></a><br />
+				<a
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.boot"/>"
+				href="javascript:showDialogForOperatePhysicalNode('<%=basePath%>','start','<%=virid%>','0');"><img
+				src="<%=basePath%>/images/poweron.png" style="border: medium none;"
+				width="16" height="16" /></a><br />
+				<a
+				title="<bean:message key="org.lingcloud.molva.xmm.node.operate.shutdown"/>"
+				href="javascript:showDialogForOperatePhysicalNode('<%=basePath%>','stop','<%=virid%>','<%=pnnode.getRunningVms()%>');"><img
+				src="<%=basePath%>/images/poweroff.png" style="border: medium none;"
+				width="16" height="16" /></a><br />
+			<% } %>
 			</td>
 			<td width="200">
 				<img src="<%=mimg%>" style="border: medium none ;" width="16" height="16" />

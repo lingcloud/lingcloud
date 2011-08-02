@@ -164,7 +164,7 @@ public class PartitionManager {
 			return null;
 		} else {
 			VirtualNode vn = new VirtualNode(asset);
-			VirtualManager.getInstance().getVirtualClient().startVirtualNode(vn);
+			VirtualManager.getInstance().getVirtualClient().bootVirtualNode(vn);
 			
 			ami.update(guid, vn);
 			return vn;
@@ -178,7 +178,7 @@ public class PartitionManager {
 			return null;
 		} else {
 			VirtualNode vn = new VirtualNode(asset);
-			VirtualManager.getInstance().getVirtualClient().stopVirtualNode(vn);
+			VirtualManager.getInstance().getVirtualClient().shutdownVirtualNode(vn);
 			
 			ami.update(guid, vn);
 			return vn;
