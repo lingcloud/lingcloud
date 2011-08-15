@@ -49,6 +49,7 @@ public class MonitorClient {
 	}
 	
 	protected long timePeriod = MonitorConstants.MONITOR_PERIOD_DEF;
+	protected int itemsPerPage = MonitorConstants.MONITOR_ITEMPERPAGE_DEF;
 	
 	protected float getScoreByStats(int[][] stats) {
 		float res = 0;
@@ -236,7 +237,6 @@ public class MonitorClient {
 			List<PhysicalNode> pnList = vxc.listPhysicalNodeInPartition(par.getGuid());
 			List<String> monitorItems = new ArrayList<String>();
 			MonitorConf mntConf = mntPool.getMonitorConfByParName(par.getName());
-			int itemsPerPage = 10;
 			int totalPhysicalNodeNum = 0;
 			totalPhysicalNodeNum = pnList.size();
 			int left = totalPhysicalNodeNum % itemsPerPage;
@@ -272,7 +272,7 @@ public class MonitorClient {
 					tmp += "',hostPic:'" + getHostPic(stat);
 					tmp += "',monitorInfors:[";
 					int count = 0;
-					for (int k = 0 ; k < MonitorConstants.MONITOR_ITEM_LIST.length ; k++) {
+					for (int k = 0 ; k < MonitorConstants.MONITOR_ITEM_LIST.length - 1 ; k++) {
 						srvName = MonitorConstants.MONITOR_ITEM_LIST[k];
 						if (!mntConf.isMonitorSrv(srvName)) {
 							continue;
@@ -301,14 +301,25 @@ public class MonitorClient {
 					}
 					tmp += "]";
 					
-					tmp += ",vmSrvName:'" + MonitorConstants.MONITOR_HOST_VMList + "'"; 
-					tmp += ",VMList:[";
+					srvName = MonitorConstants.MONITOR_HOST_VMLIST;
+					if ( mntConf.isMonitorSrv(srvName)) {
+						tmp += ",vmMonitor:true";
+						
+						tmp += ",vmSrvName:'" + srvName + "'"; 
+						tmp += ",VMList:[";
 
-					tmp += "]";
+						tmp += "],";
+						
+						srv = hostInfo.getSrv(srvName);
+						tmp += "vmStatus:'" 
+								+ srv.getStat() + "',";
+						
+						tmp += "vmCheckTime:'" + MonitorUtil.getCurrTime() + "'";
+						
+					}else {
+						tmp += ",vmMonitor:false";
+					}
 					
-					tmp += ",vmStatus:'" 
-							+ hostInfo.getHostState();
-					tmp += "',vmCheckTime:'" + MonitorUtil.getCurrTime() + "'";
 
 					tmp += "}";
 					hostCount++;
@@ -343,8 +354,8 @@ public class MonitorClient {
 			List<Partition> pl = vxc.listAllPartition();
 			Partition par = pl.get(parId);
 			MonitorConf mntConf = mntPool.getMonitorConfByParName(par.getName());
-			res += "{flushHz:" + mntConf.getMonitorPeriod() / 1000;
-			res += ",recordPerPage:" + mntConf.getItemPerPage();
+			res += "{flushHz:" + timePeriod / 1000;
+			res += ",recordPerPage:" + itemsPerPage;
 			res += ",partitionName:'" + mntConf.getParName() + "'";
 			res += ",itemList:[";
 			for (int i = 0; i < MonitorConstants.itemID.length; i++) {
@@ -380,9 +391,12 @@ public class MonitorClient {
 	public String setMonitorConfByParName(String setings, int parId) {
 		try {
 			String[] strList = setings.split(";");
+			
 			if (strList.length > 1) {
 				timePeriod = Long.parseLong(strList[0]) * 1000;
-				int itemsPerPage = Integer.parseInt(strList[1]);
+				mntPool.setTimePeriod(timePeriod);
+				
+				itemsPerPage = Integer.parseInt(strList[1]);
 				if (itemsPerPage < 1)
 					itemsPerPage = MonitorConstants.MONITOR_ITEMPERPAGE_DEF;
 				
@@ -397,6 +411,8 @@ public class MonitorClient {
 					item = strList[j];
 					mntConf.addMonitorSrv(item);
 				}
+				mntConf.setItemPerPage(itemsPerPage);
+				mntConf.setMonitorPeriod(timePeriod);
 				mntPool.setMonitorConf(mntConf);
 				return "OK";
 			}

@@ -111,6 +111,8 @@ public class MonitorPoolImpl extends MonitorPool {
 			}
 		}catch (Exception e) {
 			log.error(e);
+			res = new Host(hostName);
+			hostMap.put(hostName, res);
 		}
 		return res;
 	}

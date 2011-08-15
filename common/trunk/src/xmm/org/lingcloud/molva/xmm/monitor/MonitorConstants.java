@@ -52,7 +52,7 @@ public interface MonitorConstants {
 	String MONITOR_HOST_XEND 		= "Xend";
 	String MONITOR_HOST_VECP 		= "VECP";
 	String MONITOR_HOST_MYSQL 		= "Mysql";
-	String MONITOR_HOST_VMList	 	= "VMList";
+	String MONITOR_HOST_VMLIST	 	= "VMList";
 	
 	String[] MONITOR_ITEM_LIST		= new String[] {
 			MONITOR_HOST_CPU,		// 0
@@ -68,11 +68,11 @@ public interface MonitorConstants {
 			//MONITOR_HOST_SSH,		// 2
 			MONITOR_HOST_XEND,		// 3
 			MONITOR_HOST_VECP,		// 3
-			MONITOR_HOST_MYSQL		// 3
-			//MONITOR_HOST_VMList
+			MONITOR_HOST_MYSQL,		// 3
+			MONITOR_HOST_VMLIST
 	};
 	
-	int[] itemID = { 0, 0, 0, 0, 2, 4, 1, 1, 3, 3, 3, 3 };
+	int[] itemID = { 0, 0, 0, 0, 2, 4, 1, 1, 3, 3, 3, 3, 3};
 
 	String[] monitorItemCtg = { 
 							"Performace",

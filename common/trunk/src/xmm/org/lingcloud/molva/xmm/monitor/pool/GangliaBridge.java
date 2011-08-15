@@ -586,6 +586,42 @@ class GangliaBridge extends MonitorBridge {
 		return srv;
 	}
 	
+	protected Service getSrv_VMList(Map<String, Service> srvMap, Node hostNode) throws Exception {
+		String key = MonitorConstants.MONITOR_HOST_VMLIST;
+		String name = key;
+		String stat = MonitorConstants.MONITOR_STAT_UNKN;
+		String tm = xpath.evaluate("./@REPORTED", hostNode);
+		String info ;
+		
+		tm = MonitorUtil.getTimeFromInt(tm);
+		String total = xpath.evaluate("./METRIC[@NAME='vm_num']/@VAL", hostNode);
+
+		int f1 = Integer.parseInt(total);
+		if (f1 > 20) {
+			stat = MonitorConstants.MONITOR_STAT_CRIT;
+		}else if (f1 > 12){
+			stat = MonitorConstants.MONITOR_STAT_WARN;
+		}else {
+			stat = MonitorConstants.MONITOR_STAT_OK;
+		}
+		info = "VMLIST "
+				+ stat
+				+ " - VMs: " 
+				+ f1 ;
+		
+		Service srv = srvMap.get(key);
+		if (srv == null) {
+			srv = new Service(name, stat, tm, info);
+			srvMap.put(key, srv);
+		}else {
+			srv.setStat(stat);
+			srv.setTime(tm);
+			srv.setInfo(info);
+		}
+		
+		return srv;
+	}
+	
 	public Map<String, Host> getHostMap(Map<String, Host> hostMap) throws Exception {
 		
 		if (hostMap == null) {
@@ -780,7 +816,7 @@ class GangliaBridge extends MonitorBridge {
 					+ " AREA:line0#AFAF32:'Mysql' "
 					+ " LINE1:line0#000000 ";
 		}
-		else if (MonitorConstants.MONITOR_HOST_VMList.equals(srvName)) {
+		else if (MonitorConstants.MONITOR_HOST_VMLIST.equals(srvName)) {
 			dsName = dsDir + "/vm_num.rrd";
 			opt += " DEF:line0=" 
 					+ dsName

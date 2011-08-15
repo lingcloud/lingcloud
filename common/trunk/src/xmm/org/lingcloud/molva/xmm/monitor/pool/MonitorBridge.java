@@ -66,8 +66,13 @@ public abstract class MonitorBridge {
 		
 		long curTime = System.currentTimeMillis();
 		if (curTime - timeStamp > timePeriod) {
-			hostMap = getHostMap(hostMap);
-			timeStamp = curTime;
+			try {
+				hostMap = getHostMap(hostMap);
+				timeStamp = curTime;
+			}catch (Exception e) {
+				timeStamp = curTime;
+				throw e;
+			}
 		}
 		
 		return hostMap;

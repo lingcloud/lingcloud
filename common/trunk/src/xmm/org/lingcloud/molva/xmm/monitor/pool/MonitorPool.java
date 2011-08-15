@@ -18,6 +18,7 @@ import java.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.lingcloud.molva.xmm.monitor.MonitorConstants;
 import org.lingcloud.molva.xmm.monitor.pojos.*;
 import org.lingcloud.molva.ocl.asset.*;
 
@@ -32,11 +33,26 @@ public abstract class MonitorPool {
 	protected Log log = LogFactory.getLog(this.getClass());
 	
 	private static MonitorPool mntPool = null;
+	
+	private long timePeriod = MonitorConstants.MONITOR_PERIOD_DEF;
+	
 	public static MonitorPool getInstanse() {
 		if (mntPool == null) {
 			mntPool = new MonitorPoolImpl();	
 		}
 		return mntPool;
+	}
+	
+	public void setTimePeriod(long period) {
+		if (period < MonitorConstants.MONITOR_PERIOD_DEF / 10) {
+			period = MonitorConstants.MONITOR_PERIOD_DEF / 10 ;
+		}
+		timePeriod = period;
+		mntBridge.setTimePeriod(period);
+	}
+	
+	public long getTimePeriod() {
+		return timePeriod;
 	}
 	
 	protected MonitorBridge				mntBridge = MonitorBridge.getInstanse();
