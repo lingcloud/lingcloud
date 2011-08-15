@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lingcloud.molva.xmm.vam.controllers.Controller;
+import org.lingcloud.molva.xmm.vam.controllers.FileController;
 import org.lingcloud.molva.xmm.vam.daos.DaoFactory;
 import org.lingcloud.molva.xmm.vam.daos.VAFileDao;
 import org.lingcloud.molva.xmm.vam.pojos.VAFile;
@@ -91,6 +92,7 @@ public class FileOperation {
 				dstPath);
 		cmdList.add(command);
 
+		Controller controller = null;
 		if (vafile != null) {
 			// get file data access object
 			VAFileDao fileDao = DaoFactory.getVAFileDao();
@@ -101,10 +103,17 @@ public class FileOperation {
 			vafile.setSrcPath(srcPath);
 			vafile.setTimestamp(getTimestamp());
 			fileDao.update(vafile);
+
+			if (vafile.getController() != null 
+					|| !vafile.getController().equals("")) {
+				controller = (Controller) Class.forName(
+						vafile.getController()).newInstance();
+			}
 		}
-		
-		Controller controller = (Controller) Class.forName(
-				vafile.getController()).newInstance();
+		if (controller == null) {
+			controller = new FileController();
+		}
+			
 		// add task to the thread pool
 		CommandTask task = new CommandTask(vafile, cmdList, controller,
 				VAMConstants.STATE_READY, VAMConstants.STATE_ERROR,
@@ -139,6 +148,7 @@ public class FileOperation {
 		String command = VAMUtil.getRemoveFileCommand(host, user, path);
 		cmdList.add(command);
 
+		Controller controller = null;
 		if (vafile != null) {
 			// get file data access object
 			VAFileDao fileDao = DaoFactory.getVAFileDao();
@@ -150,10 +160,17 @@ public class FileOperation {
 			vafile.setSrcPath(path);
 			vafile.setTimestamp(getTimestamp());
 			fileDao.update(vafile);
+			
+			if (vafile.getController() != null 
+					|| !vafile.getController().equals("")) {
+				controller = (Controller) Class.forName(
+						vafile.getController()).newInstance();
+			}
 		}
-
-		Controller controller = (Controller) Class.forName(
-				vafile.getController()).newInstance();
+		if (controller == null) {
+			controller = new FileController();
+		}
+		
 		// add task to the thread pool
 		CommandTask task = new CommandTask(vafile, cmdList, controller,
 				VAMConstants.STATE_DELETED, VAMConstants.STATE_ERROR,
@@ -244,6 +261,7 @@ public class FileOperation {
 				srcPath, dstPath);
 		cmdList.add(command);
 
+		Controller controller = null;
 		if (vafile != null) {
 			// get file data access object
 			VAFileDao fileDao = DaoFactory.getVAFileDao();
@@ -255,10 +273,17 @@ public class FileOperation {
 			vafile.setSrcPath(srcPath);
 			vafile.setTimestamp(getTimestamp());
 			fileDao.update(vafile);
+			
+			if (vafile.getController() != null 
+					|| !vafile.getController().equals("")) {
+				controller = (Controller) Class.forName(
+						vafile.getController()).newInstance();
+			}
 		}
-
-		Controller controller = (Controller) Class.forName(
-				vafile.getController()).newInstance();
+		if (controller == null) {
+			controller = new FileController();
+		}
+		
 		// add task to the thread pool
 		CommandTask task = new CommandTask(vafile, cmdList, controller,
 				VAMConstants.STATE_READY, VAMConstants.STATE_ERROR,
