@@ -12,7 +12,6 @@
 failed="false"
 success="true"
 
-# 
 IP_OR_MAC="$1"
 OPERATION="$2"
 
