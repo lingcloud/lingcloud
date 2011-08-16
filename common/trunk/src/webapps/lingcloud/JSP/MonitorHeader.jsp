@@ -44,6 +44,8 @@
 <link href="<%=basePath%>css/style.css" rel="stylesheet" type="text/css" />
 <link href="<%=basePath%>css/style-vam.css" rel="stylesheet"
 	type="text/css" />
+<link href="<%=basePath%>css/lingcloudPageDiv.css" rel="stylesheet"
+	type="text/css" />
 <link href="<%=basePath%>css/jquery.alerts.css" rel="stylesheet"
 	type="text/css" media="screen" />
 
@@ -93,6 +95,16 @@
 <script language="javascript" type="text/javascript"
 	src="<%=basePath%>js/plugins/jqplot.pointLabels.min.js"></script>
 <!-- END: load jqplot -->
+
+<%if(loc == null || loc.getLanguage().equals("zh")){ %>
+<script type="text/javascript"
+	src="<%=basePath%>js/lingcloud-common-zh_cn.js"></script>
+<script src="<%=basePath%>js/lingcloudPageDiv_zh_cn.js"></script>
+<%}else{ %>
+<script type="text/javascript"
+	src="<%=basePath%>js/lingcloud-common-en_us.js"></script>
+<script src="<%=basePath%>js/lingcloudPageDiv_en_us.js"></script>
+<%} %>
 
 <script src="<%=basePath%>js/lingcloudMonitor.js"></script>
 

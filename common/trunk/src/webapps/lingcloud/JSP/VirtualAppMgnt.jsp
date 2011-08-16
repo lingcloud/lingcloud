@@ -891,7 +891,7 @@ var check = false;
 %>
 function dis(){check = true;} 
 function confirmDelete(url){
-	jConfirm(lingcloud.tip.delapp,lingcloud.tip.delapptitle,function(t){
+	jSubmit(lingcloud.tip.delapp,lingcloud.tip.delapptitle,function(t){
 	
 		if(t){ deleteFile('<%=basePath %>',url);}
 		else {return false;}
