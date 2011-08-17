@@ -155,7 +155,8 @@ public class PPNPNController extends AssetController {
 			log.info("The physical node " + pn.getName()
 						+ "'s running status is " + pn.getRunningStatus());
 		}
-		else if (pn.getRunningStatus().equals(
+		
+		if (pn.getRunningStatus().equals(
 				XMMConstants.MachineRunningState.RUNNING.toString())) {
 			if (metaInfoSender == null || "".equals(metaInfoSender)) {
 				metaInfoSender = XMMUtil.getStaticMetaInfoSenderInCfgFile();

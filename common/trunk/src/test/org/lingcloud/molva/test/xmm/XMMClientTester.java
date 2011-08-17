@@ -20,8 +20,10 @@ import org.apache.commons.logging.*;
 
 import org.junit.*;
 import org.lingcloud.molva.test.util.TestConstants;
+import org.lingcloud.molva.xmm.services.VirtualManager;
 import org.lingcloud.molva.xmm.util.XmlUtil;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
+import org.lingcloud.molva.xmm.vmc.VirtualClient;
 import org.lingcloud.molva.xmm.pojos.*;
 import org.lingcloud.molva.xmm.ac.*;
 import org.lingcloud.molva.xmm.amm.VirtualClusterAMM;
@@ -57,6 +59,7 @@ public class XMMClientTester {
 			addPhysicalNode();
 			createVirtualCluster();
 		}catch (Exception e) {
+			e.printStackTrace();
 			log.error("Initialze failed. Reason: " + e);
 			fail();
 		}
@@ -69,6 +72,7 @@ public class XMMClientTester {
 			removePhysicalNode();
 			destoryPartion();
 		}catch (Exception e) {
+			e.printStackTrace();
 			log.error("Destory failed. Reasion: " + e);
 			fail();
 		}
@@ -159,7 +163,6 @@ public class XMMClientTester {
 	}
 	
 	private static PhysicalNode addPhysicalNode() throws Exception {
-		PhysicalNode pn = null;
 		String privateip = null;
 		String publicip = null;
 		String controller = null;
@@ -193,9 +196,27 @@ public class XMMClientTester {
 		genPhyNode = xmmClient.addPhysicalNode(genPartition.getGuid(), privateip, publicip,
 				controller, redeploy, attr, description);
 		assertNotNull(genPhyNode);
+		
+		xmmClient.refreshPhysicalNode(vmPhyNode.getGuid());
+		xmmClient.refreshPhysicalNode(genPhyNode.getGuid());
+		VirtualClient vc = null;
+		PhysicalNode pn = null;
+		vc = VirtualManager.getInstance().getVirtualClient();
+		pn = vc.getVMProvisionNode(vmPhyNode);
+		
+		for (int i= 0 ; i < 100 ; i++) {
+			if (pn.getFreeCpu() > 0) {
+				break;
+			}
+			System.out.println("Wait for physical node in vm partition. Free CPU in the node : " + pn.getFreeCpu());
+			Thread.sleep(3000);
+			pn = xmmClient.refreshPhysicalNode(vmPhyNode.getGuid());
+			pn = vc.getVMProvisionNode(vmPhyNode);
+		}
+		
 		log.info(description);
 		
-		return pn;
+		return vmPhyNode;
 	}
 	
 	private static void removePhysicalNode() throws Exception {

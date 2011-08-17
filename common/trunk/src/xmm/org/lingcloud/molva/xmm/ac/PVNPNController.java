@@ -209,7 +209,8 @@ public class PVNPNController extends AssetController {
 			log.info("The physical node " + pn.getName()
 						+ "'s running status is " + pn.getRunningStatus());
 		}
-		else if(pn.getRunningStatus().equals(
+
+		if(pn.getRunningStatus().equals(
 				XMMConstants.MachineRunningState.RUNNING.toString())){
 			
 			if (metaInfoSender == null || "".equals(metaInfoSender)) {
@@ -256,6 +257,7 @@ public class PVNPNController extends AssetController {
 				VirtualNetworkManager.triggerNetworkInfoAdd(pn.getNics());
 				VirtualClient vc = VirtualManager.getInstance().getVirtualClient();
 				PhysicalNode newpn = vc.getVMProvisionNode(pn);
+			
 				log.info("The physical node " + pn.getName()
 						+ "'s running status is " + newpn.getRunningStatus());
 				return newpn;
