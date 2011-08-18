@@ -69,9 +69,9 @@ public class XMMClientTester {
 	@AfterClass
 	public static void destroyForAllTest() {
 		try {
-//			destroyVirtualCluster();
-//			removePhysicalNode();
-//			destoryPartion();
+			destroyVirtualCluster();
+			removePhysicalNode();
+			destoryPartion();
 		}catch (Exception e) {
 			e.printStackTrace();
 			log.error("Destory failed. Reasion: " + e);
@@ -187,7 +187,7 @@ public class XMMClientTester {
 		}
 	}
 
-@Ignore
+	@Ignore
 	@Test
 	public void updateVirtualNodeInfo() {
 		try {
@@ -232,6 +232,7 @@ public class XMMClientTester {
 			fail();
 		}
 	}
+	
 	@Ignore
 	@Test
 	public void refreshPhysicalNode() {
@@ -245,14 +246,28 @@ public class XMMClientTester {
 			fail();
 		}
 	}
+	
+	private List<VirtualNode> getVirtualNodeList4VC(VirtualCluster vc) throws Exception{
+		List<VirtualNode> vmnList = xmmClient
+							.listVirtualNodeInVirtualCluster(vc.getGuid());
+		for (int i = 0 ; i < 20 ; i++) {
+			if (vmnList != null) 
+				break;
+			Thread.sleep(3000);
+			System.out.println("Waiting for VNode list for VC - " + vmCluster.getName() );
+			vmnList = xmmClient
+				.listVirtualNodeInVirtualCluster(vc.getGuid());
+		}
+		return vmnList;
+	}
 
 	@Test
 	public void refreshVirtualNode() { 
 		try {
-			VirtualCluster vc = xmmClient.viewVirtualCluster(vmCluster.getGuid());
+			List<VirtualNode> vmnList = null;
+			vmnList = this.getVirtualNodeList4VC(vmCluster);
 			
-			List<VirtualNode> vmnList = xmmClient
-					.listVirtualNodeInVirtualCluster(vc.getGuid());
+			assertNotNull(vmnList);
 			VirtualNode vn = vmnList.get(0);
 			
 			
@@ -633,6 +648,7 @@ public class XMMClientTester {
 
 	private static void removePhysicalNode() throws Exception {
 
+		Thread.sleep(5000);
 		xmmClient.removePhysicalNode(vmPhyNode.getGuid());
 		log.info("Remove physical node " + vmPhyNode.getName());
 		xmmClient.removePhysicalNode(genPhyNode.getGuid());
