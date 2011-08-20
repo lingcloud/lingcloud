@@ -1,0 +1,99 @@
+#
+# Copyright (C) 2008-2011,
+# LingCloud Team,
+# Institute of Computing Technology,
+# Chinese Academy of Sciences.
+# P.O.Box 2704, 100190, Beijing, China.
+#
+# http://lingcloud.org
+#
+
+modules {
+
+	module {
+		name = "users"
+		language = "python"
+	}
+	module {
+		name = "process"
+		language = "python"
+	}
+	module {
+		name = "vm"
+		language = "python"
+	}
+
+}
+
+# Collection groups for lingcloud system.
+
+collection_group {
+	collect_every = 90
+	time_threshold = 600
+
+	metric {
+		name = "current_user"
+		value_threshold = "1.0"
+		title = "Current Users"
+	}
+}
+
+collection_group {
+	collect_every = 90
+	time_threshold = 600
+
+	metric {
+		name = "total_process"
+		value_threshold = "1.0"
+		title = "Total Processes"
+	}
+	metric {
+		name = "zombie_process"
+		value_threshold = "1.0"
+		title = "Total Processes"
+	}
+	metric {
+		name = "total_process"
+		value_threshold = "1.0"
+		title = "Total Processes"
+	}
+	metric {
+		name = "httpd"
+		value_threshold = "1.0"
+		title = "HTTP Service"
+	}
+	metric {
+		name = "mysql"
+		value_threshold = "1.0"
+		title = "MySQL Service"
+	}
+	metric {
+		name = "xend"
+		value_threshold = "1.0"
+		title = "Xend Service"
+	}
+	metric {
+		name = "lingcloud"
+		value_threshold = "1.0"
+		title = "LingCloud Service"
+	}
+
+}
+
+collection_group {
+	collect_every = 90 
+	time_threshold = 600
+
+	metric {
+		name = "vm_num"
+		value_threshold = "1.0"
+		title = "VM Number"
+	}
+	metric {
+		name = "vm_infos"
+		value_threshold = "1.0"
+		title = "Virtual Machine Infos"
+	}	
+
+}
+

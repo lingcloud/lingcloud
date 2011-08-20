@@ -1,0 +1,52 @@
+drop database if exists \\`naming\\`;
+
+create database if not exists \\`naming\\`;
+
+use \\`naming\\`;
+
+/* Table structure for table \\`gnodeinfo\\` */
+
+CREATE TABLE \\`gnodeinfo\\` (
+  \\`guid\\` varchar(40) NOT NULL default '',
+  \\`name\\` varchar(255) default NULL,
+  \\`obj\\` varchar(255) default NULL,
+  \\`type\\` int(11) NOT NULL default '0',
+  \\`rControllerType\\` varchar(160) default NULL,
+  \\`rControllerURL\\` varchar(160) default NULL,
+  \\`export\\` varchar(254) NOT NULL default '',
+  \\`description\\` text,
+  \\`linkCount\\` int(11) NOT NULL default '0',
+  PRIMARY KEY  (\\`guid\\`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* Table structure for table \\`gnode\\` */
+
+CREATE TABLE \\`gnode\\` (
+  \\`guid\\` varchar(40) NOT NULL default '',
+  \\`originGNodeID\\` varchar(40) default NULL,
+  \\`homeSiteID\\` varchar(40) default NULL,
+  \\`initAgoraID\\` varchar(40) default NULL,
+  \\`initUserID\\` varchar(40) default NULL,
+  \\`ownerAgoraID\\` varchar(40) default NULL,
+  \\`ownerID\\` varchar(40) default NULL,
+  \\`ownerDN\\` varchar(255) default NULL,
+  \\`groupID\\` varchar(40) default NULL,
+  \\`acl\\` varchar(9) NOT NULL default '',
+  \\`addTime\\` datetime NOT NULL default '0000-00-00 00:00:00',
+  \\`updateTime\\` datetime NOT NULL default '0000-00-00 00:00:00',
+  \\`version\\` int(11) NOT NULL default '0',
+  PRIMARY KEY  (\\`guid\\`),
+  KEY \\`FK_ORIGIN_GNODE_ID\\` (\\`originGNodeID\\`),
+  CONSTRAINT \\`FK_ORIGIN_GNODE_ID\\` FOREIGN KEY (\\`originGNodeID\\`) REFERENCES \\`gnodeinfo\\` (\\`guid\\`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* Table structure for table \\`gnodeattr\\` */
+
+CREATE TABLE \\`gnodeattr\\` (
+  \\`guid\\` varchar(40) NOT NULL default '',
+  \\`attrvalue\\` mediumtext,
+  \\`attrname\\` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (\\`guid\\`,\\`attrname\\`),
+  KEY \\`FKEA7F605A5B800701\\` (\\`guid\\`),
+  CONSTRAINT \\`FKEA7F605A5B800701\\` FOREIGN KEY (\\`guid\\`) REFERENCES \\`gnodeinfo\\` (\\`guid\\`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
