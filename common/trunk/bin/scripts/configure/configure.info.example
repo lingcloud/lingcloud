@@ -36,6 +36,9 @@ NFS_SERVER=10.0.0.10
 # NFS directory (remote export path and local mount path must be the same)
 NFS_MOUNT_DIR=/mnt/nfs
 
+# LingCloud install directory
+LINGCLOUD_HOME_DIR=/opt/lingcloud
+
 ################################################################################
 # Configuration for Molva
 ################################################################################
@@ -45,9 +48,6 @@ DO_CONFIG_MOLVA=1
 
 # LingCloud install server
 LINGCLOUD_SERVER=10.0.0.11
-
-# LingCloud install directory
-LINGCLOUD_HOME_DIR=/opt/lingcloud
 
 # LingCloud images directory (should be in the NFS directory)
 LINGCLOUD_MOUNT_IMAGES_DIR="$NFS_MOUNT_DIR/lingcloud-images"
@@ -60,6 +60,12 @@ MAKE_APPLIANCE_HOST=10.0.0.12
 
 # the public IP pool for virtual appliances being made
 MAKE_APPLIANCE_IP_POOL=10.0.0.231-235
+
+# monitor system type
+MONITOR_SYSTEM_TYPE=ganglia
+
+# monitor server
+MONITOR_SERVER=${LINGCLOUD_SERVER}
 
 # whether enable access control for portal (true/false)
 ACCESS_CONTROL_ENABLE=false
@@ -113,13 +119,3 @@ NAMING_MYSQL_USERNAME="$MYSQL_USERNAME"
 
 # existed MySQL password for Molva naming
 NAMING_MYSQL_PASSWORD="$MYSQL_PASSWORD"
-
-################################################################################
-# Configuration for Monitor
-################################################################################
-
-# monitor system type
-MONITOR_SYSTEM_TYPE=ganglia
-
-# monitor server
-MONITOR_SERVER=${LINGCLOUD_SERVER}

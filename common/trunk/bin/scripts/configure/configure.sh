@@ -144,6 +144,8 @@ then
 	get_val "PUBLIC_IP_POOL" "the public IP pool for runtime virtual machines"
 	get_val "MAKE_APPLIANCE_HOST" "the host used to make appliance"
 	get_val "MAKE_APPLIANCE_IP_POOL" "the public IP pool for virtual appliances being made"
+	get_val "MONITOR_SYSTEM_TYPE" "monitor system type"
+	get_val "MONITOR_SERVER" "monitor server"
 	get_val "ACCESS_CONTROL_ENABLE" "whether enable access control for portal (true/false)"
 	get_val "ACCESS_CONTROL_ADMIN" "the admin group name for access control"
 	get_val "ACCESS_CONTROL_USER" "the user group name for access control"
@@ -180,12 +182,16 @@ then
 	fi
 
 	pushd "$_LINGCLOUD_HOME/conf"
-	for _FILE_IN in *.tmpl
-	do
-		_FILE_OUT="${_FILE_IN/%.tmpl/}"
-		> "$_FILE_OUT" || onerror "failed to create configuration file"
-		sub_file "$_FILE_IN" "$_FILE_OUT" || onerror "failed to do variables substitution"
-	done
+	ls *.tmpl &> /dev/null
+	if [ "$?" = "0" ]
+	then
+		for _FILE_IN in *.tmpl
+		do
+			_FILE_OUT="${_FILE_IN/%.tmpl/}"
+			> "$_FILE_OUT" || onerror "failed to create configuration file"
+			sub_file "$_FILE_IN" "$_FILE_OUT" || onerror "failed to do variables substitution"
+		done
+	fi
 	popd
 fi
 
@@ -205,12 +211,16 @@ then
 	[ -d "$OPENNEBULA_DIR" ] || onerror "failed to access OpenNebula install directory"	
 	echo "$OPENNEBULA_USERNAME:$OPENNEBULA_PASSWORD" > "$OPENNEBULA_DIR/etc/one_auth" || onerror "failed to write one_auth"
 	pushd "opennebula-conf" 
-	for _FILE_IN in *.tmpl
-	do
-		_FILE_OUT="${_FILE_IN/%.tmpl/}"
-		> "$_FILE_OUT" || onerror "failed to create configuration file"
-		sub_file "$_FILE_IN" "$_FILE_OUT" || onerror "failed to do variables substitution"
-	done
+	ls *.tmpl &> /dev/null
+	if [ "$?" = "0" ]
+	then
+		for _FILE_IN in *.tmpl
+		do
+			_FILE_OUT="${_FILE_IN/%.tmpl/}"
+			> "$_FILE_OUT" || onerror "failed to create configuration file"
+			sub_file "$_FILE_IN" "$_FILE_OUT" || onerror "failed to do variables substitution"
+		done
+	fi
 	chmod a+x *.sh
 	popd
 	command	cp "opennebula-conf/oned.conf" "$OPENNEBULA_DIR/etc" || onerror "failed to copy oned.conf"
@@ -248,12 +258,16 @@ then
 	get_val "NAMING_MYSQL_PASSWORD" "existed MySQL password for Molva naming"
 
 	pushd "naming-conf" 
-	for _FILE_IN in *.tmpl
-	do
-		_FILE_OUT="${_FILE_IN/%.tmpl/}"
-		> "$_FILE_OUT" || onerror "failed to create configuration file"
-		sub_file "$_FILE_IN" "$_FILE_OUT" || onerror "failed to do variables substitution"
-	done
+	ls *.tmpl &> /dev/null
+	if [ "$?" = "0" ]
+	then
+		for _FILE_IN in *.tmpl
+		do
+			_FILE_OUT="${_FILE_IN/%.tmpl/}"
+			> "$_FILE_OUT" || onerror "failed to create configuration file"
+			sub_file "$_FILE_IN" "$_FILE_OUT" || onerror "failed to do variables substitution"
+		done
+	fi
 	popd
 	
 	if [ "$NAMING_MYSQL_USERNAME" = "root" ]
