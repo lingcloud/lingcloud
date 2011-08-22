@@ -1,0 +1,9 @@
+<project basedir="." default="build" name="lingcloud-extension-example">
+	
+	<target name="build" >
+		<echo>In lingcloud-extension-example</echo>
+		<echo>Build path is "${extensions.build.dir}"</echo>
+		<echo>Webapps path is "${extensions.webapps.dir}"</echo>
+	</target>
+	
+</project>

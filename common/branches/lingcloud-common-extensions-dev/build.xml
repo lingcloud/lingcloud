@@ -63,7 +63,7 @@
 		<mkdir dir="${common.dist.dir}/build/xmm" />
 		<mkdir dir="${common.dist.dir}/build/portal" />
 		<mkdir dir="${common.dist.dir}/build/test" />
-		<mkdir dir="${common.dist.dir}/build/webapps" />
+		<mkdir dir="${common.dist.dir}/build/extensions" />
 		<tstamp>
 			<format property="project.timestamp" pattern="yyyy-MM-dd'T'HH:mm:ss" />
 		</tstamp>
@@ -87,8 +87,13 @@
 		<delete dir="${common.dist.dir}/build" />
 	</target>
 
-	<target name="build" depends="extract-bin,build-subprojects,assemble-webapps,
-		clean-build" />
+	<target name="build" depends="extract-bin,build-subprojects,
+		assemble-webapps,build-assemble-extensions,clean-build" />
+
+	<target name="build-with-extensions">
+		<property name="common.extensions.build" value="true" />
+		<antcall target="build" />
+	</target>
 
 	<target name="build-subprojects" depends="build-ocl,build-xmm,
 		build-portal" />
@@ -138,7 +143,6 @@
 	</target>
 
 	<target name="build-portal" depends="init,extract-bin,build-ocl,build-xmm">
-		<!-- build jar -->
 		<javac srcdir="${common.src.dir}/contrib/portal" destdir="${common.dist.dir}/build/portal" 
 			classpathref="common.lingcloud.classpath" debug="${javac.debug}" optimize="${javac.optimize}" 
 			source="${source}" target="${target}" />
@@ -160,16 +164,91 @@
 				</section>
 			</manifest>
 		</jar>
-		<!-- build war -->
-		<echo file="${common.dist.dir}/build/webapps/version.txt" append="false" 
-			message="version=${project.portal.version} (${project.timestamp})" />
-		<war destfile="${common.dist.dir}/build/webapps/lingcloud.war" 
-			webxml="${common.src.dir}/webapps/lingcloud/WEB-INF/web.xml">
+	</target>
+	
+	<target name="build-test" depends="init,build-ocl,build-xmm">
+		<javac srcdir="${common.src.dir}/test" destdir="${common.dist.dir}/build/test" 
+			classpathref="common.lingcloud.classpath" debug="${javac.debug}" optimize="${javac.optimize}" 
+			source="${source}" target="${target}" />
+		<jar destfile="${common.dist.dir}/lib/lingcloud-molva-test-${project.test.version}.jar" 
+			basedir="${common.dist.dir}/build/test" includes="**/*.class">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-On" value="${os.name} "/>
+				<section name="lingcloud-molva-test-${project.test.version}.jar">
+					<attribute name="Specification-Title" value="${project.test.title}"/>
+					<attribute name="Specification-Version" value="${project.test.version}"/>
+					<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
+					<attribute name="Implementation-Title" value="${project.test.title}"/>
+					<attribute name="Implementation-Version" value="${project.timestamp}"/>
+					<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
+				</section>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="build-assemble-extensions" depends="init" if="common.extensions.build">
+		<echo>common.extensions.build is "${common.extensions.build}"</echo>
+		<subant target="">
+			<property name="extensions.build.dir" 
+				value="${basedir}/${common.dist.dir}/build/extensions" />
+			<property name="extensions.webapps.dir" 
+				value="${basedir}/${common.dist.dir}/bin/tomcat/webapps" />
+			<dirset dir="extensions" includes="*" />
+		</subant>
+	</target>
+	
+	<target name="assemble-xmm-axis" depends="extract-bin,build-xmm">
+		<!-- wsdd -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/axis/WEB-INF">
+			<fileset dir="conf" includes="server-config.wsdd" />
+		</copy>
+		<!-- jar -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/axis/WEB-INF/lib">
+			<fileset dir="${common.dist.dir}/lib" includes="lingcloud-molva-ocl-*.jar,
+				lingcloud-molva-xmm-*.jar" />
+			<fileset dir="lib/3rdparty">
+				<include name="antlr-*.jar" />
+				<include name="asm-attrs*.jar" />
+				<include name="asm*.jar" />
+				<include name="c3p0-*.jar" />
+				<include name="cglib-nodep-*.jar" />
+				<include name="commons-beanutils*.jar" />
+				<include name="commons-codec-*.jar" />
+				<include name="commons-collections-*.jar" />
+				<include name="commons-validator*.jar" />
+				<include name="dom4j-*.jar" />
+				<include name="hibernate*.jar" />
+				<include name="jdom*.jar" />
+				<include name="jta*.jar" />
+				<include name="mysql-connector-java-*-bin.jar" />
+				<include name="one-oca-*.jar" />
+				<include name="ws-commons-util-*.jar" />
+				<include name="xmlrpc-client-*.jar" />
+				<include name="xmlrpc-common-*.jar" />
+				<include name="xstream-*.jar" />
+				<include name="xwork-*.jar" />
+			</fileset>
+		</copy>
+		<!-- log4j.properties -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/axis/WEB-INF/classes">
+			<fileset dir="conf" includes="log4j.properties" />
+		</copy>
+	</target>
+
+	<target name="assemble-portal" depends="extract-bin,build-portal">
+		<!-- lingcloud dir -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/lingcloud">
 			<fileset dir="${common.src.dir}/webapps/lingcloud" />
-			<zipfileset dir="${common.dist.dir}/build/webapps" prefix="WEB-INF">
-				<include name="version.txt" />
-			</zipfileset>
-			<zipfileset dir="lib/3rdparty" prefix="WEB-INF/lib">
+		</copy>
+		<!-- version file -->
+		<echo file="${common.dist.dir}/bin/tomcat/webapps/lingcloud/WEB-INF/version.txt" 
+			append="false" message="version=${project.portal.version} (${project.timestamp})" />
+		<!-- jar -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/lingcloud/WEB-INF/lib">
+			<fileset dir="${common.dist.dir}/lib" includes="lingcloud-molva-ocl-*.jar,
+				lingcloud-molva-xmm-*.jar,lingcloud-molva-portal-*.jar" />
+			<fileset dir="lib/3rdparty">
 				<include name="ant.jar" />
 				<include name="antlr-*.jar" />
 				<include name="asm*.jar" />
@@ -213,81 +292,11 @@
 				<include name="xmlrpc-client-*.jar" />
 				<include name="xstream-*.jar" />
 				<include name="xwork-*.jar" />
-			</zipfileset>
-			<zipfileset dir="${common.dist.dir}/lib" prefix="WEB-INF/lib" >
-				<include name="lingcloud-molva-ocl-${project.ocl.version}.jar" />
-				<include name="lingcloud-molva-xmm-${project.xmm.version}.jar" />
-				<include name="lingcloud-molva-portal-${project.portal.version}.jar" />
-			</zipfileset>
-			<zipfileset dir="conf" prefix="WEB-INF/classes">
-				<include name="log4j.properties" />
-			</zipfileset>
-		</war>
-	</target>
-	
-	<target name="build-test" depends="init,build-ocl,build-xmm">
-		<javac srcdir="${common.src.dir}/test" destdir="${common.dist.dir}/build/test" 
-			classpathref="common.lingcloud.classpath" debug="${javac.debug}" optimize="${javac.optimize}" 
-			source="${source}" target="${target}" />
-		<jar destfile="${common.dist.dir}/lib/lingcloud-molva-test-${project.test.version}.jar" 
-			basedir="${common.dist.dir}/build/test" includes="**/*.class">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-On" value="${os.name} "/>
-				<section name="lingcloud-molva-test-${project.test.version}.jar">
-					<attribute name="Specification-Title" value="${project.test.title}"/>
-					<attribute name="Specification-Version" value="${project.test.version}"/>
-					<attribute name="Specification-Vendor" value="${project.vendor.name}"/>
-					<attribute name="Implementation-Title" value="${project.test.title}"/>
-					<attribute name="Implementation-Version" value="${project.timestamp}"/>
-					<attribute name="Implementation-Vendor" value="${project.vendor.name}"/>
-				</section>
-			</manifest>
-		</jar>
-	</target>
-
-	<target name="assemble-xmm-axis" depends="extract-bin,build-xmm">
-		<!-- wsdd -->
-		<copy todir="${common.dist.dir}/bin/tomcat/webapps/axis/WEB-INF">
-			<fileset dir="conf" includes="server-config.wsdd" />
-		</copy>
-		<!-- jar -->
-		<copy todir="${common.dist.dir}/bin/tomcat/webapps/axis/WEB-INF/lib">
-			<fileset dir="${common.dist.dir}/lib" includes="lingcloud-molva-ocl-*.jar,
-				lingcloud-molva-xmm-*.jar" />
-			<fileset dir="lib/3rdparty">
-				<include name="antlr-*.jar" />
-				<include name="asm-attrs*.jar" />
-				<include name="asm*.jar" />
-				<include name="c3p0-*.jar" />
-				<include name="cglib-nodep-*.jar" />
-				<include name="commons-beanutils*.jar" />
-				<include name="commons-codec-*.jar" />
-				<include name="commons-collections-*.jar" />
-				<include name="commons-validator*.jar" />
-				<include name="dom4j-*.jar" />
-				<include name="hibernate*.jar" />
-				<include name="jdom*.jar" />
-				<include name="jta*.jar" />
-				<include name="mysql-connector-java-*-bin.jar" />
-				<include name="one-oca-*.jar" />
-				<include name="ws-commons-util-*.jar" />
-				<include name="xmlrpc-client-*.jar" />
-				<include name="xmlrpc-common-*.jar" />
-				<include name="xstream-*.jar" />
-				<include name="xwork-*.jar" />
 			</fileset>
 		</copy>
 		<!-- log4j.properties -->
-		<copy todir="${common.dist.dir}/bin/tomcat/webapps/axis/WEB-INF/classes">
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/lingcloud/WEB-INF/classes">
 			<fileset dir="conf" includes="log4j.properties" />
-		</copy>
-	</target>
-
-	<target name="assemble-portal" depends="extract-bin,build-portal">
-		<copy todir="${common.dist.dir}/bin/tomcat/webapps">
-			<fileset dir="${common.dist.dir}/build/webapps" 
-				includes="lingcloud.war" />
 		</copy>
 	</target>
 
@@ -396,4 +405,5 @@
 
 	<target name="test" depends="test-init,test-junit,test-junit-report,
 		test-coverage-report,clean-build"/>
+
 </project>
