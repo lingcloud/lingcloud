@@ -63,7 +63,6 @@
 		<mkdir dir="${common.dist.dir}/build/xmm" />
 		<mkdir dir="${common.dist.dir}/build/portal" />
 		<mkdir dir="${common.dist.dir}/build/test" />
-		<mkdir dir="${common.dist.dir}/build/webapps" />
 		<tstamp>
 			<format property="project.timestamp" pattern="yyyy-MM-dd'T'HH:mm:ss" />
 		</tstamp>
@@ -138,7 +137,6 @@
 	</target>
 
 	<target name="build-portal" depends="init,extract-bin,build-ocl,build-xmm">
-		<!-- build jar -->
 		<javac srcdir="${common.src.dir}/contrib/portal" destdir="${common.dist.dir}/build/portal" 
 			classpathref="common.lingcloud.classpath" debug="${javac.debug}" optimize="${javac.optimize}" 
 			source="${source}" target="${target}" />
@@ -160,69 +158,6 @@
 				</section>
 			</manifest>
 		</jar>
-		<!-- build war -->
-		<echo file="${common.dist.dir}/build/webapps/version.txt" append="false" 
-			message="version=${project.portal.version} (${project.timestamp})" />
-		<war destfile="${common.dist.dir}/build/webapps/lingcloud.war" 
-			webxml="${common.src.dir}/webapps/lingcloud/WEB-INF/web.xml">
-			<fileset dir="${common.src.dir}/webapps/lingcloud" />
-			<zipfileset dir="${common.dist.dir}/build/webapps" prefix="WEB-INF">
-				<include name="version.txt" />
-			</zipfileset>
-			<zipfileset dir="lib/3rdparty" prefix="WEB-INF/lib">
-				<include name="ant.jar" />
-				<include name="antlr-*.jar" />
-				<include name="asm*.jar" />
-				<include name="axis.jar" />
-				<include name="bcprov-jdk15.jar" />
-				<include name="cog-jglobus.jar" />
-				<include name="c3p0-*.jar" />
-				<include name="cglib-*.jar" />
-				<include name="cglib-nodep-*.jar" />
-				<include name="commons-beanutils.jar" />
-				<include name="commons-cli-*.jar" />
-				<include name="commons-codec-*.jar" />
-				<include name="commons-collections-*.jar" />
-				<include name="commons-digester.jar" />
-				<include name="commons-discovery.jar" />
-				<include name="commons-fileupload-*.jar" />
-				<include name="commons-httpclient-*.jar" />
-				<include name="commons-validator.jar" />
-				<include name="commons-io-*.jar" />
-				<include name="commons-logging-*.jar" />
-				<include name="commons-lang-*.jar" />
-				<include name="dom4j-*.jar" />
-				<include name="freemarker-*.jar" />
-				<include name="jdom.jar" />
-				<include name="hibernate3.jar" />
-				<include name="jakarta-oro-*.jar" />
-				<include name="jaxrpc.jar" />
-				<include name="jsonplugin-*.jar" />
-				<include name="JPam-1.1.jar" />
-				<include name="jta.jar" />
-				<include name="junit-*.jar" />
-				<include name="mysql-connector-java-*.jar" />
-				<include name="log4j-*.jar" />
-				<include name="ognl-*.jar" />
-				<include name="spring.jar" />
-				<include name="struts.jar" />
-				<include name="struts2-core-*.jar" />
-				<include name="struts2-spring-plugin-*.jar" />
-				<include name="wsdl4j-*.jar" />
-				<include name="xmlrpc-*-patched.jar" />
-				<include name="xmlrpc-client-*.jar" />
-				<include name="xstream-*.jar" />
-				<include name="xwork-*.jar" />
-			</zipfileset>
-			<zipfileset dir="${common.dist.dir}/lib" prefix="WEB-INF/lib" >
-				<include name="lingcloud-molva-ocl-${project.ocl.version}.jar" />
-				<include name="lingcloud-molva-xmm-${project.xmm.version}.jar" />
-				<include name="lingcloud-molva-portal-${project.portal.version}.jar" />
-			</zipfileset>
-			<zipfileset dir="conf" prefix="WEB-INF/classes">
-				<include name="log4j.properties" />
-			</zipfileset>
-		</war>
 	</target>
 	
 	<target name="build-test" depends="init,build-ocl,build-xmm">
@@ -285,9 +220,66 @@
 	</target>
 
 	<target name="assemble-portal" depends="extract-bin,build-portal">
-		<copy todir="${common.dist.dir}/bin/tomcat/webapps">
-			<fileset dir="${common.dist.dir}/build/webapps" 
-				includes="lingcloud.war" />
+		<!-- lingcloud dir -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/lingcloud">
+			<fileset dir="${common.src.dir}/webapps/lingcloud" />
+		</copy>
+		<!-- version file -->
+		<echo file="${common.dist.dir}/bin/tomcat/webapps/lingcloud/WEB-INF/version.txt" 
+			append="false" message="version=${project.portal.version} (${project.timestamp})" />
+		<!-- jar -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/lingcloud/WEB-INF/lib">
+			<fileset dir="${common.dist.dir}/lib" includes="lingcloud-molva-ocl-*.jar,
+				lingcloud-molva-xmm-*.jar,lingcloud-molva-portal-*.jar" />
+			<fileset dir="lib/3rdparty">
+				<include name="ant.jar" />
+				<include name="antlr-*.jar" />
+				<include name="asm*.jar" />
+				<include name="axis.jar" />
+				<include name="bcprov-jdk15.jar" />
+				<include name="cog-jglobus.jar" />
+				<include name="c3p0-*.jar" />
+				<include name="cglib-*.jar" />
+				<include name="cglib-nodep-*.jar" />
+				<include name="commons-beanutils.jar" />
+				<include name="commons-cli-*.jar" />
+				<include name="commons-codec-*.jar" />
+				<include name="commons-collections-*.jar" />
+				<include name="commons-digester.jar" />
+				<include name="commons-discovery.jar" />
+				<include name="commons-fileupload-*.jar" />
+				<include name="commons-httpclient-*.jar" />
+				<include name="commons-validator.jar" />
+				<include name="commons-io-*.jar" />
+				<include name="commons-logging-*.jar" />
+				<include name="commons-lang-*.jar" />
+				<include name="dom4j-*.jar" />
+				<include name="freemarker-*.jar" />
+				<include name="jdom.jar" />
+				<include name="hibernate3.jar" />
+				<include name="jakarta-oro-*.jar" />
+				<include name="jaxrpc.jar" />
+				<include name="jsonplugin-*.jar" />
+				<include name="JPam-1.1.jar" />
+				<include name="jta.jar" />
+				<include name="junit-*.jar" />
+				<include name="mysql-connector-java-*.jar" />
+				<include name="log4j-*.jar" />
+				<include name="ognl-*.jar" />
+				<include name="spring.jar" />
+				<include name="struts.jar" />
+				<include name="struts2-core-*.jar" />
+				<include name="struts2-spring-plugin-*.jar" />
+				<include name="wsdl4j-*.jar" />
+				<include name="xmlrpc-*-patched.jar" />
+				<include name="xmlrpc-client-*.jar" />
+				<include name="xstream-*.jar" />
+				<include name="xwork-*.jar" />
+			</fileset>
+		</copy>
+		<!-- log4j.properties -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/lingcloud/WEB-INF/classes">
+			<fileset dir="conf" includes="log4j.properties" />
 		</copy>
 	</target>
 
@@ -396,4 +388,5 @@
 
 	<target name="test" depends="test-init,test-junit,test-junit-report,
 		test-coverage-report,clean-build"/>
+
 </project>
