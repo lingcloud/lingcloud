@@ -32,7 +32,7 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  */
 interface IFileTask extends Runnable {
-
+	String getContent();
 }
 
 /**
@@ -84,6 +84,17 @@ class CommandTask implements IFileTask {
 	public void setCmdList(List<String> cmdList) {
 		this.cmdList = cmdList;
 	}
+	
+	public String getContent() {
+		StringBuilder buf = new StringBuilder();
+		if (cmdList != null) {
+			for (String cmd : cmdList) {
+				buf.append(cmd);
+				buf.append("###");
+			}
+		}
+		return buf.toString();
+	}
 
 	public void setObject(VAObject object) throws CloneNotSupportedException {
 		if (object != null) {
@@ -91,7 +102,10 @@ class CommandTask implements IFileTask {
 		} else {
 			this.object = null;
 		}
-
+	}
+	
+	public VAObject getObject() {
+		return this.object;
 	}
 
 	public void setController(Controller controller) {
@@ -212,6 +226,7 @@ class CommandTask implements IFileTask {
 					}
 				}
 			}
+			FileManager.getInstance().completeTask(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 			VAMUtil.errorLog(Thread.currentThread().getName() + ": "

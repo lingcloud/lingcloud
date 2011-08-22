@@ -12,7 +12,9 @@
  */
 package org.lingcloud.molva.xmm.vam.services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,6 +34,7 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 public class FileManager {
 	private ExecutorService busyThreadPool;
 	private ExecutorService lightThreadPool;
+	private Map<String, IFileTask> taskPool = null;
 	private static FileManager instance = null;
 	private static Object lock = null;
 
@@ -40,6 +43,7 @@ public class FileManager {
 				.newFixedThreadPool(VAMConstants.MAX_BUSY_THREAD);
 		lightThreadPool = Executors
 				.newFixedThreadPool(VAMConstants.MAX_LIGHT_THREAD);
+		taskPool = new HashMap<String, IFileTask>();
 	}
 
 	static {
@@ -88,10 +92,19 @@ public class FileManager {
 	 * 		task type
 	 */
 	public synchronized void addTask(IFileTask task, int type) {
+		if (taskPool.get(task.getContent()) != null) {
+			return;
+		}
+		taskPool.put(task.getContent(), task);
+		
 		if (type == VAMConstants.THREAD_TYPE_BUSY) {
 			busyThreadPool.execute(task);
 		} else if (type == VAMConstants.THREAD_TYPE_LIGHT) {
 			lightThreadPool.execute(task);
 		}
+	}
+	
+	public synchronized void completeTask(IFileTask task) {
+		taskPool.remove(task.getContent());
 	}
 }
