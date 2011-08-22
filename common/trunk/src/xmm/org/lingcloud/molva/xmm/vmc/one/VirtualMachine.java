@@ -411,12 +411,14 @@ public class VirtualMachine extends PoolElement {
 		String lcmState = this.lcmStateStr();
 		if (vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.SHUTDOWN.toString())){
 			;
-		} else if (vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.HALT.toString())){
-			
+		} else if (vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.SHUTTING.toString())){
+			/**
+			 * Wait for the VM state is UNKNOWN in openNebula.
+			 */
 			if(state.equals(VM_STATES[VM_STATE_ACTIVE])
 				&& lcmState.equals(LCM_STATE[LCM_STATE_UNKNOWN])){
-			newvi.setRunningStatus(XMMConstants.MachineRunningState.SHUTDOWN
-					.toString());
+				newvi.setRunningStatus(XMMConstants.MachineRunningState.SHUTDOWN
+						.toString());
 			}
 		} else if (state.equals(VM_STATES[VM_STATE_INIT])
 				|| state.equals(VM_STATES[VM_STATE_PENDING])

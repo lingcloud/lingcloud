@@ -196,7 +196,7 @@ public class PartitionManager {
 					getVirtualClient().
 							migrateVirtualNode(vn, pn);
 			
-			ami.update(guid, vn);
+			ami.refresh(vn);
 			return vn;
 		}
 	}

@@ -689,6 +689,14 @@ public class VirtualClientImpl implements VirtualClient {
 	}
 
 	public VirtualNode startVirtualNode(VirtualNode vnode) throws Exception {
+		String stat = vnode.getRunningStatus();
+		if (! XMMConstants.MachineRunningState.STOP.toString().equals(stat)) {
+			throw new Exception("Virtual machine " 
+								+ vnode.getName() 
+								+ " CANNOT boot in state - " 
+								+ stat + "!");
+		}
+		
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 		int vid = Integer.parseInt(vir.getId());
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
@@ -721,6 +729,14 @@ public class VirtualClientImpl implements VirtualClient {
 	}
 
 	public VirtualNode stopVirtualNode(VirtualNode vnode) throws Exception {
+		String stat = vnode.getRunningStatus();
+		if (! XMMConstants.MachineRunningState.RUNNING.toString().equals(stat)) {
+			throw new Exception("Virtual machine " 
+								+ vnode.getName() 
+								+ " CANNOT stop in state - " 
+								+ stat + "!");
+		}
+		
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 		int vid = Integer.parseInt(vir.getId());
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
@@ -756,6 +772,13 @@ public class VirtualClientImpl implements VirtualClient {
 	}
 	
 	public VirtualNode migrateVirtualNode(VirtualNode vnode, PhysicalNode host) throws Exception {
+		String stat = vnode.getRunningStatus();
+		if (!XMMConstants.MachineRunningState.RUNNING.toString().equals(stat)) {
+			throw new Exception("Virtual machine " 
+					+ vnode.getName() 
+					+ " CANNOT livemigrate in state - " 
+					+ stat + "!");
+		}
 		
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 
@@ -976,6 +999,18 @@ public class VirtualClientImpl implements VirtualClient {
 	}
 	
 	public VirtualNode bootVirtualNode(VirtualNode vnode) throws Exception{
+		
+		String stat = vnode.getRunningStatus();
+		if (! XMMConstants.MachineRunningState.SHUTDOWN.toString().equals(stat)
+				&& ! XMMConstants.MachineRunningState.ERROR.toString().equals(stat)
+				&& ! XMMConstants.MachineRunningState.STOP.toString().equals(stat)
+				&& ! XMMConstants.MachineRunningState.WAIT_DEPLOY.toString().equals(stat)) {
+			throw new Exception("Virtual machine " 
+								+ vnode.getName() 
+								+ " CANNOT boot in state - " 
+								+ stat + "!");
+		}
+		
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 		int vid = Integer.parseInt(vir.getId());
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
@@ -1005,6 +1040,18 @@ public class VirtualClientImpl implements VirtualClient {
 	}
 
 	public VirtualNode shutdownVirtualNode(VirtualNode vnode) throws Exception{
+		
+		String stat = vnode.getRunningStatus();
+		if (! XMMConstants.MachineRunningState.RUNNING.toString().equals(stat)
+				&& ! XMMConstants.MachineRunningState.ERROR.toString().equals(stat)
+				&& ! XMMConstants.MachineRunningState.STOP.toString().equals(stat)
+				&& ! XMMConstants.MachineRunningState.SUSPENDED.toString().equals(stat)) {
+			throw new Exception("Virtual machine " 
+								+ vnode.getName() 
+								+ " CANNOT shutdown in state - " 
+								+ stat + "!");
+		}
+		
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 		int vid = Integer.parseInt(vir.getId());
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
@@ -1014,6 +1061,11 @@ public class VirtualClientImpl implements VirtualClient {
 					+ vnode.getName() + "), the detail msg as: "
 					+ onrc.getErrorMessage());
 		} else {
+			/**
+			 * We shut down the VM by our own shell, instead of shutdown in one-oca,
+			 * in order to start it again.
+			 * Here, we introduce a SHUTTING state as mid-status.
+			 */
 			StringBuffer cmdSB = new StringBuffer();
 			String cmd = XMMUtil.getOperateVirtualNodeCmdInCfgFile();
 			if (cmd == null || "".equals(cmd)) {
@@ -1031,10 +1083,10 @@ public class VirtualClientImpl implements VirtualClient {
 						+ " Failed: " + stdout);
 				throw new Exception("shutdown virtual node " + vnode.getName() + " Failed: " + stdout);
 			}
-			vnode.setRunningStatus(XMMConstants.MachineRunningState.HALT
+			vnode.setRunningStatus(XMMConstants.MachineRunningState.SHUTTING
 					.toString());
 			
-			log.info("The VM(" + vnode.getName() + ") is shutdown.");
+			log.info("The VM(" + vnode.getName() + ") is shutting down.");
 		}
 		return vnode;
 	}
