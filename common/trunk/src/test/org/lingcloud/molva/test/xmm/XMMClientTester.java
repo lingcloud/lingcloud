@@ -49,6 +49,7 @@ public class XMMClientTester {
 	private static Partition vmPartition = null;
 	private static Partition genPartition = null;
 	private static PhysicalNode vmPhyNode = null;
+	private static PhysicalNode vmmPhyNode = null;
 	private static PhysicalNode genPhyNode = null;
 	private static VirtualCluster vmCluster = null;
 	private static VirtualCluster genCluster = null;
@@ -63,6 +64,8 @@ public class XMMClientTester {
 			e.printStackTrace();
 			log.error("Initialze failed. Reason: " + e);
 			fail();
+			
+			
 		}
 	}
 
@@ -101,7 +104,7 @@ public class XMMClientTester {
 			fail();
 		}
 	}
-	@Ignore
+
 	@Test
 	public void listAllPartition() {
 		try {
@@ -113,7 +116,7 @@ public class XMMClientTester {
 			fail();
 		}
 	}
-	@Ignore
+	
 	@Test
 	public void listPartition() {
 		try {
@@ -142,7 +145,42 @@ public class XMMClientTester {
 			fail();
 		}
 	}
-	@Ignore
+
+	@Test
+	public void searchVirtualNode() {
+		try {
+			List<VirtualNode> vmnList = getVirtualNodeList4VC(vmCluster);
+			
+			VirtualNode vn = vmnList.get(0);
+			vn.setName("tom");
+			xmmClient.updateVirtualNodeInfo(vn.getGuid(),vn);
+			List<VirtualNode> vnList = xmmClient.searchVirtualNode(new String[]{"name"}, new String[]{"="}, new Object[]{"tom"});
+			assertTrue(vnList.size()>0);
+			log.info("searchVirtualNode Test success.");
+
+		} catch (Exception e) {
+			log.error("Initialze failed. Reason: " + e);
+			fail();
+		}
+		
+	}
+
+	@Test
+	public void searchPhysicalNode() {
+		try {
+			vmPhyNode.setName("sun");
+			xmmClient.updatePhysicalNodeInfo(vmPhyNode.getGuid(),vmPhyNode);
+			List<PhysicalNode> phyList = xmmClient.searchPhysicalNode(new String[]{"name"}, new String[]{"="}, new Object[]{"sun"});
+			assertTrue(phyList.size() > 0);
+			log.info("searchPhysicalNode Test success.");
+
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+
+	}
+@Ignore
 	@Test
 	public void stopVirtualCluster() {
 		try {
@@ -151,14 +189,14 @@ public class XMMClientTester {
 					.listVirtualNodeInVirtualCluster(vmCluster.getGuid());
 			VirtualNode vn = vmnList.get(0);
 	
-		assertTrue(vn.getRunningStatus().equals(XMMConstants.MachineRunningState.STOP.toString()));
+		assertTrue(vn.getRunningStatus().equals(XMMConstants.MachineRunningState.BOOT.toString()));
 			log.info("stopVirtualCluster Test success.");
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
 			fail();
 		}
 	}
-	@Ignore
+
 	@Test
 	public void viewPartition() {
 		try {
@@ -172,7 +210,7 @@ public class XMMClientTester {
 			fail();
 		}
 	}
-	@Ignore
+
 	@Test
 	public void updateVirtualClusterInfo() {
 		try {
@@ -187,7 +225,7 @@ public class XMMClientTester {
 		}
 	}
 
-	@Ignore
+
 	@Test
 	public void updateVirtualNodeInfo() {
 		try {
@@ -202,7 +240,7 @@ public class XMMClientTester {
 			fail();
 		}
 	}
-	@Ignore
+	
 	@Test
 	public void updatePartitionInfo() {
 
@@ -233,7 +271,7 @@ public class XMMClientTester {
 		}
 	}
 	
-	@Ignore
+	
 	@Test
 	public void refreshPhysicalNode() {
 		try {
@@ -250,8 +288,8 @@ public class XMMClientTester {
 	private List<VirtualNode> getVirtualNodeList4VC(VirtualCluster vc) throws Exception{
 		List<VirtualNode> vmnList = xmmClient
 							.listVirtualNodeInVirtualCluster(vc.getGuid());
-		for (int i = 0 ; i < 20 ; i++) {
-			if (vmnList != null) 
+		for (int i = 0 ; i < 10 ; i++) {
+			if (vmnList != null ) 
 				break;
 			Thread.sleep(3000);
 			System.out.println("Waiting for VNode list for VC - " + vmCluster.getName() );
@@ -273,7 +311,6 @@ public class XMMClientTester {
 			
 			VirtualNode vnode = xmmClient.refreshVirtualNode(vn.getGuid());
 			assertNotNull(vnode);
-			//assertTrue(vnode.getGuid().equals(vn.getGuid()));
 			log.info("refreshVirtualNode Test success.");
 
 		} catch (Exception e) {
@@ -283,18 +320,16 @@ public class XMMClientTester {
 		}
 		
 	}
-	
-	@Ignore
+
+
 	@Test
 	public void listPhysicalNodeInPartition() {
 
 		try {
 			List<PhysicalNode> vmphyList = xmmClient
-					.listPhysicalNodeInPartition(vmPhyNode.getGuid());
+					.listPhysicalNodeInPartition(vmPartition.getGuid());
 			assertTrue(vmphyList.size() > 0);
-//			List<PhysicalNode> phyList = xmmClient
-//					.listPhysicalNodeInPartition(genPartition.getGuid());
-//			assertTrue(phyList.size() > 0);
+
 			log.info("listPhysicalNodeInPartition Test success.");
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
@@ -302,17 +337,31 @@ public class XMMClientTester {
 		}
 
 	}
+	@Test
+	public void listPhysicalNodeInVirtualCluster() {
 
-	@Ignore
+		try {
+
+			List<PhysicalNode> vmphyList = xmmClient
+					.listPhysicalNodeInVirtualCluster(genCluster.getGuid());
+	
+			assertTrue(vmphyList.size() > 0);
+			log.info("listPhysicalNodeInVirtualCluster Test success.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+
+
 	@Test
 	public void listVirtualNodeInPartition() {
 		try {
 			List<VirtualNode> vmnList = xmmClient
-					.listVirtualNodeInVirtualCluster(genPartition.getGuid());
+					.listVirtualNodeInPartition(vmPartition.getGuid());
 			assertTrue(vmnList.size() > 0);
-//			List<VirtualNode> vmnodeList = xmmClient
-//					.listVirtualNodeInPartition(genPartition.getGuid());
-//			assertTrue(vmnodeList.size() > 0);
+
 			log.info("listVirtualNodeInPartition Test success.");
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
@@ -321,16 +370,12 @@ public class XMMClientTester {
 
 	}
 
-	@Ignore
 	@Test
 	public void listVirtualNodeInVirtualCluster() {
 		try {
-			List<VirtualNode> vmnList = xmmClient
-					.listVirtualNodeInVirtualCluster(vmCluster.getGuid());
+			List<VirtualNode> vmnList = getVirtualNodeList4VC(vmCluster);
 			assertTrue(vmnList.size() > 0);
-//			List<VirtualNode> vmnodeList = xmmClient
-//					.listVirtualNodeInPartition(genCluster.getGuid());
-//			assertTrue(vmnodeList.size() > 0);
+
 			log.info("listVirtualNodeInVirtualCluster Test success.");
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
@@ -338,21 +383,8 @@ public class XMMClientTester {
 		}
 	}
 
-	@Ignore
-	@Test
-	public void listPhysicalNodeInVirtualCluster() {
 
-		try {
-			List<PhysicalNode> vmphyList = xmmClient
-					.listPhysicalNodeInVirtualCluster(vmCluster.getGuid());
-			assertTrue(vmphyList.size() > 0);
-			log.info("listPhysicalNodeInVirtualCluster Test success.");
-		} catch (Exception e) {
-			log.error("Test failed. Reason: " + e);
-			fail();
-		}
-	}
-	@Ignore
+
 	@Test
 	public void viewVirtualCluster() {
 		try {
@@ -365,11 +397,12 @@ public class XMMClientTester {
 			fail();
 		}
 	}
-	@Ignore
+
 	@Test
 	public void searchVirtualCluster() {
 		try {
 				vmCluster.setName("sun");
+				xmmClient.updateVirtualClusterInfo(vmCluster.getGuid(),vmCluster);
 				List<VirtualCluster> vcList = xmmClient.searchVirtualCluster(new String[]{"name"}, new String[]{"="}, new Object[]{"sun"});
 				assertTrue(vcList.size() > 0);
 				log.info("searchVirtualCluster Test success.");
@@ -380,40 +413,8 @@ public class XMMClientTester {
 		}
 	}
 	
-	@Ignore
-	@Test
-	public void searchPhysicalNode() {
-		try {
-			vmPhyNode.setName("sun");
-			List<PhysicalNode> phyList = xmmClient.searchPhysicalNode(new String[]{"name"}, new String[]{"="}, new Object[]{"sun"});
-			assertTrue(phyList.size() > 0);
-			log.info("searchPhysicalNode Test success.");
 
-		} catch (Exception e) {
-			log.error("Test failed. Reason: " + e);
-			fail();
-		}
-
-	}
-	@Ignore
-	@Test
-	public void searchVirtualNode() {
-		try {
-			List<VirtualNode> vmnList = xmmClient
-					.listVirtualNodeInVirtualCluster(vmCluster.getGuid());
-			VirtualNode vn = vmnList.get(0);
-			vn.setName("tom");
-			List<VirtualNode> vnList = xmmClient.searchVirtualNode(new String[]{"name"}, new String[]{"="}, new Object[]{"tom"});
-			assertTrue(vnList.size() > 0);
-			log.info("searchVirtualNode Test success.");
-
-		} catch (Exception e) {
-			log.error("Initialze failed. Reason: " + e);
-			fail();
-		}
-		
-	}
-	@Ignore
+	
 	@Test
 	public void refreshVirtualCluster() {
 		try {
@@ -426,7 +427,7 @@ public class XMMClientTester {
 			fail();
 		}
 	}
-	@Ignore
+
 	@Test
 	public void listVirtualCluster() {
 		try {
@@ -440,12 +441,11 @@ public class XMMClientTester {
 		}
 	}
 
-	@Ignore
+
 	@Test
 	public void viewVirtualNode() {
 		try {
-			List<VirtualNode> vmnList = xmmClient
-					.listVirtualNodeInVirtualCluster(vmCluster.getGuid());
+			List<VirtualNode> vmnList = getVirtualNodeList4VC(vmCluster);
 			VirtualNode vn = vmnList.get(0);
 			VirtualNode vnode = xmmClient.viewVirtualNode(vn.getGuid());
 			assertTrue(vnode.getGuid().equals(vn.getGuid()));
@@ -456,31 +456,24 @@ public class XMMClientTester {
 			fail();
 		}
 	}
-	@Ignore
-	@Test
-	public void startVirtualNode() {
-		try {
-			List<VirtualNode> vmnList = xmmClient
-					.listVirtualNodeInVirtualCluster(vmCluster.getGuid());
-			VirtualNode vn = vmnList.get(0);
-		VirtualNode vnode =	xmmClient.startVirtualNode(vn.getGuid());
-		assertTrue(vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.RUNNING.toString()));
-			log.info("startVirtualNode Test success.");
-
-		} catch (Exception e) {
-			log.error("Test failed. Reason: " + e);
-			fail();
-		}
-	}
-	@Ignore
+@Ignore
+	
 	@Test
 	public void stopVirtualNode() {
 		try {
-			List<VirtualNode> vmnList = xmmClient
-					.listVirtualNodeInVirtualCluster(vmCluster.getGuid());
-			VirtualNode vn = vmnList.get(0);
+			VirtualNode vn = null;
+			for(int i = 0  ;i < 10; i++ ){
+				List<VirtualNode> vmnList = xmmClient
+						.listVirtualNodeInVirtualCluster(vmCluster.getGuid());
+			 vn = vmnList.get(0);
+			if (vn.getRunningStatus()==XMMConstants.MachineRunningState.RUNNING.toString())
+			{
+				break;
+				}
+			Thread.sleep(2000);
+			}
 		VirtualNode vnode =	xmmClient.stopVirtualNode(vn.getGuid());
-		assertTrue(vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.STOP.toString()));
+		assertTrue(vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.HALT.toString()));
 			log.info("stopVirtualNode Test success.");
 
 		} catch (Exception e) {
@@ -488,14 +481,48 @@ public class XMMClientTester {
 			fail();
 		}
 	}
-
-
 	@Ignore
+	@Test
+	public void startVirtualNode() {
+		try {
+			VirtualNode vn = null;
+			for(int i = 0  ;i < 10; i++ ){
+				List<VirtualNode> vmnList = getVirtualNodeList4VC(vmCluster);
+			 vn = vmnList.get(0);
+			 if (vn.getRunningStatus()==XMMConstants.MachineRunningState.RUNNING.toString())
+				{
+					break;
+					}
+		
+			
+			Thread.sleep(2000);
+			}
+		VirtualNode vnode =	xmmClient.stopVirtualNode(vn.getGuid());
+		VirtualNode vnode1 =	xmmClient.startVirtualNode(vn.getGuid());
+		
+		for(int j = 0; j<10;j++){
+		
+			 if (vnode1.getRunningStatus()==XMMConstants.MachineRunningState.RUNNING.toString())
+				{
+					break;
+					}
+			 Thread.sleep(3000);
+		}
+		//assertTrue(vnode1.getRunningStatus().equals(XMMConstants.MachineRunningState.RUNNING.toString()));
+			log.info("startVirtualNode Test success.");
+
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+
+
 	@Test
 	public void viewPhysicalNode() {
 		try {
 			PhysicalNode phn = xmmClient.viewPhysicalNode(vmPhyNode.getGuid());
-			assertTrue(phn.getGuid().equals(vmPhyNode.getGuid()));
+			assertNotNull(phn);
 			log.info("viewPhysicalNode Test success.");
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
@@ -531,10 +558,9 @@ public class XMMClientTester {
 	@Test
 	public void migrateVirtualNode() {
 		try {
-			List<VirtualNode> vmnList = xmmClient
-					.listVirtualNodeInVirtualCluster(vmCluster.getGuid());
+			List<VirtualNode> vmnList =getVirtualNodeList4VC(vmCluster);
 			VirtualNode vn = vmnList.get(0);
-			VirtualNode vnode = xmmClient.migrateVirtualNode(vn.getGuid(), genPhyNode.getGuid());
+			VirtualNode vnode = xmmClient.migrateVirtualNode(vn.getGuid(), vmmPhyNode.getGuid());
 			assertTrue(vnode.getGuid().equals(vn.getGuid()));
 			log.info("migrateVirtualNode Test success.");
 		} catch (Exception e) {
