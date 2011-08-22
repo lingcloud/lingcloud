@@ -26,6 +26,8 @@ import org.apache.commons.logging.*;
 import org.junit.*;
 import org.lingcloud.molva.test.util.TestConstants;
 import org.lingcloud.molva.xmm.services.*;
+import org.lingcloud.molva.xmm.util.XMMConstants;
+import org.lingcloud.molva.xmm.util.XMMException;
 import org.lingcloud.molva.xmm.util.XmlUtil;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
 import org.lingcloud.molva.xmm.vmc.VirtualClient;
@@ -64,7 +66,7 @@ public class XMMImplTester {
 	 * Virtual appliance's GUID for the test suite.
 	 * It must be replaced by the existed appliance's GUID.
 	 */
-	public static final String TEST_EVN_GUID_APP = "virtual appliance guid";
+	public static final String TEST_EVN_GUID_APP = "7A53AAEF7819528A8435395556CC3FB49A100BC8";
 	
 	private static Log log = LogFactory.getLog(XMMClientTester.class);
 	
@@ -79,6 +81,8 @@ public class XMMImplTester {
 	
 	@BeforeClass
 	public static void initializeForAllTest() {
+
+
 		try {
 			xmmImpl = new XMMImpl();
 			createPartion();
@@ -89,10 +93,12 @@ public class XMMImplTester {
 			log.error("Initialze failed. Reason: " + e);
 			fail();
 		}
+
 	}
 	
 	@AfterClass
 	public static void destroyForAllTest() {
+
 		try {
 			destroyVirtualCluster();
 			removePhysicalNode();
@@ -107,18 +113,14 @@ public class XMMImplTester {
 	
 	@Before
 	public void initialze() {
-		try {
-			
-		}catch (Exception e) {
-			log.error("Initialze failed. Reason: " + e);
-			fail();
-		}
+	
 	}
 	
 	@After
 	public void destory() {
 	}
 	
+
 	@Test
 	public void getServerCurrentTime() {
 		try {
@@ -131,6 +133,7 @@ public class XMMImplTester {
 		}
 	}
 	
+	
 	@Test
 	public void listAllPartition() {
 		try {
@@ -138,6 +141,295 @@ public class XMMImplTester {
 			assertTrue(parList.size() > 1);
 			log.info("getServerCurrentTime Test success.");
 		}catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	
+	@Test
+	public void listPartition(){
+		try {
+			List<Partition> parList = xmmImpl.listPartition(PartitionAC.class.getName());
+			assertTrue(parList.size() > 1);
+			log.info("listPartition Test success.");
+		}catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	
+	@Test
+	public void listPhysicalNode(){
+		try {
+			List<PhysicalNode> parList = xmmImpl.listPhysicalNode(genPartition.getGuid());
+			assertTrue(parList.size() > 0);
+			log.info("listPhysicalNode Test success.");
+		}catch (Exception e) {
+			e.printStackTrace();
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	
+	@Test
+	public void refreshPhysicalNode() {
+		try {
+			PhysicalNode phyTmp = xmmImpl.refreshPhysicalNode(vmPhyNode
+					.getGuid());
+			assertTrue(phyTmp.getGuid().equals(vmPhyNode.getGuid()));
+			log.info("refreshPhysicalNode Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	
+	@Test
+	public void refreshVirtualCluster() {
+		try {
+			VirtualCluster vml = xmmImpl.refreshVirtualCluster(vmCluster
+					.getGuid());
+			assertTrue(vml.getGuid().equals(vmCluster.getGuid()));
+			log.info("refreshVirtualCluster Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+
+	@Test
+	public void refreshVirtualNode() { 
+		try {
+			List<VirtualNode> vmnList = null;
+			vmnList = this.getVirtualNodeList4VC(vmCluster);
+			
+			assertNotNull(vmnList);
+			VirtualNode vn = vmnList.get(0);
+			
+			
+			VirtualNode vnode = xmmImpl.refreshVirtualNode(vn.getGuid());
+			assertNotNull(vnode);
+			log.info("refreshVirtualNode Test success.");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("Initialze failed. Reason: " + e);
+			fail();
+		}
+		
+	}
+	@Test
+	public void searchVirtualCluster() {
+		try {
+				vmCluster.setName("sun");
+				xmmImpl.updateVirtualClusterInfo(vmCluster.getGuid(),vmCluster);
+				List<VirtualCluster> vcList = xmmImpl.searchVirtualCluster(new String[]{"name"}, new String[]{"="}, new Object[]{"sun"});
+				assertTrue(vcList.size() > 0);
+				log.info("searchVirtualCluster Test success.");
+			
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	@Test
+	public void searchVirtualNode() {
+		try {
+			List<VirtualNode> vmnList = getVirtualNodeList4VC(vmCluster);
+			
+			VirtualNode vn = vmnList.get(0);
+			vn.setName("tom");
+			xmmImpl.updateVirtualNodeInfo(vn.getGuid(),vn);
+			List<VirtualNode> vnList = xmmImpl.searchVirtualNode(new String[]{"name"}, new String[]{"="}, new Object[]{"tom"});
+			assertTrue(vnList.size()>0);
+			log.info("searchVirtualNode Test success.");
+
+		} catch (Exception e) {
+			log.error("Initialze failed. Reason: " + e);
+			fail();
+		}
+		
+	}
+
+	@Test
+	public void searchPhysicalNode() {
+		try {
+			vmPhyNode.setName("sun");
+			xmmImpl.updatePhysicalNodeInfo(vmPhyNode.getGuid(),vmPhyNode);
+			List<PhysicalNode> phyList = xmmImpl.searchPhysicalNode(new String[]{"name"}, new String[]{"="}, new Object[]{"sun"});
+			assertTrue(phyList.size() > 0);
+			log.info("searchPhysicalNode Test success.");
+
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+
+	}
+	
+	@Ignore
+	@Test
+	public void stopVirtualCluster() {
+		try {
+			xmmImpl.stopVirtualCluster(vmCluster.getGuid());
+			List<VirtualNode> vmnList = listVirtualNodeInVirtualCluster(vmCluster.getGuid());
+			VirtualNode vn = vmnList.get(0);
+	
+		assertTrue(vn.getRunningStatus().equals(XMMConstants.MachineRunningState.BOOT.toString()));
+			log.info("stopVirtualCluster Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	@Ignore
+	@Test
+	public void startVirtualCluster() {
+		try {
+			xmmImpl.startVirtualCluster(vmCluster.getGuid());
+			List<VirtualNode> vmnList = listVirtualNodeInVirtualCluster(vmCluster.getGuid());
+			VirtualNode vn = vmnList.get(0);
+	
+		assertTrue(vn.getRunningStatus().equals(XMMConstants.MachineRunningState.RUNNING.toString()));
+			log.info("startVirtualCluster Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	
+	@Test
+	public void viewVirtualNode() {
+		try {
+			List<VirtualNode> vmnList = getVirtualNodeList4VC(vmCluster);
+			VirtualNode vn = vmnList.get(0);
+			VirtualNode vnode = xmmImpl.viewVirtualNode(vn.getGuid());
+			assertTrue(vnode.getGuid().equals(vn.getGuid()));
+			log.info("viewVirtualNode Test success.");
+
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	@Test
+	public void viewVirtualCluster() {
+		try {
+			VirtualCluster vml = xmmImpl.viewVirtualCluster(vmCluster
+					.getGuid());
+			assertTrue(vml.getGuid().equals(vmCluster.getGuid()));
+			log.info("viewVirtualCluster Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+
+	@Test
+	public void viewPhysicalNode() {
+		try {
+			PhysicalNode phn = xmmImpl.viewPhysicalNode(vmPhyNode.getGuid());
+			assertNotNull(phn);
+			log.info("viewPhysicalNode Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	@Test
+	public void viewPartition() {
+		try {
+			Partition vmpart = xmmImpl.viewPartition(vmPartition.getGuid());
+			assertTrue(vmpart.getGuid().equals(vmPartition.getGuid()));
+			Partition phypart = xmmImpl.viewPartition(genPartition.getGuid());
+			assertTrue(phypart.getGuid().equals(genPartition.getGuid()));
+			log.info("viewPartition Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	@Test
+	public void updateVirtualClusterInfo() {
+		try {
+			vmCluster.setDescription("description1");
+			VirtualCluster vmTmp = xmmImpl.updateVirtualClusterInfo(
+					vmCluster.getGuid(), vmCluster);
+			assertTrue(vmTmp.getDescription().equals("description1"));
+			log.info("updateVirtualClusterInfo Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+
+	@Test
+	public void updateVirtualNodeInfo() {
+		try {
+			vmPhyNode.setDescription("description1");
+			PhysicalNode phyTmp = xmmImpl.updatePhysicalNodeInfo(
+					vmPhyNode.getGuid(), vmPhyNode);
+			assertNotNull(phyTmp);
+			//assertTrue(phyTmp.getDescription().equals("description1"));
+			log.info("updateVirtualNodeInfo Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+
+	@Test
+	public void updatePartitionInfo() {
+
+		try {
+			vmPartition.setDescription("description1");
+			Partition parTmp = xmmImpl.updatePartitionInfo(
+					vmPartition.getGuid(), vmPartition);
+			assertTrue(parTmp.getDescription().equals("description1"));
+
+			log.info("updatePartitionInfo Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	
+	@Test
+	public void updatePhysicalNodeInfo() {
+		try {
+			vmPhyNode.setDescription("description1");
+			PhysicalNode phyTmp = xmmImpl.updatePhysicalNodeInfo(
+					vmPhyNode.getGuid(), vmPhyNode);
+			assertTrue(phyTmp.getDescription().equals("description1"));
+			log.info("updatePhysicalNodeInfo Test success.");
+		} catch (Exception e) {
+			log.error("Test failed. Reason: " + e);
+			fail();
+		}
+	}
+	
+	
+	@Ignore
+	@Test
+	public void stopVirtualNode() {
+		try {
+			VirtualNode vn = null;
+			
+			for (int i = 0 ; i < 20 ; i++) {
+				List<VirtualNode> vmnList = listVirtualNodeInVirtualCluster(vmCluster.getGuid());
+				 vn = vmnList.get(0);
+				if ( vn.RUNNING_STATUS == XMMConstants.MachineRunningState.RUNNING.toString()  ) 
+					break;
+				Thread.sleep(3000);
+				System.out.println("Waiting for VNode list for VC node- " + vmCluster.getName() );
+			
+			}
+			
+		VirtualNode vnode =	xmmImpl.stopVirtualNode(vn.getGuid());
+		assertTrue(vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.STOP.toString()));
+			log.info("stopVirtualNode Test success.");
+
+		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
 			fail();
 		}
@@ -158,7 +450,7 @@ public class XMMImplTester {
 		controller = PartitionAC.class.getName();
 		nodetype = PartitionAC.VM;
 		preInstalledSoft = "No software.";
-		desc = "VM partition for XMMClient test.";
+		desc = "VM partition for xmmImpl test.";
 		attr.put(PartitionAC.REQUIRED_ATTR_NODETYPE, nodetype);
 		attr.put(PartitionAC.ATTR_NODE_PRE_INSTALLED_SOFT,
 						preInstalledSoft);
@@ -172,7 +464,7 @@ public class XMMImplTester {
 		controller = PartitionAC.class.getName();
 		nodetype = PartitionAC.GENERAL;
 		preInstalledSoft = "No software.";
-		desc = "General partition for XMMClient test.";
+		desc = "General partition for xmmImpl test.";
 		attr.put(PartitionAC.REQUIRED_ATTR_NODETYPE, nodetype);
 		attr.put(PartitionAC.ATTR_NODE_PRE_INSTALLED_SOFT,
 						preInstalledSoft);
@@ -180,6 +472,24 @@ public class XMMImplTester {
 		assertNotNull(genPartition);
 		
 		return par;
+	}
+	private List<VirtualNode> getVirtualNodeList4VC(VirtualCluster vc) throws Exception{
+		List<VirtualNode> vmnList = listVirtualNodeInVirtualCluster(vc.getGuid());
+		for (int i = 0 ; i < 10 ; i++) {
+			if (vmnList != null ) 
+				break;
+			Thread.sleep(3000);
+			System.out.println("Waiting for VNode list for VC - " + vmCluster.getName() );
+			vmnList = listVirtualNodeInVirtualCluster(vc.getGuid());
+		}
+		return vmnList;
+	}
+	public List<VirtualNode> listVirtualNodeInVirtualCluster(String vcid)
+			throws Exception {
+		String[] fields = new String[] { "leaseId" };
+		String[] operators = new String[] { "=" };
+		Object[] values = new Object[] { vcid };
+		return xmmImpl.searchVirtualNode(fields, operators, values);
 	}
 	
 	private static void destoryPartion() throws Exception{
@@ -289,6 +599,7 @@ public class XMMImplTester {
 		vmCluster = xmmImpl.createVirtualCluster(parguid, clustername,
 				nodeMatchMaker, tenantId, null, nrmap, effectiveTime, 0,
 				expireTime, null, desc);
+		
 		assertNotNull(vmCluster);
 		log.info(desc);
 		
