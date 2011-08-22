@@ -31,7 +31,7 @@ public class XMMImplTestSuite {
 	public static Test suite() {
 		
 		TestSuite suite = new TestSuite();
-		suite.addTest(
+	suite.addTest(
 				new JUnit4TestAdapter(
 						XMMImplTester.class));
 		
