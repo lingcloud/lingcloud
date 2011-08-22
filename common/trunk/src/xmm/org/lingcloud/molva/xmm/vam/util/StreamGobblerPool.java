@@ -21,6 +21,8 @@ package org.lingcloud.molva.xmm.vam.util;
  * 
  */
 public class StreamGobblerPool {
+	public static final int TRY_TIMES = 10;
+	public static final int WAIT_TIME = 30000;
 	private StreamGobbler[] streamGobblerPool = null;
 
 	public StreamGobblerPool(int size, String type) {
@@ -33,27 +35,31 @@ public class StreamGobblerPool {
 
 	/**
 	 * acquire one stream gobbler, if no stream gobbler is available, wait.
+	 * 
 	 * @return stream gobbler object
 	 * @throws InterruptedException
 	 */
 	public synchronized StreamGobbler acquireStreamGobbler()
 			throws InterruptedException {
-		while (true) {
+		for (int i = 0; i < TRY_TIMES; i++) {
 			for (StreamGobbler gobbler : streamGobblerPool) {
 				if (gobbler.isAvailable()) {
 					gobbler.acquire();
 					return gobbler;
 				}
 			}
-			
-			wait();
+
+			wait(WAIT_TIME);
 		}
+
+		return null;
 	}
-	
+
 	/**
 	 * release stream gobbler.
+	 * 
 	 * @param gobbler
-	 * 		stream gobbler object
+	 *            stream gobbler object
 	 */
 	public synchronized void releaseStreamGobbler(StreamGobbler gobbler) {
 		if (gobbler != null) {

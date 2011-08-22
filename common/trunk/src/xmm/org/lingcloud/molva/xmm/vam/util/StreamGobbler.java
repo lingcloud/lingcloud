@@ -59,9 +59,7 @@ public class StreamGobbler extends Thread {
 	}
 
 	public synchronized void release() {
-		if (!active) {
-			acquire = false;
-		}
+		acquire = false;
 	}
 
 	public boolean isAvailable() {

@@ -770,7 +770,7 @@ public class VAMUtil {
 		}
 		return res;
 	}
-
+	
 	/**
 	 * execute command.
 	 * 
@@ -782,13 +782,19 @@ public class VAMUtil {
 	 */
 	public static String executeCommand(String command) throws Exception {
 		// create a process input stream thread
-		StreamGobbler errorGobbler = getInstance().errorStreamPool
-				.acquireStreamGobbler();
-		errorGobbler.setName("MainThread");
-
 		String res = "";
-
+		StreamGobbler errorGobbler = null;
+		
 		try {
+			errorGobbler = getInstance().errorStreamPool
+			.acquireStreamGobbler();
+			if (errorGobbler == null) {
+				VAMUtil.errorLog("Can not get StreamGobbler.");
+				return null;
+			}
+			
+			errorGobbler.setName("MainThread");
+	
 			// execute command
 			Runtime rt = Runtime.getRuntime();
 			Process proc;
@@ -819,9 +825,12 @@ public class VAMUtil {
 		} catch (Exception e) {
 			res = null;
 			VAMUtil.errorLog(e.getMessage());
+		} finally {
+			if (errorGobbler != null) {
+				getInstance().errorStreamPool.releaseStreamGobbler(
+						errorGobbler);
+			}
 		}
-
-		getInstance().errorStreamPool.releaseStreamGobbler(errorGobbler);
 
 		return res;
 	}
