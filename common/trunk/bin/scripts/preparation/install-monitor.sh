@@ -178,6 +178,8 @@ ganglia)
 		command cp conf/monitor/gm*.conf "$GANGLIA_HOME/etc"
 		command cp conf/monitor/*.pyconf "$GANGLIA_HOME/etc/conf.d"
 		command cp conf/monitor/*.py "$GANGLIA_PYTHON_MODULE_DIR"
+		command ln -s "$GANGLIA_HOME/etc/gmond-client.conf" "$GANGLIA_HOME/etc/gmond.conf"
+		command ln -s "$GANGLIA_HOME/bin/gmetric" "$GANGLIA_PYTHON_MODULE_DIR/gmetric"
 		
 		echo "rrd_rootdir \"$GANGLIA_RRDS_DIR\"" >> "$GANGLIA_HOME/etc/gmetad.conf"
 		sed -i "s;^GANGLIA_HOME=.*;GANGLIA_HOME=$GANGLIA_HOME;g" $GANGLIA_HOME/sbin/start-g*.sh

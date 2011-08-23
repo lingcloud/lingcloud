@@ -10,10 +10,14 @@
 #
 
 import commands
+from xml.dom.ext.reader import Sax2
+from xml import xpath,dom
 
 descriptors = list()
 vm_list = list()
 vm_infos = list()
+
+gmetric = './gmetric -t string '
 
 def get_vm_num(name):
 	global vm_list
@@ -30,19 +34,97 @@ def get_vm_num(name):
 
 	return len(vm_list)
 
+def get_vm_cpuinfos(doc, domid):
+
+	r = xpath.Evaluate('/domain/vcpu/text()', doc)
+	ret = 'vcpu:' + r[0].nodeValue + ','
+	cmd = 'virsh vcpuinfo ' + domid
+	(stat, output) = commands.getstatusoutput(cmd)
+	ret += output.replace('\n', ',')
+	
+	return ret
+
+def get_vm_meminfos(doc, domid):
+
+	r = xpath.Evaluate('/domain/memory/text()', doc)
+	ret = 'memory:' + r[0].nodeValue + ','
+	r = xpath.Evaluate('/domain/currentMemory/text()', doc)
+	ret += 'currMem:' + r[0].nodeValue
+	
+	return ret
+
+def get_vm_diskinfos(doc, domid):
+	ret = ''
+	r = xpath.Evaluate('/domain/devices/disk/source/@file', doc)
+	c = 0
+	imgCmd = 'qemu-img info '
+	for i in r:
+		cmd = imgCmd + i.value
+		(stat, output) = commands.getstatusoutput(cmd)
+		c += 1
+		if c > 1:
+			ret += ';'
+		ret += output.replace('\n', ',')
+
+	return ret
+
+def get_vm_netinfos(doc, domid):
+	ret = ''
+	r = xpath.Evaluate('/domain/devices/interface', doc)
+	c = 0
+	ifCmd = 'virsh domifstat ' + domid
+	for i in r:
+		c += 1
+		if c > 1:
+			ret += ';'
+		dev = i.getElementsByTagName('target').item(0).getAttribute('dev')
+		ret += 'dev:' + dev + ','
+		ret += 'ip :' + i.getElementsByTagName('ip').item(0).getAttribute('address') + ','
+		ret += 'mac:' + i.getElementsByTagName('mac').item(0).getAttribute('address') + ','
+		cmd = ifCmd + ' ' + dev
+		(stat, output) = commands.getstatusoutput(cmd)
+		ret += output.replace('\n', ',')
+
+	return ret
+
 def get_vm_infos(name):
 	global vm_list
 	global vm_infos
+	global gmetric
 
 	ret = ''
 	c = 0
+	cpuinfos = ''
+	meminfos = ''
+	diskinfos = ''
+	netinfos = ''
+	sep = ''
 	for i in vm_list:
 		cmd = 'virsh dumpxml '+i[0]
+		(stat, domxml) = commands.getstatusoutput(cmd)
+		doc = Sax2.FromXml(domxml)
+		c += 1
+		if c > 1:
+			sep = '|'
+		prefix = sep + "vmName:" + i[1] + ";"
+		cpuinfos += prefix + get_vm_cpuinfos(doc, i[0])
+		meminfos += prefix + get_vm_meminfos(doc, i[0])
+		diskinfos += prefix + get_vm_diskinfos(doc, i[0])
+		netinfos += prefix + get_vm_netinfos(doc, i[0])
+
+	if c > 0:
+		cmd = gmetric + ' -n "vm_cpu_infos" -v "' + cpuinfos + '"'
+		# print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
-		if c > 0:
-			ret += ','
-			c += 1
-		ret += output
+		cmd = gmetric + ' -n "vm_mem_infos" -v "' + meminfos + '"'
+		# print cmd
+		(stat, output) = commands.getstatusoutput(cmd)
+		cmd = gmetric + ' -n "vm_disk_infos" -v "' + diskinfos + '"'
+		# print cmd
+		(stat, output) = commands.getstatusoutput(cmd)
+		cmd = gmetric + ' -n "vm_net_infos" -v "' + netinfos + '"'
+		# print cmd
+		(stat, output) = commands.getstatusoutput(cmd)
 
 	return 'To be done' # ret # Ganglia python module's string length limited
 
