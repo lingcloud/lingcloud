@@ -473,7 +473,7 @@ public class XMMClientTester {
 			Thread.sleep(2000);
 			}
 		VirtualNode vnode =	xmmClient.stopVirtualNode(vn.getGuid());
-		assertTrue(vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.HALT.toString()));
+		assertTrue(vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.SHUTTING.toString()));
 			log.info("stopVirtualNode Test success.");
 
 		} catch (Exception e) {
