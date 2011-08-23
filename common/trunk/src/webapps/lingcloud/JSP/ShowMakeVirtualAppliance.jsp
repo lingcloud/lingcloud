@@ -83,10 +83,10 @@
 				src="<%=basePath%>images/vnc.png" width="16px" height="16px" /></a>&nbsp;<a
 				href="#"
 				onclick="showDialogForOperateAppliance('<%=basePath%>', '<%=va.getGuid()%>', 'start');"
-				title="<bean:message key="org.lingcloud.molva.xmm.virtualAppliance.startAppliance" />"><img
+				title="<bean:message key="org.lingcloud.molva.xmm.virtualAppliance.boot" />"><img
 				src="<%=basePath%>images/poweron.png" /></a>&nbsp;<a href="#"
 				onclick="showDialogForOperateAppliance('<%=basePath%>', '<%=va.getGuid()%>', 'stop');"
-				title="<bean:message key="org.lingcloud.molva.xmm.virtualAppliance.stopAppliance" />"><img
+				title="<bean:message key="org.lingcloud.molva.xmm.virtualAppliance.shutdown" />"><img
 				src="<%=basePath%>images/poweroff.png" /></a>&nbsp;<a href="#"
 				onclick="showDialogForChangeDisc('<%=basePath%>', '<%=va.getGuid()%>',  '<%=discl.get(i)%>');"
 				title="<bean:message key="org.lingcloud.molva.xmm.virtualAppliance.mountCD" />"><img
