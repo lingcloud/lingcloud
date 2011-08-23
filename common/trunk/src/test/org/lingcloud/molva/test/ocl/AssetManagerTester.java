@@ -16,10 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.lingcloud.molva.ocl.asset.Asset;
 import org.lingcloud.molva.ocl.asset.AssetManagerImpl;
-import org.lingcloud.molva.ocl.persistence.GNode;
-import org.lingcloud.molva.ocl.persistence.GNodeConstants;
-import org.lingcloud.molva.ocl.util.HashFunction;
-import org.lingcloud.molva.xmm.ac.PartitionAC;
 
 import java.util.List;
 
@@ -27,10 +23,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
@@ -41,7 +35,7 @@ import static org.junit.Assert.fail;
  * TODO.
  * 
  * @version 1.0.1 2011-7-25<br>
- * @author Ruijian Wang<br>
+ * @author Maosen Sun<br>
  * 
  */
 public class AssetManagerTester {
@@ -52,60 +46,50 @@ public class AssetManagerTester {
 	@BeforeClass
 	public static void initializeForAllTest() {
 		assetManager = new AssetManagerImpl();
-		asset = new Asset();
-		 asset.setAssetController("lingcontrol");
-		 asset.setName("lingname");
-		 asset.setType("type");
-		asset.setAcl("rwx------");
 	}
 
 	@AfterClass
 	public static void destroyForAllTest() throws Exception {
-		if (asset != null) {
-			assetManager.remove(asset.getGuid(), true);
-		}
 	}
 
 	@Before
 	public void initialize() throws Exception {
-
-	
+		asset = new Asset();
+		asset.setAssetController("lingcontrol");
+		asset.setName("test asset");
+		asset.setType("test asset");
+		asset.setAcl("rwx------");
 	}
 
 	@After
 	public void destroy() throws Exception {
-		
+		if (asset != null && asset.getGuid() != null) {
+			assetManager.remove(asset.getGuid(), true);
+		}
 	}
-
 
 	@Test
 	public void add() {
-
 		log.info("begin add...");
 		try {
-
-			Asset assetTmp = assetManager.add(asset, true);
-			assertNotNull(assetTmp);
+			asset = assetManager.add(asset, true);
+			assertNotNull(asset);
 			log.info("add success...");
 		} catch (Exception e) {
 			log.error("test failed. Reason: " + e);
 			e.printStackTrace();
 			fail();
 		}
-
 	}
-
 
 	@Test
 	public void view() {
-
 		log.info("begin view...");
 
 		try {
-
+			asset = assetManager.add(asset, true);
 			assertNotNull(assetManager.view(asset.getGuid()));
 			log.info("view success...");
-
 		} catch (Exception e) {
 			log.error("test failed. Reason: " + e);
 			e.printStackTrace();
@@ -114,15 +98,14 @@ public class AssetManagerTester {
 
 	}
 
-	
 	@Test
 	public void search() {
 		log.info("begin search...");
 
 		try {
-
-			List<Asset> list = assetManager.search(new String[] { "name" }, new String[] { "="}, new Object[] {
-					"lingname"});
+			asset = assetManager.add(asset, true);
+			List<Asset> list = assetManager.search(new String[] { "name" },
+					new String[] { "=" }, new Object[] { "test asset" });
 			assertTrue(list.size() > 0);
 			log.info("search success...");
 		} catch (Exception e) {
@@ -133,17 +116,16 @@ public class AssetManagerTester {
 
 	}
 
-	
 	@Test
 	public void update() {
 		log.info("begin update...");
 
 		try {
-
+			asset = assetManager.add(asset, true);
+			asset.setDescription("test");
 			Asset assetTmp = assetManager.update(asset.getGuid(), asset);
 			assertNotNull(assetTmp);
 			log.info("update success...");
-
 		} catch (Exception e) {
 			log.error("test failed. Reason: " + e);
 			e.printStackTrace();
@@ -152,15 +134,14 @@ public class AssetManagerTester {
 
 	}
 
-	
-	
 	@Test
 	public void remove() {
 		log.info("begin remove...");
 		try {
-
+			asset = assetManager.add(asset, true);
 			Asset assetTmp = assetManager.remove(asset.getGuid(), true);
 			assertNull(assetManager.view(assetTmp.getGuid()));
+			asset = null;
 			log.info("remove success...");
 		} catch (Exception e) {
 			log.error("test failed. Reason: " + e);

@@ -12,26 +12,22 @@
  */
 package org.lingcloud.molva.test.suite.server;
 
-import org.lingcloud.molva.test.ocl.AssetManagerTester;
-import org.lingcloud.molva.test.ocl.GNodeManagerTester;
-import org.lingcloud.molva.test.ocl.LeaseManagerTester;
-import org.lingcloud.molva.test.ocl.LeasePoolManagerTester;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.lingcloud.molva.test.xmm.XMMClientTester;
+import org.lingcloud.molva.test.xmm.XMMImplTester;
 
 /**
  * <strong>Purpose:</strong><br>
- * The test suite for LingCloud OCL.
+ * The test suite for LingCloud XMM.
  * 
  * @version 1.0.0 2011-7-23<br>
  * @author Ruijian Wang<br>
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({ GNodeManagerTester.class, AssetManagerTester.class,
-		LeaseManagerTester.class, LeasePoolManagerTester.class })
-public class OCLTestSuite {
+@SuiteClasses({ XMMImplTester.class, XMMClientTester.class })
+public class XMMTestSuite {
 
 }

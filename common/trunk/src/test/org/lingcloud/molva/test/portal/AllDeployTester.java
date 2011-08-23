@@ -17,6 +17,7 @@ import com.thoughtworks.selenium.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.lingcloud.molva.test.util.TestConfig;
 import org.lingcloud.molva.test.util.TestConstants;
 import org.lingcloud.molva.test.util.TestUtils;
 /**
@@ -30,10 +31,10 @@ import org.lingcloud.molva.test.util.TestUtils;
 public class AllDeployTester extends SeleneseTestCase {
 	@Before
 	public void setUp() throws Exception {
-		selenium = new DefaultSelenium(TestConstants.SELENIUM_SERVER_HOST,
-				TestConstants.SELENIUM_SERVER_PORT, TestUtils.getBrowser(),
-				TestConstants.TEST_LINGCLOUD_PORTAL_URL);
-		selenium.setSpeed(TestConstants.SELENIUM_SPEED );
+		selenium = new DefaultSelenium(TestConfig.getSeleniumServerHost(),
+				TestConfig.getSeleniumPort(), TestUtils.getBrowser(),
+				TestConfig.getTestLingCloudPortalURL());
+		selenium.setSpeed(TestConfig.getSeleniumSpeed());
 		
 		selenium.start();
 		selenium.windowMaximize();
@@ -197,7 +198,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[5]/a/img");
 		selenium.select("parguid", "label=partion1");
-		selenium.type("privateip", TestConstants.TEST_XEN_SERVER);
+		selenium.type("privateip", TestConfig.getTestXenServer());
 		selenium.type("description", "description4");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
@@ -211,7 +212,7 @@ public class AllDeployTester extends SeleneseTestCase {
 			break;
 		}
 		verifyTrue(selenium.isTextPresent("RUNNING"));		
-		verifyTrue(selenium.isTextPresent(TestConstants.TEST_XEN_SERVER));
+		verifyTrue(selenium.isTextPresent(TestConfig.getTestXenServer()));
 
 	}
 	@Test
@@ -324,12 +325,12 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[5]/a/img");
 		selenium.select("parguid", "label=partion2");
-		selenium.type("privateip", TestConstants.TEST_COMMON_SERVER);
+		selenium.type("privateip", TestConfig.getTestCommonServer());
 		selenium.type("description", "description5");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//a[contains(text(),'partion2')]");
-		verifyTrue(selenium.isTextPresent(TestConstants.TEST_COMMON_SERVER));
+		verifyTrue(selenium.isTextPresent(TestConfig.getTestCommonServer()));
 
 	}
 	@Test

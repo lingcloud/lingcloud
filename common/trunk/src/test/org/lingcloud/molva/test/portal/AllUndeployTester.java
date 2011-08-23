@@ -13,9 +13,11 @@
 
 package org.lingcloud.molva.test.portal;
 import com.thoughtworks.selenium.*;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.lingcloud.molva.test.util.TestConfig;
 import org.lingcloud.molva.test.util.TestConstants;
 import org.lingcloud.molva.test.util.TestUtils;
 /**
@@ -30,10 +32,10 @@ public class AllUndeployTester extends SeleneseTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		selenium = new DefaultSelenium(TestConstants.SELENIUM_SERVER_HOST,
-				TestConstants.SELENIUM_SERVER_PORT, TestUtils.getBrowser(),
-				TestConstants.TEST_LINGCLOUD_PORTAL_URL);
-		selenium.setSpeed(TestConstants.SELENIUM_SPEED);
+		selenium = new DefaultSelenium(TestConfig.getSeleniumServerHost(),
+				TestConfig.getSeleniumPort(), TestUtils.getBrowser(),
+				TestConfig.getTestLingCloudPortalURL());
+		selenium.setSpeed(TestConfig.getSeleniumSpeed());
 		selenium.start();
 		selenium.windowMaximize();
 	}
@@ -59,11 +61,11 @@ public class AllUndeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[6]/a/img");
 		selenium.select("parguid", "label=partion2");
-		selenium.select("pnguid", "label="+TestConstants.TEST_COMMON_SERVER);
+		selenium.select("pnguid", "label="+TestConfig.getTestCommonServer());
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("60000");
 		selenium.click("//a[contains(text(),'partion2')]");
-		verifyFalse(selenium.isTextPresent(TestConstants.TEST_COMMON_SERVER));
+		verifyFalse(selenium.isTextPresent(TestConfig.getTestCommonServer()));
 
 	}
 	@Test
@@ -97,11 +99,11 @@ public class AllUndeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[6]/a/img");
 		selenium.select("parguid", "label=partion1");
-		selenium.select("pnguid", "label="+TestConstants.TEST_XEN_SERVER);
+		selenium.select("pnguid", "label="+TestConfig.getTestXenServer());
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//a[contains(text(),'partion1')]");
-		verifyFalse(selenium.isTextPresent(TestConstants.TEST_XEN_SERVER));
+		verifyFalse(selenium.isTextPresent(TestConfig.getTestXenServer()));
 
 	}
 	@Test

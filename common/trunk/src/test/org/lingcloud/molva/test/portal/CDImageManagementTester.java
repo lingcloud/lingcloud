@@ -18,6 +18,7 @@ import com.thoughtworks.selenium.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.lingcloud.molva.test.util.TestConfig;
 import org.lingcloud.molva.test.util.TestConstants;
 import org.lingcloud.molva.test.util.TestUtils;
 
@@ -33,12 +34,10 @@ import org.lingcloud.molva.test.util.TestUtils;
 public class CDImageManagementTester extends SeleneseTestCase {	
 	@Before
 	public void setUp() throws Exception {
-		selenium = new DefaultSelenium(
-				TestConstants.SELENIUM_SERVER_HOST,
-				TestConstants.SELENIUM_SERVER_PORT,
-				TestUtils.getBrowser(),
-				TestConstants.TEST_LINGCLOUD_PORTAL_URL);
-		selenium.setSpeed(TestConstants.SELENIUM_SPEED);
+		selenium = new DefaultSelenium(TestConfig.getSeleniumServerHost(),
+				TestConfig.getSeleniumPort(), TestUtils.getBrowser(),
+				TestConfig.getTestLingCloudPortalURL());
+		selenium.setSpeed(TestConfig.getSeleniumSpeed());
 		selenium.start();
 		selenium.windowMaximize();
 	}

@@ -12,8 +12,8 @@
  */
 package org.lingcloud.molva.test.ocl;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import org.apache.commons.logging.Log;
@@ -24,25 +24,24 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.lingcloud.molva.ocl.lease.Lease;
-import org.lingcloud.molva.ocl.lease.LeaseManagerImpl;
+
 import org.lingcloud.molva.ocl.lease.LeasePoolManager;
 import org.lingcloud.molva.ocl.util.HashFunction;
 
 /**
  * <strong>Purpose:</strong><br>
  * TODO.
- *
+ * 
  * @version 1.0.1 2011-7-25<br>
- * @author Ruijian Wang<br>
- *
+ * @author Maosen Sun<br>
+ * 
  */
 public class LeasePoolManagerTester {
 	private static Log log = LogFactory.getLog(LeasePoolManagerTester.class);
-	private static LeasePoolManager leasePoolManager = null;
 	private static Lease lease = null;
+
 	@BeforeClass
 	public static void initializeForAllTest() {
-		
 
 	}
 
@@ -58,72 +57,68 @@ public class LeasePoolManagerTester {
 	@After
 	public void destroy() throws Exception {
 		if (lease != null) {
-			leasePoolManager.removeLease(lease);
+			LeasePoolManager.removeLease(lease);
 		}
 	}
-	
+
 	@Test
 	public void getLease() {
-		log.info("begin getlease...");
+		log.info("begin getLease...");
 		try {
-			
-		Lease lease = new Lease();
-		if (lease.getGuid() == null || "".equals(lease.getGuid())) {
-			String guid = HashFunction.createGUID().toString();
-			lease.setGuid(guid);
-		}
-		leasePoolManager.putLease(lease);
-		Lease tmp = leasePoolManager.getLease(lease);
-		assertTrue(tmp.getGuid().equals(lease.getGuid()));
-		log.info("getlease success");
+			Lease lease = new Lease();
+			if (lease.getGuid() == null || "".equals(lease.getGuid())) {
+				String guid = HashFunction.createGUID().toString();
+				lease.setGuid(guid);
+			}
+			LeasePoolManager.putLease(lease);
+			assertNotNull(LeasePoolManager.getLease(lease));
+			log.info("getlease success");
 
-	} catch (Exception e) {
-		log.error("test failed. Reason: " + e);
-		e.printStackTrace();
-		fail();
+		} catch (Exception e) {
+			log.error("test failed. Reason: " + e);
+			e.printStackTrace();
+			fail();
+		}
 	}
-	}
-	
+
 	@Test
 	public void putLease() {
-		log.info("begin putlease...");
+		log.info("begin putLease...");
 		try {
-			
-		lease = new Lease();
-		if (lease.getGuid() == null || "".equals(lease.getGuid())) {
-			String guid = HashFunction.createGUID().toString();
-			lease.setGuid(guid);
-		}
-		leasePoolManager.putLease(lease);
-		assertNotNull(leasePoolManager.getLease(lease));
-		leasePoolManager.removeLease(lease);
-		log.info("putlease success");
+			lease = new Lease();
+			if (lease.getGuid() == null || "".equals(lease.getGuid())) {
+				String guid = HashFunction.createGUID().toString();
+				lease.setGuid(guid);
+			}
+			LeasePoolManager.putLease(lease);
+			assertNotNull(LeasePoolManager.getLease(lease));
+			log.info("putlease success");
 
-	} catch (Exception e) {
-		log.error("test failed. Reason: " + e);
-		e.printStackTrace();
-		fail();
+		} catch (Exception e) {
+			log.error("test failed. Reason: " + e);
+			e.printStackTrace();
+			fail();
+		}
 	}
-	}
-	
+
 	@Test
 	public void removeLease() {
-		log.info("begin removelease...");
+		log.info("begin removeLease...");
 		try {
-		lease = new Lease();
-		if (lease.getGuid() == null || "".equals(lease.getGuid())) {
-			String guid = HashFunction.createGUID().toString();
-			lease.setGuid(guid);
-		}
-		leasePoolManager.putLease(lease);
-		leasePoolManager.removeLease(lease);
-		assertNull(leasePoolManager.getLease(lease));
-		log.info("removelease success");
+			lease = new Lease();
+			if (lease.getGuid() == null || "".equals(lease.getGuid())) {
+				String guid = HashFunction.createGUID().toString();
+				lease.setGuid(guid);
+			}
+			LeasePoolManager.putLease(lease);
+			LeasePoolManager.removeLease(lease);
+			assertNull(LeasePoolManager.getLease(lease));
+			log.info("removelease success");
 
-	} catch (Exception e) {
-		log.error("test failed. Reason: " + e);
-		e.printStackTrace();
-		fail();
-	}
+		} catch (Exception e) {
+			log.error("test failed. Reason: " + e);
+			e.printStackTrace();
+			fail();
+		}
 	}
 }

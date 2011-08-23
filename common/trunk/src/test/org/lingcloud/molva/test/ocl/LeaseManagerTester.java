@@ -49,7 +49,7 @@ import org.lingcloud.molva.test.ocl.example.Monitor;
  */
 public class LeaseManagerTester {
 	private static Log log = LogFactory.getLog(LeaseManagerTester.class);
-	private static final int MAX_TRY_TIMES = 40;
+	private static final int MAX_TRY_TIMES = 80;
 	private static final int SLEEP_TIME = 3000;
 	private static final int DURATION = 1000000000;
 	private static final int MINUTE = 60000;
@@ -599,7 +599,7 @@ public class LeaseManagerTester {
 			if (l.getLifecycleState() == LeaseLifeCycleState.EFFECTIVE) {
 				checkState(
 						lease,
-						MAX_TRY_TIMES * 2,
+						MAX_TRY_TIMES,
 						SLEEP_TIME,
 						new LeaseLifeCycleState[] { 
 								LeaseLifeCycleState.EXPIRED },
@@ -655,7 +655,7 @@ public class LeaseManagerTester {
 			l = leaseManager.view(lease.getGuid());
 			assertNotNull(l);
 
-			checkState(lease, MAX_TRY_TIMES * 2, SLEEP_TIME,
+			checkState(lease, MAX_TRY_TIMES, SLEEP_TIME,
 					new LeaseLifeCycleState[] { LeaseLifeCycleState.EXPIRED },
 					new LeaseLifeCycleState[] { LeaseLifeCycleState.FAIL,
 							LeaseLifeCycleState.REJECTED,

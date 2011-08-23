@@ -14,9 +14,11 @@
 package org.lingcloud.molva.test.portal;
 
 import com.thoughtworks.selenium.*;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.lingcloud.molva.test.util.TestConfig;
 import org.lingcloud.molva.test.util.TestConstants;
 import org.lingcloud.molva.test.util.TestUtils;
 
@@ -33,12 +35,10 @@ import java.util.regex.Pattern;
 public class PartitionTester extends SeleneseTestCase {
 	@Before
 	public void setUp() throws Exception {
-		selenium = new DefaultSelenium(
-				TestConstants.SELENIUM_SERVER_HOST,
-				TestConstants.SELENIUM_SERVER_PORT,
-				TestUtils.getBrowser(),
-				TestConstants.TEST_LINGCLOUD_PORTAL_URL);
-		selenium.setSpeed(TestConstants.SELENIUM_SPEED);
+		selenium = new DefaultSelenium(TestConfig.getSeleniumServerHost(),
+				TestConfig.getSeleniumPort(), TestUtils.getBrowser(),
+				TestConfig.getTestLingCloudPortalURL());
+		selenium.setSpeed(TestConfig.getSeleniumSpeed());
 		selenium.start();
 		selenium.windowMaximize();
 	}
@@ -59,13 +59,13 @@ public class PartitionTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("node1"));
 		// Add a node for VM partition
 		selenium.click("css=td:nth(4) > a > img");
-		selenium.type("privateip", TestConstants.TEST_XEN_SERVER);
+		selenium.type("privateip", TestConfig.getTestXenServer());
 		selenium.type("description", "description2");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("sd1");
 		Thread.sleep(TestConstants.RETRY_INTERVAL);
-		verifyTrue(selenium.isTextPresent(TestConstants.TEST_XEN_SERVER));
+		verifyTrue(selenium.isTextPresent(TestConfig.getTestXenServer()));
 		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
 		{
 			selenium.click("css=#ptNodeRrd1 > td > span > img[title=Refresh]");
@@ -77,12 +77,12 @@ public class PartitionTester extends SeleneseTestCase {
 		// Delete the node for VM partition
 		selenium.click("css=td:nth(5) > a > img");
 		selenium.select("parguid", "label=node1");
-		selenium.select("pnguid", "label=" + TestConstants.TEST_XEN_SERVER);
+		selenium.select("pnguid", "label=" + TestConfig.getTestXenServer());
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("sd1");
 		Thread.sleep(TestConstants.RETRY_INTERVAL);
-		verifyFalse(selenium.isTextPresent(TestConstants.TEST_XEN_SERVER));
+		verifyFalse(selenium.isTextPresent(TestConfig.getTestXenServer()));
 		// Delete the VM partition
 		selenium.click("css=td:nth(3) > a > img");
 		selenium.select("parguid", "label=node1");
@@ -108,13 +108,13 @@ public class PartitionTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("partition1"));
 		// Add a node for General partition
 		selenium.click("css=td:nth(4) > a > img");
-		selenium.type("privateip", TestConstants.TEST_COMMON_SERVER);
+		selenium.type("privateip", TestConfig.getTestCommonServer());
 		selenium.type("description", "description4");
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("sd1");
 		Thread.sleep(TestConstants.RETRY_INTERVAL);
-		verifyTrue(selenium.isTextPresent(TestConstants.TEST_COMMON_SERVER));
+		verifyTrue(selenium.isTextPresent(TestConfig.getTestCommonServer()));
 		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
 		{
 			selenium.click("css=#ptNodeRrd1 > td > span > img[title=Refresh]");
@@ -126,12 +126,12 @@ public class PartitionTester extends SeleneseTestCase {
 		// Delete the node for General partition
 		selenium.click("css=td:nth(5) > a > img");
 		selenium.select("parguid", "label=partition1");
-		selenium.select("pnguid", "label=" + TestConstants.TEST_COMMON_SERVER);
+		selenium.select("pnguid", "label=" + TestConfig.getTestCommonServer());
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("sd1");
 		Thread.sleep(TestConstants.RETRY_INTERVAL);
-		verifyFalse(selenium.isTextPresent(TestConstants.TEST_COMMON_SERVER));
+		verifyFalse(selenium.isTextPresent(TestConfig.getTestCommonServer()));
 		// Delete the General partition
 		selenium.click("css=td:nth(3) > a > img");
 		selenium.select("parguid", "label=partition1");
