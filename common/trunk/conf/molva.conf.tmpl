@@ -10,6 +10,9 @@
 #
 # Configuration file for LingCloud Molva
 
+# LingCloud server
+lingCloudServer=${LINGCLOUD_SERVER}
+
 # LingCloud home directory
 lingCloudHome="${LINGCLOUD_HOME_DIR}"
 
@@ -139,5 +142,11 @@ monitorServerPort=8649
 # the monitor install location
 monitorDir="${NFS_MOUNT_DIR}/monitor"
 
-# the RRDtool command
+# the RRDtool command for monitor
 cmdRRDtool=/usr/local/rrdtool/bin/rrdtool
+
+# Xen server for test case
+testCaseXenServer=${LINGCLOUD_SERVER}
+
+# Common server for test case
+testCaseCommonServer=${NFS_SERVER}
