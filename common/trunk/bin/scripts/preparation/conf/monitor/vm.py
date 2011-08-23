@@ -15,7 +15,6 @@ from xml import xpath,dom
 
 descriptors = list()
 vm_list = list()
-vm_infos = list()
 
 gmetric = './gmetric -t string '
 
@@ -40,6 +39,7 @@ def get_vm_cpuinfos(doc, domid):
 	ret = 'vcpu:' + r[0].nodeValue + ','
 	cmd = 'virsh vcpuinfo ' + domid
 	(stat, output) = commands.getstatusoutput(cmd)
+	output = output[0:-1]
 	ret += output.replace('\n', ',')
 	
 	return ret
@@ -83,13 +83,15 @@ def get_vm_netinfos(doc, domid):
 		ret += 'mac:' + i.getElementsByTagName('mac').item(0).getAttribute('address') + ','
 		cmd = ifCmd + ' ' + dev
 		(stat, output) = commands.getstatusoutput(cmd)
+		output = output[0:-1]
+		output = output.replace(dev + ' ', '')
+		output = output.replace(' ', ':')
 		ret += output.replace('\n', ',')
 
 	return ret
 
 def get_vm_infos(name):
 	global vm_list
-	global vm_infos
 	global gmetric
 
 	ret = ''
@@ -98,6 +100,7 @@ def get_vm_infos(name):
 	meminfos = ''
 	diskinfos = ''
 	netinfos = ''
+	vminfos = ''
 	sep = ''
 	for i in vm_list:
 		cmd = 'virsh dumpxml '+i[0]
@@ -111,6 +114,7 @@ def get_vm_infos(name):
 		meminfos += prefix + get_vm_meminfos(doc, i[0])
 		diskinfos += prefix + get_vm_diskinfos(doc, i[0])
 		netinfos += prefix + get_vm_netinfos(doc, i[0])
+		vminfos += sep + i[1] + ':' +i[2] 
 
 	if c > 0:
 		cmd = gmetric + ' -n "vm_cpu_infos" -v "' + cpuinfos + '"'
@@ -123,6 +127,9 @@ def get_vm_infos(name):
 		# print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_net_infos" -v "' + netinfos + '"'
+		# print cmd
+		(stat, output) = commands.getstatusoutput(cmd)
+		cmd = gmetric + ' -n "vm_name_infos" -v "' + vminfos + '"'
 		# print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
 
