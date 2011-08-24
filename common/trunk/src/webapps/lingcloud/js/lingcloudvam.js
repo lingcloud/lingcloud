@@ -1931,7 +1931,7 @@ loadForChangeDisc = function (basePath, loadingTable, targetTable) {
 	                var select_disc = document.getElementById("discguid");
 	                select_disc.options.length = 0;
 	                var i;
-	                var option = new Option("\u65E0","none");
+	                var option = new Option(lingcloud.tip.nodisc,"none");
 	                select_disc.options[0] = option;
 	                for (i = 0; i < xSel.length; i+=1) {
 	                    var xValue = xSel[i].childNodes[0].firstChild.nodeValue;

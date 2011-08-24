@@ -17,6 +17,7 @@ var lingcloud = {
 		delapp:'Are you sure to delete this application.',
 		delapptitle:'Delete Application',
 		nocategory:'No Category',
+		nodisc:'none',
 		clear:'Clear',
 		vnctip:'Please login the VM via local VNC client.'
 	},
