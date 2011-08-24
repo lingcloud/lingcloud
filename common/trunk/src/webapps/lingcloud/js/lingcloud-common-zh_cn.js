@@ -319,7 +319,9 @@ var lingcloud = {
 			},
 			cpu:{
 				vcpu:'\u865A\u62DFCPU\u6570',
+				cpu:'CPU\u6570',
 				time:'CPU\u65F6\u95F4',
+				stat:'CPU\u72b6\u6001',
 				usage:'\u5F53\u524D\u4F7F\u7528',
 				uptime:'\u8FD0\u884C\u65F6\u95F4'
 			},
@@ -331,15 +333,21 @@ var lingcloud = {
 			},
 			disk:{
 				usage:'\u786C\u76D8\u4F7F\u7528',
+				img:'\u955c\u50cf\u6587\u4ef6',
+				fmt:'\u955c\u50cf\u683c\u5f0f',
 				max:'\u6700\u5927\u9650\u5236',
 				dir:'\u6587\u4EF6\u8DEF\u5F84',
-				size:'\u6240\u5360\u7A7A\u95F4'
+				virSize:'\u865a\u62df\u5bb9\u91cf',
+				size:'\u6240\u5360\u7A7A\u95F4',
+				bak:'\u5907\u4efd\u6587\u4ef6'
 			},
 			net:{
 				nets:'\u865A\u62DF\u7F51\u5361',
+				dev:'\u7f51\u7edc\u63a5\u53e3',
+				mac:'MAC\u5730\u5740',
 				ip:'IP\u5730\u5740',
 				tx:'\u53D1\u9001\u6570\u636E',
-				sx:'\u63A5\u6536\u6570\u636E'
+				rx:'\u63A5\u6536\u6570\u636E'
 			}
 		},
 		monitorMgt: {

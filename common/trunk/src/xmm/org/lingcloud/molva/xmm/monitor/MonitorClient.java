@@ -308,6 +308,16 @@ public class MonitorClient {
 						tmp += ",vmSrvName:'" + srvName + "'"; 
 						tmp += ",VMList:[";
 
+						Map<String, VM> vmMap = hostInfo.getVMMap();
+						int c = 0;
+						for (String vmName : vmMap.keySet()) {
+							c++;
+							if (c > 1) {
+								tmp += ",";
+							}
+							tmp += "{ vmName:'" + vmName + "',";
+							tmp += "vmPic:'" + getHostPic(vmMap.get(vmName).getStat()) + "' }";
+						}
 						tmp += "],";
 						
 						srv = hostInfo.getSrv(srvName);
@@ -344,6 +354,62 @@ public class MonitorClient {
 			log.error(res);
 			res = "";
 		}
+		return res;
+	}
+	
+	public String getVMInfos(String hostName, String vmName) {
+		String res = "";
+		Host host = mntPool.getHost(hostName);
+		VM vm = host.getVMMap().get(vmName);
+		VM.CPUInfo cpu = vm.getCPUInfo();
+		VM.MemInfo mem = vm.getMemInfo();
+		VM.DiskInfo disk = vm.getDiskInfo();
+		VM.NetInfo net = vm.getNetInfo();
+		
+		res += "{vmName:'" + vmName + "',\n"
+				+ "hostName:'" + hostName + "',"
+				+ "chkTime:'" + host.getHostTime() + "',";
+		res += "runStat:'" + vm.getRunStat() + "',\n";
+		res += "hostPic:'" + this.getHostPic(vm.getStat()) + "',\n";
+		res += "cpu:{"
+				+ "vcpus:" + cpu.vcpu + ","
+				+ "time:'" + cpu.cpuTime + "',"
+				+ "stat:'" + cpu.stat + "',"
+				+ "cpu:" + cpu.cpu + "\n},";
+		
+		res += "mem:{"
+			+ "mem:" + mem.currMem + ","
+			+ "usage:" + mem.currMem + ","
+			+ "max:'" + mem.memory + "',"
+			+ "maxPer:'" + (mem.memory > 0 ? ((int)mem.currMem*100/(int)mem.memory): 100) + "'"
+			+ "\n},";
+		
+		res += "net:[";
+		for (int i = 0 ; i < net.vifList.size() ; i++) {
+			VM.VifInfo vif = net.vifList.get(i);
+			if (i>0)
+				res += ",";
+			res += "{dev:'" + vif.dev + "',"
+				+ "ip:'" + vif.ip + "',"
+				+ "mac:'" + vif.mac + "',"
+				+ "tx:'" + vif.tx_bytes + "',"
+				+ "rx:'" + vif.rx_bytes + "'}";
+		}
+		res += "],";
+		res += "disk:[";
+		for (int i = 0 ; i < disk.imgList.size() ; i++) {
+			VM.ImageInfo img = disk.imgList.get(i);
+			if (i>0)
+				res += ",";
+			res += "{ img:'" + img.img + "',"
+				+ "fmt:'" + img.fmt + "',"
+				+ "virSize:'" + img.virSize + "',"
+				+ "size:'" + img.size + "',"
+				+ "bak:'" + img.bak + "'}";
+		}
+		res += "]";
+		
+		res += "}";
 		return res;
 	}
 	

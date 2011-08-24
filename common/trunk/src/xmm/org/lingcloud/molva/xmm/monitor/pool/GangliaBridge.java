@@ -33,6 +33,20 @@ import org.w3c.dom.*;
  */
 class GangliaBridge extends MonitorBridge {
 	
+	public static void main(String args[]) {
+		try {
+			System.setProperty("lingcloud.home", "/opt/lingcloud");
+			MonitorBridge b = new GangliaBridge();
+			Map<String, Host> hs = new HashMap<String, Host>(); 
+			
+			hs = b.getHostMap(hs);
+			
+			System.out.println(hs.get("10.0.0.10"));
+		}catch(Exception e) {
+			log.error(e);
+		}
+	}
+	
 	private XPath xpath = XPathFactory.newInstance().newXPath();
 	
 	protected Document getGangliaMonitorData() throws Exception {
@@ -58,22 +72,8 @@ class GangliaBridge extends MonitorBridge {
 		}
 		in.close();
 		child.destroy();
-		
+		//System.out.println(sb);
 		return XmlUtil.build(sb.toString());
-	}
-	
-	public static void main(String args[]) {
-		try {
-			System.setProperty("lingcloud.home", "/opt");
-			MonitorBridge b = new GangliaBridge();
-			Map<String, Host> hs = new HashMap<String, Host>(); 
-			
-			hs = b.getHostMap(hs);
-			
-			// System.out.println(hs.get("10.0.0.10"));
-		}catch(Exception e) {
-			log.error(e);
-		}
 	}
 	
 	protected Map<String, Service> getSrvFromNode(Map<String, Service> srvMap, Node hostNode) {
@@ -586,6 +586,189 @@ class GangliaBridge extends MonitorBridge {
 		return srv;
 	}
 	
+	protected String getVMState(String stat) {
+		String ret = MonitorConstants.MONITOR_STAT_CRIT;
+		if (ret == null) {
+			return ret;
+		}
+		if (stat.contains("run") ||
+				stat.contains("idle") ) {
+			ret = MonitorConstants.MONITOR_STAT_OK;
+		}else if (stat.contains("paused")) {
+			ret = MonitorConstants.MONITOR_STAT_WARN;
+		}
+		return ret;
+	}
+	
+	protected int getVMInfos(Map<String,VM> vmMap, Node hostNode) throws Exception {
+		VM vm = null;
+		vmMap.clear();
+		for (String key : vmMap.keySet()) {
+			vm = vmMap.get(key);
+			vm.setFlag(false);
+		}
+		String names = xpath.evaluate("./METRIC[@NAME='vm_name_infos']/@VAL", hostNode);
+		String cpus = xpath.evaluate("./METRIC[@NAME='vm_cpu_infos']/@VAL", hostNode);
+		String mems = xpath.evaluate("./METRIC[@NAME='vm_mem_infos']/@VAL", hostNode);
+		String disks = xpath.evaluate("./METRIC[@NAME='vm_disk_infos']/@VAL", hostNode);
+		String nets = xpath.evaluate("./METRIC[@NAME='vm_net_infos']/@VAL", hostNode);
+		String[] bufs ;
+		String sep = "\\|";
+		
+		/**
+		 * VM name and state list
+		 * eg:
+		 *  one-x:state |
+		 *  one-xx:state
+		 */
+		bufs = names.split(sep);
+		String stat;
+		for (int i = 0 ; i < bufs.length ; i++) {
+			String[] tmp = bufs[i].split(":");
+			if (tmp.length == 2){
+				vm = vmMap.get(tmp[0]);
+				stat = this.getVMState(tmp[1]);
+				if (vm == null) {
+					vm = new VM(tmp[0], stat);
+					vmMap.put(tmp[0], vm);
+				}else {
+					vm.setState(stat);
+				}
+				vm.setRunStat(tmp[1]);
+			}else {
+				log.warn("GangliaBridge: VM name and stat format Error: " 
+						+ bufs[i]);
+			}
+		}
+		for (String key : vmMap.keySet()) {
+			vm = vmMap.get(key);
+			if (!vm.getFlag()) {
+				vmMap.remove(key);
+			}
+		}
+		
+		/**
+		 * VM CPU infos
+		 * eg:
+		 *  vmName:one-x;vcpu:2,VCPU: 0,CPU: 0,State:running,CPU time: 84018.3s,CPU Affinity: y------- |
+		 *  vmName:one-xx;vcpu:2,VCPU: 0,CPU: 0,State:running,CPU time: 84018.3s,CPU Affinity: y-------
+		 */
+		VM.CPUInfo cpu;
+		bufs = cpus.split(sep);
+		for (int i = 0 ; i < bufs.length ; i++) {
+			try {
+				String[] tmp = bufs[i].split(";");
+				vm = vmMap.get(tmp[0].split(":",2)[1]);
+				tmp = tmp[1].split(",");
+				cpu = vm.getCPUInfo();
+				cpu.vcpu = Integer.parseInt(tmp[0].split(":",2)[1].trim());
+				cpu.cpu = Integer.parseInt(tmp[2].split(":",2)[1].trim());
+				cpu.cpuTime = tmp[4].split(":",2)[1].trim();
+				cpu.stat = tmp[3].split(":",2)[1].trim();
+			}catch(Exception e) {
+				log.warn(e);
+				log.warn(bufs[i]);
+			}
+		}
+		
+		/**
+		 * VM memory infos
+		 * eg:
+		 *  vmName:one-x;memory:524288,currMem:524288 | 
+		 *  vmName:one-xx;memory:524288,currMem:524288
+		 */
+		VM.MemInfo mem;
+		bufs = mems.split(sep);
+		for (int i = 0 ; i < bufs.length ; i++) {
+			try {
+				String[] tmp = bufs[i].split(";");
+				vm = vmMap.get(tmp[0].split(":",2)[1]);
+				tmp = tmp[1].split(",");
+				mem = vm.getMemInfo();
+				mem.memory = Double.parseDouble(tmp[0].split(":",2)[1].trim());
+				mem.currMem = Double.parseDouble(tmp[1].split(":",2)[1].trim());
+			}catch(Exception e) {
+				log.warn(e);
+				log.warn(bufs[i]);
+			}
+		}
+		
+		/**
+		 * VM disk infos
+		 * eg:
+		 * vmName:one-x;
+		 * ***ula/var//x/images/disk.0,qcow,10M(10485760bytes),4.0K |
+		 * vmName:one-xx;
+		 * ***ula/var//xx/images/disk.0,qcow,10M(10485760bytes),4.0K 
+		 */
+		VM.DiskInfo ds;
+		VM.ImageInfo img;
+		bufs = disks.split(sep);
+		for (int i = 0 ; i < bufs.length ; i++) {
+			try {
+				String[] tmp = bufs[i].split(";");
+				vm = vmMap.get(tmp[0].split(":",2)[1]);
+				ds = vm.getDiskInfo();
+				if (ds.imgList.size() != tmp.length - 1) {
+					ds.imgList.clear();
+					for (int j = 1 ; j < tmp.length ; j++)
+						ds.imgList.add(new VM.ImageInfo());
+				}
+				for (int j = 1 ; j < tmp.length ; j++) {
+					String[] t = tmp[j].split(",");
+					img = ds.imgList.get(j-1);
+					img.img = t[0].trim();
+					img.fmt = t[1].trim();
+					img.virSize = t[2].trim();
+					img.size = t[3].trim();
+					img.bak = "";
+				}
+			}catch(Exception e) {
+				log.warn(e);
+				log.warn(bufs[i]);
+			}
+		}
+		
+		/**
+		 * VM network infos
+		 * eg: dev,ip,mac,tx,rx
+		 *  vmName:one-x;
+		 *  vifx.0,192.168.0.1,01:00:00:01:00:01, 0,0;
+		 *  vifx.1,10.0.0.10,ee:ee:ac:16:01:c9, 0,0 |
+		 *  vmName:one-xx;
+		 *  vifxx.0,192.168.0.2,00:01:00:03:00:02, 0,0
+		 */
+		VM.NetInfo ns;
+		VM.VifInfo vif;
+		bufs = nets.split(sep);
+		for (int i = 0 ; i < bufs.length ; i++) {
+			try {
+				String[] tmp = bufs[i].split(";");
+				vm = vmMap.get(tmp[0].split(":",2)[1]);
+				ns = vm.getNetInfo();
+				if (ns.vifList.size() != tmp.length - 1) {
+					ns.vifList.clear();
+					for (int j = 1 ; j < tmp.length ; j++)
+						ns.vifList.add(new VM.VifInfo());
+				}
+				for (int j = 1 ; j < tmp.length ; j++) {
+					String[] t = tmp[j].split(",");
+					vif = ns.vifList.get(j-1);
+					vif.dev = t[0].trim();
+					vif.ip = t[1].trim();
+					vif.mac = t[2].trim();
+					vif.tx_bytes = t[3].trim();
+					vif.rx_bytes = t[4].trim();
+				}
+			}catch(Exception e) {
+				log.warn(e);
+				log.warn(bufs[i]);
+			}
+		}
+		
+		return 0;
+	}
+	
 	protected Service getSrv_VMList(Map<String, Service> srvMap, Node hostNode) throws Exception {
 		String key = MonitorConstants.MONITOR_HOST_VMLIST;
 		String name = key;
@@ -650,11 +833,13 @@ class GangliaBridge extends MonitorBridge {
 				host.setHostTime(tm);
 			}
 			getSrvFromNode(host.getSrvMap(), hn);
+			getVMInfos(host.getVMMap(), hn);
 		}
 		
 		return hostMap;
 	}
 	
+	@Override
 	public Host updateHost(Host host) throws Exception {
 		return host;
 	}

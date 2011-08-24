@@ -9,14 +9,14 @@
 # http://lingcloud.org
 #
 
-import commands
+import commands,os
 from xml.dom.ext.reader import Sax2
 from xml import xpath,dom
 
 descriptors = list()
 vm_list = list()
 
-gmetric = './gmetric -t string '
+gmetric = os.getcwd() + '/gmetric -t string '
 
 def get_vm_num(name):
 	global vm_list
@@ -39,7 +39,9 @@ def get_vm_cpuinfos(doc, domid):
 	ret = 'vcpu:' + r[0].nodeValue + ','
 	cmd = 'virsh vcpuinfo ' + domid
 	(stat, output) = commands.getstatusoutput(cmd)
-	output = output[0:-1]
+	l = output.find('\nCPU Affinity')
+	output = output[0:l]
+	output = output.replace(' ','')
 	ret += output.replace('\n', ',')
 	
 	return ret
@@ -57,14 +59,18 @@ def get_vm_diskinfos(doc, domid):
 	ret = ''
 	r = xpath.Evaluate('/domain/devices/disk/source/@file', doc)
 	c = 0
-	imgCmd = 'qemu-img info '
+	imgCmd = '/usr/bin/qemu-img info '
+	# img,fmt,virSize,size
 	for i in r:
 		cmd = imgCmd + i.value
 		(stat, output) = commands.getstatusoutput(cmd)
-		c += 1
-		if c > 1:
-			ret += ';'
-		ret += output.replace('\n', ',')
+		out = output.splitlines()
+		ret += '***' + out[0].split(':')[1][-25:] + ','
+		ret += out[1].split(':')[1] + ','
+		ret += out[2].split(':')[1] + ','
+		ret += out[3].split(':')[1] 
+
+		ret = ret.replace(' ','')
 
 	return ret
 
@@ -73,20 +79,37 @@ def get_vm_netinfos(doc, domid):
 	r = xpath.Evaluate('/domain/devices/interface', doc)
 	c = 0
 	ifCmd = 'virsh domifstat ' + domid
+	# dev,ip,mac,tx,rx
 	for i in r:
 		c += 1
 		if c > 1:
 			ret += ';'
 		dev = i.getElementsByTagName('target').item(0).getAttribute('dev')
-		ret += 'dev:' + dev + ','
-		ret += 'ip :' + i.getElementsByTagName('ip').item(0).getAttribute('address') + ','
-		ret += 'mac:' + i.getElementsByTagName('mac').item(0).getAttribute('address') + ','
+		ret += dev + ','
+		ret += i.getElementsByTagName('ip').item(0).getAttribute('address') + ','
+		ret += i.getElementsByTagName('mac').item(0).getAttribute('address') + ','
 		cmd = ifCmd + ' ' + dev
 		(stat, output) = commands.getstatusoutput(cmd)
-		output = output[0:-1]
-		output = output.replace(dev + ' ', '')
-		output = output.replace(' ', ':')
-		ret += output.replace('\n', ',')
+		output = output.replace(dev + ' ','')
+		l = output.find('tx_bytes')
+		if l > 0:
+			tmp = output[l:]
+			l = tmp.find('\n')
+			tmp = tmp[0:l]
+			l = tmp.find(' ')
+			tmp = tmp[l:]
+			ret += tmp
+		else:
+			ret += '0'
+		ret += ','
+		l = output.find('rx_bytes')
+		if l > 0:
+			tmp = output[l:]
+			l = tmp.find('\n')
+			tmp = tmp[0:l]
+			ret += tmp.replace(' ', ':')
+		else:
+			ret += '0'
 
 	return ret
 
@@ -124,10 +147,11 @@ def get_vm_infos(name):
 		# print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_disk_infos" -v "' + diskinfos + '"'
-		# print cmd
+		print cmd
+		print len(cmd)
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_net_infos" -v "' + netinfos + '"'
-		# print cmd
+		print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_name_infos" -v "' + vminfos + '"'
 		# print cmd

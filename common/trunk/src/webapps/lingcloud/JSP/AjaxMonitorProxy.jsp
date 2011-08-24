@@ -67,6 +67,11 @@
 			String srvName = request.getParameter("srv");
 			res = monitorClient.getSrvHistoryImg(hostName, srvName);
 		}
+		else if ("getVMInfos".equals(proxy)) {
+			String hostName = request.getParameter("hostName");
+			String vmName = request.getParameter("vmName");
+			res = monitorClient.getVMInfos(hostName, vmName);
+		}
 	} catch(Exception e) {
 		e.printStackTrace();
 		res = "false";

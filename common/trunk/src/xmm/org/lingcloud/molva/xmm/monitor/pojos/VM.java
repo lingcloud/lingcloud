@@ -13,6 +13,8 @@
 
 package org.lingcloud.molva.xmm.monitor.pojos;
 
+import java.util.*;
+
 /**
  * <strong>Purpose:</strong><br>
  * 
@@ -21,49 +23,123 @@ package org.lingcloud.molva.xmm.monitor.pojos;
  */
 public class VM {
 	private String vmName;
-	private String vmIP;
+	private String vmRunningState;
 	private String vmTime;
 	private String vmStat;
+	private boolean flag = true;
 	
-	public class CPU {
-		
+	public static class CPUInfo {
+		public int vcpu = 0;
+		public int cpu = 0;
+		public String cpuTime = "";
+		public String stat = "";
 	}
 	
-	public class Mem {
-		
+	public static class MemInfo {
+		public double memory = 0;
+		public double currMem = 0;
 	}
 	
-	public class Disk {
-		
+	public static class ImageInfo {
+		public String img = "";
+		public String fmt = "";
+		public String virSize = "";
+		public String size = "";
+		public String bak = "";
 	}
 	
-	public class Net {
-		
+	public static class DiskInfo {
+		public List<ImageInfo> imgList = new ArrayList<ImageInfo>();
 	}
 	
-	private CPU vmCpu;
-	private Mem vmMem;
-	private Disk vmDisk;
-	private Net vmNet;
+	public static class VifInfo {
+		public String dev = "";
+		public String ip = "";
+		public String mac = "";
+		
+		public String tx_bytes = "";
+		public String rx_bytes = "";
+	}
 	
-	public VM(String name, String ip, String tm, String stat) {
+	public static class NetInfo {
+		public List<VifInfo> vifList = new ArrayList<VifInfo>();
+	}
+	
+	private CPUInfo vmCpu = new CPUInfo();
+	private MemInfo vmMem = new MemInfo();
+	private DiskInfo vmDisk = new DiskInfo();
+	private NetInfo vmNet = new NetInfo();
+	
+	public CPUInfo getCPUInfo() {
+		return vmCpu;
+	}
+	
+	public void setCPUInfo(CPUInfo cpu) {
+		vmCpu = cpu;
+	}
+	
+	public MemInfo getMemInfo() {
+		return vmMem;
+	}
+	
+	public void setMemInfo(MemInfo mem) {
+		vmMem = mem;
+	}
+	
+	public DiskInfo getDiskInfo() {
+		return vmDisk;
+	}
+	
+	public void setDiskInfo(DiskInfo disk) {
+		vmDisk = disk;
+	}
+	
+	public NetInfo getNetInfo() {
+		return vmNet;
+	}
+	
+	public void setNetInfo(NetInfo net) {
+		vmNet = net;
+	}
+	
+	public VM(String name, String stat) {
 		vmName = name;
-		vmIP = ip;
-		vmTime = tm;
 		vmStat = stat;
+	}
+	
+	public void setFlag(boolean t) {
+		flag = t;
+	}
+	
+	public boolean getFlag() {
+		return flag;
+	}
+	
+	public void setState(String stat) {
+		this.vmStat = stat;
+	}
+	
+	public String getStat() {
+		return vmStat;
+	}
+	
+	public void setRunStat(String running) {
+		vmRunningState = running;
+	}
+	
+	public String getRunStat() {
+		return vmRunningState;
 	}
 	
 	@Override
 	public String toString() {
 		if (vmName == null 
-				|| vmIP == null
 				|| vmTime == null
 				|| vmStat == null) {
 			return "";
 		}
 		return "{"
 				+ "\tvmName:'" + vmName + "',\n"
-				+ "\tvmIP:'" + vmIP + "',\n"
 				+ "\tvmTime:'" + vmTime + "',\n"
 				+ "\tvmStat:'" + vmStat + "',\n" 
 				+ "\tcpu:" + vmCpu

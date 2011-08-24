@@ -31,7 +31,7 @@ public class Host {
 	private String			hostTime;
 	
 	private Map<String, Service>	srvMap = new HashMap<String, Service>();
-	private List<VM>		vmList = new ArrayList<VM>();
+	private Map<String, VM>		vmMap = new HashMap<String, VM>();
 	
 	public Host(String name) {
 		this(name, name, MonitorUtil.getCurrTime());
@@ -72,11 +72,11 @@ public class Host {
 				sb.append(",");
 			}
 		}
-		sb.append("],vmList:[");
-		for (int i = 0 ; i < vmList.size() ; i++) {
-			vm = vmList.get(i);
+		sb.append("],vmMap:[");
+		for (int i = 0 ; i < vmMap.size() ; i++) {
+			vm = vmMap.get(i);
 			sb.append(vm);
-			if (i < vmList.size() - 1) {
+			if (i < vmMap.size() - 1) {
 				sb.append(",");
 			}
 		}
@@ -129,7 +129,7 @@ public class Host {
 	
 	public void clear() {
 		srvMap.clear();
-		vmList.clear();
+		vmMap.clear();
 	}
 	
 	public void addSrv(String srvName, Service srv) {
@@ -147,19 +147,19 @@ public class Host {
 		return srvMap.get(srvName);
 	}
 	
-	public void addVM(VM vm) {
-		vmList.add(vm);
+	public void addVM(String name, VM vm) {
+		vmMap.put(name,vm);
 	}
 	
 	public int getVMSize() {
-		return vmList.size();
+		return vmMap.size();
 	}
 	
-	public List<VM> getVMList() {
-		return vmList;
+	public Map<String, VM> getVMMap() {
+		return vmMap;
 	}
 	
 	public VM getVMIndexOf(int i) {
-		return vmList.get(i);
+		return vmMap.get(i);
 	}
 }

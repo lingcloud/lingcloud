@@ -322,7 +322,9 @@ var lingcloud = {
 			},
 			cpu:{
 				vcpu:'Virt CPU',
+				cpu:'CPU',
 				time:'CPU Time',
+				stat:'CPU status',
 				usage:'Usage',
 				uptime:'Run Time'
 			},
@@ -334,15 +336,21 @@ var lingcloud = {
 			},
 			disk:{
 				usage:'Usage',
+				img:'Image',
+				fmt:'Format',
 				max:'Max',
 				dir:'Dir',
-				size:'Size'
+				virSize:'Virtual Size',
+				size:'Size',
+				bak:'Backing File'
 			},
 			net:{
 				nets:'Virt Nets',
+				dev:'Device',
+				mac:'MAC',
 				ip:'Addr',
 				tx:'Transmit',
-				sx:'Receive'
+				rx:'Receive'
 			}
 		},
 		monitorMgt: {
