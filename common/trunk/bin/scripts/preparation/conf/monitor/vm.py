@@ -147,14 +147,15 @@ def get_vm_infos(name):
 		# print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_disk_infos" -v "' + diskinfos + '"'
-		print cmd
-		print len(cmd)
+		# print cmd
+		# print len(cmd)
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_net_infos" -v "' + netinfos + '"'
-		print cmd
+		# print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_name_infos" -v "' + vminfos + '"'
 		# print cmd
+		# print len(cmd)
 		(stat, output) = commands.getstatusoutput(cmd)
 
 	return 'To be done' # ret # Ganglia python module's string length limited
