@@ -16,6 +16,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.lingcloud.molva.ocl.lease.LeaseConstants.LeaseLifeCycleState;
+import org.lingcloud.molva.ocl.util.ConfigUtil;
 import org.lingcloud.molva.test.util.TestConfig;
 import org.lingcloud.molva.test.util.TestConstants;
 import org.lingcloud.molva.xmm.ac.PPNPNController;
@@ -47,7 +51,11 @@ import org.lingcloud.molva.xmm.pojos.VirtualNode;
 import org.lingcloud.molva.xmm.services.VirtualManager;
 import org.lingcloud.molva.xmm.util.XMMConstants;
 import org.lingcloud.molva.xmm.util.XmlUtil;
+import org.lingcloud.molva.xmm.vam.pojos.VirtualAppliance;
+import org.lingcloud.molva.xmm.vam.services.VirtualApplianceManager;
+import org.lingcloud.molva.xmm.vam.util.VAMConfig;
 import org.lingcloud.molva.xmm.vam.util.VAMConstants;
+import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 import org.lingcloud.molva.xmm.vmc.VirtualClient;
 
 /**
@@ -74,6 +82,7 @@ public class XMMClientTester {
 	@BeforeClass
 	public static void initializeForAllTest() {
 		try {
+			addVirtualAppliance();
 			createPartion();
 			addPhysicalNode();
 			createVirtualCluster();
@@ -91,6 +100,7 @@ public class XMMClientTester {
 			destroyVirtualCluster();
 			removePhysicalNode();
 			destoryPartion();
+			removeVirtualAppliance();
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("Destory failed. Reasion: " + e);
@@ -754,6 +764,8 @@ public class XMMClientTester {
 			e.printStackTrace();
 			log.error("Destory partion failed. Reasion: " + e);
 		}
+		
+		Thread.sleep(TestConstants.RETRY_INTERVAL);
 	}
 
 	private static PhysicalNode addPhysicalNode() throws Exception {
@@ -982,5 +994,103 @@ public class XMMClientTester {
 			e.printStackTrace();
 			log.error("Destroy virtual cluster failed. Reasion: " + e);
 		}
+	}
+	
+	private static void copyFile(String srcPath, String dstPath) 
+		throws Exception {
+		int total = 0;
+		int read = 0;
+		File srcfile = new File(srcPath);
+		if (srcfile.exists()) { 
+			FileInputStream fis = new FileInputStream(srcPath); 
+			FileOutputStream fos = new FileOutputStream(dstPath);
+			byte[] buffer = new byte[TestConstants.K];
+			
+			while ((read = fis.read(buffer)) != -1) {
+				total += read;
+				fos.write(buffer, 0, read);
+			}
+			fis.close();
+			fos.close();
+		}
+	}
+	
+	public static void addVirtualAppliance() throws Exception {
+		VirtualApplianceManager vam = VAMUtil.getVAManager();
+		String guid = TestConstants.TEST_EVN_GUID_APP;
+		
+		try {
+			if (vam.queryAppliance(guid) != null) {
+				return;
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+		
+		String imagePath = ConfigUtil.getHomePath() 
+				+ "/bin/images/example/example.img";
+		File image = new File(imagePath);
+
+		assertTrue(image.exists());
+
+		copyFile(imagePath, VAMConfig.getDiskUploadDirLocation()
+				+ "/example.img");
+		
+		String format = VAMConfig.getImageFormat();
+		String loader = VAMConstants.VA_BOOTLOAD_HVM;
+		String name = "testAppliance";
+		String location = "example.img";
+		String os = "Linux";
+		String osversion = "";
+		String category = "0";
+		int cpuamount = 2;
+		int memsize = TestConstants.K / 2;
+		int loginstyle = VAMConstants.LOGIN_STYLE_GLOBAL_USER;
+		List<String> accessWayList = new ArrayList<String>();
+		accessWayList.add(VAMConstants.VA_ACCESS_WAY_VNC);
+		List<String> langl = new ArrayList<String>();
+		langl.add("English");
+		String description = "test appliance.";
+		
+		VirtualAppliance va = new VirtualAppliance();
+		va.setGuid(guid);
+		va.setVAName(name);
+		va.setAccessWay(accessWayList);
+		va.setCpuAmount(cpuamount);
+		va.setMemory(memsize);
+		List<String> appl = new ArrayList<String>();
+		va.setApplications(appl);
+		va.setBootLoader(loader);
+		va.setCategory(category);
+		va.setDescription(description);
+		va.setLanguages(langl);
+		va.setOs(os, osversion);
+		va.setFormat(format);
+		va.setLoginStyle(loginstyle);
+		va.setUsername("");
+		va.setPassword("");
+		va = vam.addAppliance(va, location);
+		
+		assertNotNull(va);
+		
+		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
+			VirtualAppliance appliance = vam.queryAppliance(va.getGuid());
+			if (appliance.getState() == VAMConstants.STATE_READY) {
+				break;
+			}
+			Thread.sleep(TestConstants.RETRY_INTERVAL);
+		}
+	}
+
+	public static void removeVirtualAppliance() throws Exception {
+		try {
+			String guid = TestConstants.TEST_EVN_GUID_APP;
+			VirtualApplianceManager vam = VAMUtil.getVAManager();
+			vam.removeAppliance(guid);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("remove virtual appliance failed. Reasion: " + e);
+		}
+		Thread.sleep(TestConstants.RETRY_INTERVAL);
 	}
 }

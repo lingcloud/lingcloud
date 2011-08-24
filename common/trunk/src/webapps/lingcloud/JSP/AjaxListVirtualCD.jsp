@@ -27,7 +27,7 @@
 	if (!(buf.toString().indexOf("option") > -1)) {
 		buf.append("<option>");
 		buf.append("<value>-1</value>");
-		buf.append("<text>No Available VirtualCD1</text>");
+		buf.append("<text>No Available VirtualCD</text>");
 		buf.append("</option>");
 	}
 	buf.append("</VirtualCD>");

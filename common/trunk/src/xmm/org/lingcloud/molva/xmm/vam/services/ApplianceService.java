@@ -96,8 +96,11 @@ public class ApplianceService {
 		// create a new file
 		VAFile disk = fileService.createFile(appliance.getVAName(), null,
 				VAMConstants.VAF_FILE_TYPE_DISK, appliance.getFormat(), 0);
-
-		String guid = VAMUtil.genGuid();
+		
+		String guid = appliance.getGuid();
+		if (guid == null) {
+			guid = VAMUtil.genGuid();
+		}
 		appliance.setGuid(guid);
 		appliance.setParent(VAMConstants.NULL);
 		appliance.setRef(0);
