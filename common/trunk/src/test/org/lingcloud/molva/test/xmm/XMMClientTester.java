@@ -17,8 +17,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +34,7 @@ import org.lingcloud.molva.ocl.lease.LeaseConstants.LeaseLifeCycleState;
 import org.lingcloud.molva.ocl.util.ConfigUtil;
 import org.lingcloud.molva.test.util.TestConfig;
 import org.lingcloud.molva.test.util.TestConstants;
+import org.lingcloud.molva.test.util.TestUtils;
 import org.lingcloud.molva.xmm.ac.PPNPNController;
 import org.lingcloud.molva.xmm.ac.PVNPNController;
 import org.lingcloud.molva.xmm.ac.PartitionAC;
@@ -996,25 +995,6 @@ public class XMMClientTester {
 		}
 	}
 	
-	private static void copyFile(String srcPath, String dstPath) 
-		throws Exception {
-		int total = 0;
-		int read = 0;
-		File srcfile = new File(srcPath);
-		if (srcfile.exists()) { 
-			FileInputStream fis = new FileInputStream(srcPath); 
-			FileOutputStream fos = new FileOutputStream(dstPath);
-			byte[] buffer = new byte[TestConstants.K];
-			
-			while ((read = fis.read(buffer)) != -1) {
-				total += read;
-				fos.write(buffer, 0, read);
-			}
-			fis.close();
-			fos.close();
-		}
-	}
-	
 	public static void addVirtualAppliance() throws Exception {
 		VirtualApplianceManager vam = VAMUtil.getVAManager();
 		String guid = TestConstants.TEST_EVN_GUID_APP;
@@ -1033,7 +1013,7 @@ public class XMMClientTester {
 
 		assertTrue(image.exists());
 
-		copyFile(imagePath, VAMConfig.getDiskUploadDirLocation()
+		TestUtils.copyFile(imagePath, VAMConfig.getDiskUploadDirLocation()
 				+ "/example.img");
 		
 		String format = VAMConfig.getImageFormat();

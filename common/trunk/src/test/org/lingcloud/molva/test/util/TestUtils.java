@@ -13,6 +13,10 @@
 
 package org.lingcloud.molva.test.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 /**
  * <strong>Purpose:</strong><br>
  * The utils for LingCloud Portal test.
@@ -32,9 +36,28 @@ public class TestUtils {
 	public static String getBrowser() {
 		return browser;
 	}
-	
+
+	public static void copyFile(String srcPath, String dstPath)
+			throws Exception {
+		int total = 0;
+		int read = 0;
+		File srcfile = new File(srcPath);
+		if (srcfile.exists()) {
+			FileInputStream fis = new FileInputStream(srcPath);
+			FileOutputStream fos = new FileOutputStream(dstPath);
+			byte[] buffer = new byte[TestConstants.K];
+
+			while ((read = fis.read(buffer)) != -1) {
+				total += read;
+				fos.write(buffer, 0, read);
+			}
+			fis.close();
+			fos.close();
+		}
+	}
+
 	private TestUtils() {
-		
+
 	}
 
 }
