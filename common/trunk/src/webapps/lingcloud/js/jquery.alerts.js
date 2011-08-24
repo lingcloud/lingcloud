@@ -104,7 +104,6 @@
 				
 			if( $.alerts.dialogClass ) $("#popup_container").addClass($.alerts.dialogClass);
 			
-			
 			// IE6 Fix
 			//var pos = ($.browser.msie && parseInt($.browser.version) <= 6 ) ? 'absolute' : 'fixed'; 
 			var pos="absolute";
@@ -113,7 +112,9 @@
 				position: pos,
 				zIndex: 99999,
 				padding: 0,
-				margin: 0
+				margin: 0,
+				top: $(document).scrollTop(),
+				left: $(document).scrollLeft()
 			});
 			
 			$("#popup_title").text(title);
@@ -206,7 +207,7 @@
 
 			$.alerts._reposition();
 			$.alerts._maintainPosition(true);
-			
+
 			// Make draggable
 			if( $.alerts.draggable ) {
 				try {
@@ -234,8 +235,8 @@
 						
 						top: '0px',
 						left: '0px',
-						width: '100%',
-						height: $(window).height(),
+						width: $(document).width(),
+						height: $(document).height(),
 						background: $.alerts.overlayColor,
 						opacity: $.alerts.overlayOpacity
 					});
@@ -249,15 +250,20 @@
 		_reposition: function() {
 			//var top = (($(window).height() / 2) - ($("#popup_container").outerHeight() / 2)) + $.alerts.verticalOffset;
 			//Modified by Xiaoyi Lu at 2010.1.11 for auto adjust to window size.
-			var top = (($(window).height() - $("#popup_container").outerHeight()) / 2);
-			var left = (($(window).width() / 2) - ($("#popup_container").outerWidth() / 2)) + $.alerts.horizontalOffset;
+			$("#popup_overlay").height( $(window).height() );
+			$("#popup_overlay").width( $(window).width() );
+			$("#popup_overlay").height( $(document).height() );
+			$("#popup_overlay").width( $(document).width() );
+			
+			var top = $(document).scrollTop() + (($(window).height() - $("#popup_container").outerHeight()) / 2);
+			var left = $(document).scrollLeft() + (($(window).width() / 2) - ($("#popup_container").outerWidth() / 2)) + $.alerts.horizontalOffset;
 			
 			if( top < 0 ) top = 0;
 			if( left < 0 ) left = 0;
 			
 			// IE6 fix
 			if( $.browser.msie && parseInt($.browser.version) <= 6 ) top = top + $(window).scrollTop();
-			$("#popup_overlay").height( $(window).height() );
+
 			$("#popup_container").css({
 				top: top + 'px',
 				left: left + 'px'
