@@ -1198,6 +1198,42 @@ public class XMMImpl {
 	}
 	
 	/**
+	 * Boot the virtual node.
+	 * @param guid the virtual node's guid
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public VirtualNode bootVirtualNode(String guid) throws Exception {
+		ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		try {
+
+			return parm.bootVirtualNode(guid.trim());
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+
+		}
+	}
+	
+	/**
+	 * Shutdown the virtual node.
+	 * @param guid the virtual node's guid
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public VirtualNode shutdownVirtualNode(String guid) throws Exception {
+		ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		try {
+
+			return parm.shutdownVirtualNode(guid.trim());
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+
+		}
+	}
+	
+	/**
 	 * Migrate the virtual node, if it's running, will live-migrate.
 	 * @param guid the virtual node's guid
 	 * @param hostId the new host's id

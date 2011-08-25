@@ -75,8 +75,12 @@ public class OperateVirtualNodeAction extends NeedLoginAction{
 
 			XMMClient vxc = XMMPortalUtil.getXMMClient();
 			if ("boot".equals(action)) {
-				vxc.startVirtualNode(vNodeGuid);
+				vxc.bootVirtualNode(vNodeGuid);
 			}else if ("shutdown".equals(action)) {
+				vxc.shutdownVirtualNode(vNodeGuid);
+			}else if ("start".equals(action)) {
+				vxc.startVirtualNode(vNodeGuid);
+			}else if ("stop".equals(action)) {
 				vxc.stopVirtualNode(vNodeGuid);
 			}else if ("migrate".equals(action)) {
 				String pNodeGuid = (String) operateVNodeForm.get("pnName");

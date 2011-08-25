@@ -1004,6 +1004,8 @@ public class VirtualClientImpl implements VirtualClient {
 		if (! XMMConstants.MachineRunningState.SHUTDOWN.toString().equals(stat)
 				&& ! XMMConstants.MachineRunningState.ERROR.toString().equals(stat)
 				&& ! XMMConstants.MachineRunningState.STOP.toString().equals(stat)
+				&& ! XMMConstants.MachineRunningState.BOOT.toString().equals(stat)
+				&& ! XMMConstants.MachineRunningState.SHUTTING.toString().equals(stat)
 				&& ! XMMConstants.MachineRunningState.WAIT_DEPLOY.toString().equals(stat)) {
 			throw new Exception("Virtual machine " 
 								+ vnode.getName() 
@@ -1020,9 +1022,7 @@ public class VirtualClientImpl implements VirtualClient {
 					+ vnode.getName() + "), the detail msg as: "
 					+ onrc.getErrorMessage());
 		} else {
-			if(newvir.lcmStateStr().equals(VirtualMachine
-					.LCM_STATE[VirtualMachine.LCM_STATE_UNKNOWN]) &&
-					newvir.stateStr().equals(VirtualMachine
+			if(	newvir.stateStr().equals(VirtualMachine
 							.VM_STATES[VirtualMachine.VM_STATE_ACTIVE])){ 
 				OneResponse sonrc = newvir.restart();
 				if (sonrc.isError()) {
@@ -1085,6 +1085,8 @@ public class VirtualClientImpl implements VirtualClient {
 			}
 			vnode.setRunningStatus(XMMConstants.MachineRunningState.SHUTTING
 					.toString());
+			
+			newvir.stop();
 			
 			log.info("The VM(" + vnode.getName() + ") is shutting down.");
 		}

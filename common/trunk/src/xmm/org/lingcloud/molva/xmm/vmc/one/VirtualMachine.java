@@ -421,9 +421,7 @@ public class VirtualMachine extends PoolElement {
 						.toString());
 			}
 		} else if (state.equals(VM_STATES[VM_STATE_INIT])
-				|| state.equals(VM_STATES[VM_STATE_PENDING])
-				|| lcmState.equals(LCM_STATE[LCM_STATE_INIT])
-				|| lcmState.equals(LCM_STATE[LCM_STATE_PROLOG])) {
+				|| state.equals(VM_STATES[VM_STATE_PENDING])) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.BOOT
 					.toString());
 		} else if (state.equals(VM_STATES[VM_STATE_ACTIVE])
@@ -451,7 +449,12 @@ public class VirtualMachine extends PoolElement {
 					.toString());
 		}else if (lcmState.contains("SAVE")) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.SAVING
-					.toString());	
+					.toString());
+		}else if ( lcmState.equals(LCM_STATE[LCM_STATE_INIT])
+						|| lcmState.equals(LCM_STATE[LCM_STATE_PROLOG])
+						|| lcmState.equals(LCM_STATE[LCM_STATE_BOOT])) {
+					newvi.setRunningStatus(XMMConstants.MachineRunningState.BOOT
+							.toString());
 		}else {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.ERROR
 					.toString());

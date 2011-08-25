@@ -321,6 +321,28 @@ public class XMMImplWrapper {
 	}
 	
 	/**
+	 * Boot the virtual node.
+	 * @param guid the virtual node's guid
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public String bootVirtualNode(String guid) throws Exception {
+		VirtualNode vn = impl.bootVirtualNode(guid);
+		return XmlUtil.toXml(vn);
+	}
+	
+	/**
+	 * Shutdown the virtual node.
+	 * @param guid the virtual node's guid
+	 * @return the virtual node
+	 * @throws Exception
+	 */
+	public String shutdownVirtualNode(String guid) throws Exception {
+		VirtualNode vn = impl.shutdownVirtualNode(guid);
+		return XmlUtil.toXml(vn);
+	}
+	
+	/**
 	 * Migrate the virtual node, if it's running, will live-migrate.
 	 * @param vNodeGuid the virtual node's guid
 	 * @param pNodeGuid the new host's guid

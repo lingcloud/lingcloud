@@ -891,6 +891,28 @@ public class XMMClient {
 		return (VirtualNode) XmlUtil.fromXml(vnstr);
 	}
 	
+	public VirtualNode bootVirtualNode(String guid) throws XMMException {
+		try {
+			ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		}catch (Exception e) {
+			throw new XMMException(e.getMessage());
+		}
+		String vnstr = (String) XMMUtil.callService(xmmServerUrl, "bootVirtualNode", new Object[] {guid});
+		
+		return (VirtualNode) XmlUtil.fromXml(vnstr);
+	}
+	
+	public VirtualNode shutdownVirtualNode(String guid) throws XMMException {
+		try {
+			ParaChecker.checkGuidFormat(guid, "virtual node guid");
+		}catch (Exception e) {
+			throw new XMMException(e.getMessage());
+		}
+		String vnstr = (String) XMMUtil.callService(xmmServerUrl, "shutdownVirtualNode", new Object[] {guid});
+		
+		return (VirtualNode) XmlUtil.fromXml(vnstr);
+	}
+	
 	public VirtualNode migrateVirtualNode(String guid, String hostGuid) throws XMMException {
 		try {
 			ParaChecker.checkGuidFormat(guid, "virtual node guid");

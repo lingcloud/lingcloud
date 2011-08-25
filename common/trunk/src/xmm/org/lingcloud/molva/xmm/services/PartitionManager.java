@@ -164,7 +164,7 @@ public class PartitionManager {
 			return null;
 		} else {
 			VirtualNode vn = new VirtualNode(asset);
-			VirtualManager.getInstance().getVirtualClient().bootVirtualNode(vn);
+			VirtualManager.getInstance().getVirtualClient().startVirtualNode(vn);
 			
 			ami.update(guid, vn);
 			return vn;
@@ -172,6 +172,34 @@ public class PartitionManager {
 	}
 	
 	public VirtualNode stopVirtualNode(String guid) throws Exception  {
+		AssetManagerImpl ami = new AssetManagerImpl();
+		Asset asset = ami.view(guid);
+		if (asset == null) {
+			return null;
+		} else {
+			VirtualNode vn = new VirtualNode(asset);
+			VirtualManager.getInstance().getVirtualClient().stopVirtualNode(vn);
+			
+			ami.update(guid, vn);
+			return vn;
+		}
+	}
+	
+	public VirtualNode bootVirtualNode(String guid) throws Exception  {
+		AssetManagerImpl ami = new AssetManagerImpl();
+		Asset asset = ami.view(guid);
+		if (asset == null) {
+			return null;
+		} else {
+			VirtualNode vn = new VirtualNode(asset);
+			VirtualManager.getInstance().getVirtualClient().bootVirtualNode(vn);
+			
+			ami.update(guid, vn);
+			return vn;
+		}
+	}
+	
+	public VirtualNode shutdownVirtualNode(String guid) throws Exception  {
 		AssetManagerImpl ami = new AssetManagerImpl();
 		Asset asset = ami.view(guid);
 		if (asset == null) {
