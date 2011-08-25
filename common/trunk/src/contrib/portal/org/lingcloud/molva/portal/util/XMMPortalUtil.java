@@ -23,7 +23,9 @@ import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.security.Key;
 import java.util.ArrayList;
@@ -100,6 +102,8 @@ public class XMMPortalUtil {
 	private static final int DEFAULT_RDP_PORT = 3389;
 
 	private static final int DEFAULT_SSH_PORT = 22;
+	
+	private static final int SOCKET_TIMEOUT = 3000;
 
 	public static final String VN_AUTO_CREATE = "auto_create";
 
@@ -390,7 +394,11 @@ public class XMMPortalUtil {
 	public static boolean checkPortIsListening(String ip, int port) {
 		try {
 			// FIXME we must close immedially.
-			new Socket(ip, port).close();
+			SocketAddress address = new InetSocketAddress(ip, port);
+			Socket socket = new Socket();
+			socket.connect(address, SOCKET_TIMEOUT);
+			socket.close();
+
 			return true;
 		} catch (UnknownHostException e) {
 			return false;
