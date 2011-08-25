@@ -463,4 +463,12 @@ public class XMMUtil {
 	public static String getAccessControlUserGroup() throws Exception {
 		return getValueInCfgFile("accessControlUserGroup");
 	}
+	
+	public static String getNetworkBridge() throws Exception {
+		String bridge = getValueInCfgFile("networkBridge");
+		if (bridge == null || "".equals(bridge)) {
+			bridge = XMMConstants.DEFAULT_BRIDGE;
+		}
+		return bridge;
+	}
 }

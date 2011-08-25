@@ -192,9 +192,6 @@ public class VirtualNode extends Node {
 
 	public String getBridge() {
 		String bridge = this.getAttributes().get(BRIDGE);
-		if (bridge == null || "".equals(bridge)) {
-			bridge = XMMConstants.DEFAULT_BRIDGE;
-		}
 		return bridge;
 	}
 
