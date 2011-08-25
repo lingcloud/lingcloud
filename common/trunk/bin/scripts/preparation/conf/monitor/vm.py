@@ -178,7 +178,7 @@ def get_vm_infos(name):
 		cmd = gmetric + ' -n "vm_mem_infos" -v "' + meminfos + '"'
 		#print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
-		#cmd = gmetric + ' -n "vm_disk_infos" -v "' + diskinfos + '"'
+		cmd = gmetric + ' -n "vm_disk_infos" -v "' + diskinfos + '"'
 		#print cmd
 		#print len(cmd)
 		(stat, output) = commands.getstatusoutput(cmd)
