@@ -1474,7 +1474,7 @@ files in <%=f.getName()%>. Compression ratio: <%=(f.length() * 100) / size%>%
 		<h3><bean:message
 			key="org.lingcloud.molva.xmm.virtualAppliance.application" /></h3>
 		</a></td>
-		<td width="150px"></td>
+		
 		<tr>
 			<tr>
 				<td width="700px" colspan="8">
@@ -1728,9 +1728,6 @@ files in <%=f.getName()%>. Compression ratio: <%=(f.length() * 100) / size%>%
 <%@ include file="Foot.jsp" %>
 <!-- end footer --></div>
 <!-- end container -->
-
-
-
 
 </body>
 </html>

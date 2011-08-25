@@ -127,27 +127,6 @@
 	</tr>
 	<tr>
 		<td class="tdKey"><bean:message
-			key="org.lingcloud.molva.xmm.virtualAppliance.loginstyle" /></td>
-		<td class="tdValue"><%=va.getLoginStyle()==VAMConstants.LOGIN_STYLE_GLOBAL_USER?VAMConstants.VA_LOGIN_STYLE_GLOBAL_USER:VAMConstants.VA_LOGIN_STYLE_USER_PASS%></td>
-	</tr>
-	<%
-					if (va.getLoginStyle()!=VAMConstants.LOGIN_STYLE_GLOBAL_USER) {
-				 %>
-	<tr>
-		<td class="tdKey"><bean:message
-			key="org.lingcloud.molva.xmm.virtualAppliance.username" /></td>
-		<td class="tdValue"><%=va.getUsername() %></td>
-	</tr>
-	<tr>
-		<td class="tdKey"><bean:message
-			key="org.lingcloud.molva.xmm.virtualAppliance.password" /></td>
-		<td class="tdValue"><%=va.getPassword() %></td>
-	</tr>
-	<%
-					}
-				 %>
-	<tr>
-		<td class="tdKey"><bean:message
 			key="org.lingcloud.molva.xmm.virtualAppliance.language" /></td>
 		<td class="tdValue"><%=langs %></td>
 	</tr>
