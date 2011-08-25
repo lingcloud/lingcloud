@@ -11,7 +11,6 @@
  *  
  */
 
-
 package org.lingcloud.molva.xmm.vmc;
 
 import java.net.URL;
@@ -73,20 +72,19 @@ public class VirtualClientImpl implements VirtualClient {
 
 	private static int currentClusterInPublicNode = 0;
 
-	private static final String HVM_LOADER_LOCATION = 
-		"/usr/lib/xen/boot/hvmloader";
+	private static final String HVM_LOADER_LOCATION 
+				= "/usr/lib/xen/boot/hvmloader";
 
 	// user to index hard disk in hvm loader. e.g. hda,hdb,hdc...
 	// TODO now we support seven disks.
 	public static final String[] HD_ARRAY = new String[] { "hda", "hdb", "hdc",
 			"hdd", "hde", "hdf", "hdg" };
 
-	private static final String DEVICE_MODEL_LOCATION = 
-		"'/usr/' + arch_libdir + '/xen/bin/qemu-dm'";
+	private static final String DEVICE_MODEL_LOCATION 
+				= "'/usr/' + arch_libdir + '/xen/bin/qemu-dm'";
 
-	private static final String PYGRUB_LOADER_LOCATION = 
-		"/usr/bin/pygrub";
-	
+	private static final String PYGRUB_LOADER_LOCATION = "/usr/bin/pygrub";
+
 	private static final int VNC_PORT = 5900;
 
 	/**
@@ -129,14 +127,12 @@ public class VirtualClientImpl implements VirtualClient {
 			throws Exception {
 		String privateIp = pn.getPrivateIps()[0];
 		if (privateIp == null || "".equals(privateIp)) {
-			throw new Exception(
-					"The privateIp is null or blank, in "
+			throw new Exception("The privateIp is null or blank, in "
 					+ "allocateVmProvisionNode method.");
 		}
 		String hyper = pn.getAttributes().get(XMMConstants.HYPERVISOR);
 		if (hyper == null || "".equals(hyper)) {
-			throw new Exception(
-					"The hypervisor is null or blank, in "
+			throw new Exception("The hypervisor is null or blank, in "
 					+ "allocateVmProvisionNode method.");
 		}
 		String im = "";
@@ -156,14 +152,14 @@ public class VirtualClientImpl implements VirtualClient {
 		} else {
 			throw new Exception(
 					"Not support virtualization hypervisor type, and it "
-					+ "should be xen, kvm, vmware, ec2.");
+							+ "should be xen, kvm, vmware, ec2.");
 		}
 
 		String trans = pn.getTransferway();
 		if (trans == null || "".equals(trans)) {
 			throw new Exception(
 					"The file transfer way of String is null or blank, in"
-					+ " allocateVmProvisionNode method.");
+							+ " allocateVmProvisionNode method.");
 		}
 		String tm = "";
 		if (trans.equalsIgnoreCase(XMMConstants.FILE_TRANSFER_NFS)) {
@@ -332,8 +328,8 @@ public class VirtualClientImpl implements VirtualClient {
 			attRAW4Boot.put("data", "boot = 'c'");
 			vmTemplate.newVectorAttribute("RAW", attRAW4Boot);
 
-			Map<String, String> attRAW4DeviceModel = 
-				new HashMap<String, String>();
+			Map<String, String> attRAW4DeviceModel 
+					= new HashMap<String, String>();
 			attRAW4DeviceModel.put("type", "xen");
 
 			// Bug fixed here, if the os is 64bit, the device_model is
@@ -359,8 +355,8 @@ public class VirtualClientImpl implements VirtualClient {
 			attRAW4Apic.put("data", "apic = 1");
 			vmTemplate.newVectorAttribute("RAW", attRAW4Apic);
 			// localtime = 0
-			Map<String, String> attRAW4Localtime = 
-				new HashMap<String, String>();
+			Map<String, String> attRAW4Localtime 
+					= new HashMap<String, String>();
 			attRAW4Localtime.put("type", "xen");
 			attRAW4Localtime.put("data", "localtime = 0");
 			vmTemplate.newVectorAttribute("RAW", attRAW4Localtime);
@@ -427,7 +423,7 @@ public class VirtualClientImpl implements VirtualClient {
 			}
 		}
 
-		{
+		if (isHeadNode) {
 			Map<String, String> attRAW4VNC = new HashMap<String, String>();
 			attRAW4VNC.put("type", "xen");
 			attRAW4VNC.put("data", "vnc=1");
@@ -435,34 +431,33 @@ public class VirtualClientImpl implements VirtualClient {
 
 			// TODO VNCController and HeadNode structure
 			String vncport = this.getNextVNCPort4Cluster();
-			Map<String, String> attRAW4VNCDispaly = 
-				new HashMap<String, String>();
+			Map<String, String> attRAW4VNCDispaly 
+					= new HashMap<String, String>();
 			attRAW4VNCDispaly.put("type", "xen");
 			attRAW4VNCDispaly.put("data", "vncdisplay=" + vncport);
 			vmTemplate.newVectorAttribute("RAW", attRAW4VNCDispaly);
 
-			Map<String, String> attRAW4VNCUnused = 
-				new HashMap<String, String>();
+			Map<String, String> attRAW4VNCUnused 
+					= new HashMap<String, String>();
 			attRAW4VNCUnused.put("type", "xen");
 			attRAW4VNCUnused.put("data", "vncunused=1");
 			vmTemplate.newVectorAttribute("RAW", attRAW4VNCUnused);
-
-			// FIXME at 2009.11.26, Xiaoyi Lu marked below lines for usb mouse
-			// At 2010-12-19, Xiaoyi Lu opened following lines to solve double
-			// mouse pointer problem; Notice: the following line can be effected
-			// only when the virtual appliance is installed in the
-			// 'usbdevice=tablet' case.
-			Map<String, String> attRAW4USB = new HashMap<String, String>();
-			attRAW4USB.put("type", "xen");
-			attRAW4USB.put("data", "usb=1");
-			vmTemplate.newVectorAttribute("RAW", attRAW4USB);
-
-			Map<String, String> attRAW4USBDevice = 
-				new HashMap<String, String>();
-			attRAW4USBDevice.put("type", "xen");
-			attRAW4USBDevice.put("data", "usbdevice = 'tablet'");
-			vmTemplate.newVectorAttribute("RAW", attRAW4USBDevice);
 		}
+
+		// FIXME at 2009.11.26, Xiaoyi Lu marked below lines for usb mouse
+		// At 2010-12-19, Xiaoyi Lu opened following lines to solve double
+		// mouse pointer problem; Notice: the following line can be effected
+		// only when the virtual appliance is installed in the
+		// 'usbdevice=tablet' case.
+		Map<String, String> attRAW4USB = new HashMap<String, String>();
+		attRAW4USB.put("type", "xen");
+		attRAW4USB.put("data", "usb=1");
+		vmTemplate.newVectorAttribute("RAW", attRAW4USB);
+
+		Map<String, String> attRAW4USBDevice = new HashMap<String, String>();
+		attRAW4USBDevice.put("type", "xen");
+		attRAW4USBDevice.put("data", "usbdevice = 'tablet'");
+		vmTemplate.newVectorAttribute("RAW", attRAW4USBDevice);
 
 		// For vm deploy policy.
 		if (vmdeployResults != null && !vmdeployResults.isEmpty()) {
@@ -505,8 +500,8 @@ public class VirtualClientImpl implements VirtualClient {
 		if (vnodels == null || vnodels.isEmpty()) {
 			return "" + port;
 		}
-		HashMap<String, VirtualNode> portset = 
-			new HashMap<String, VirtualNode>();
+		HashMap<String, VirtualNode> portset 
+				= new HashMap<String, VirtualNode>();
 		for (int i = 0; i < vnodels.size(); i++) {
 			VirtualNode vHeadNode = vnodels.get(i);
 			// like 5902.
@@ -613,7 +608,7 @@ public class VirtualClientImpl implements VirtualClient {
 
 			String bridge = vnode.getBridge();
 			if (bridge == null || "".equals(bridge)) {
-				bridge = XMMConstants.DEFAULT_BRIDGE;
+				bridge = XMMUtil.getNetworkBridge();
 			}
 
 			List<Nic> privateNics = vnode.getPrivateIpNics();
@@ -649,9 +644,9 @@ public class VirtualClientImpl implements VirtualClient {
 			newvi.setVmTemplate(vmt);
 			if (isGraphicEnabled) {
 				String vmtstr = vmt.toString();
-				
-				System.out.println("Langlee: " +  vmtstr);
-				
+
+				System.out.println("Langlee: " + vmtstr);
+
 				int portpos = vmtstr.indexOf("vncdisplay=");
 				String tmp = vmtstr.substring(portpos + "vncdisplay=".length(),
 						vmtstr.length()).trim();
@@ -690,13 +685,11 @@ public class VirtualClientImpl implements VirtualClient {
 
 	public VirtualNode startVirtualNode(VirtualNode vnode) throws Exception {
 		String stat = vnode.getRunningStatus();
-		if (! XMMConstants.MachineRunningState.STOP.toString().equals(stat)) {
-			throw new Exception("Virtual machine " 
-								+ vnode.getName() 
-								+ " CANNOT boot in state - " 
-								+ stat + "!");
+		if (!XMMConstants.MachineRunningState.STOP.toString().equals(stat)) {
+			throw new Exception("Virtual machine " + vnode.getName()
+					+ " CANNOT boot in state - " + stat + "!");
 		}
-		
+
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 		int vid = Integer.parseInt(vir.getId());
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
@@ -706,16 +699,18 @@ public class VirtualClientImpl implements VirtualClient {
 					+ vnode.getName() + "), the detail msg as: "
 					+ onrc.getErrorMessage());
 		} else {
-			if (newvir.stateStr().equals(VirtualMachine
-					.VM_STATES[VirtualMachine.VM_STATE_ACTIVE])
-					&& newvir.lcmStateStr().equals(VirtualMachine
-							.LCM_STATE[VirtualMachine.LCM_STATE_RUNNING])) {
+			if (newvir.stateStr().equals(
+					VirtualMachine.VM_STATES[VirtualMachine.VM_STATE_ACTIVE])
+					&& newvir
+							.lcmStateStr()
+							.equals(VirtualMachine.LCM_STATE[VirtualMachine
+							                      .LCM_STATE_RUNNING])) {
 				vnode.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
 						.toString());
 				return vnode;
 			}
 			OneResponse sonrc = newvir.resume();
-			
+
 			if (sonrc.isError()) {
 				throw new Exception("Error occurred when start the VM("
 						+ vnode.getName() + "), the detail msg as: "
@@ -730,13 +725,11 @@ public class VirtualClientImpl implements VirtualClient {
 
 	public VirtualNode stopVirtualNode(VirtualNode vnode) throws Exception {
 		String stat = vnode.getRunningStatus();
-		if (! XMMConstants.MachineRunningState.RUNNING.toString().equals(stat)) {
-			throw new Exception("Virtual machine " 
-								+ vnode.getName() 
-								+ " CANNOT stop in state - " 
-								+ stat + "!");
+		if (!XMMConstants.MachineRunningState.RUNNING.toString().equals(stat)) {
+			throw new Exception("Virtual machine " + vnode.getName()
+					+ " CANNOT stop in state - " + stat + "!");
 		}
-		
+
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 		int vid = Integer.parseInt(vir.getId());
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
@@ -746,13 +739,16 @@ public class VirtualClientImpl implements VirtualClient {
 					+ vnode.getName() + "), the detail msg as: "
 					+ onrc.getErrorMessage());
 		} else {
-			if (newvir.stateStr().equals(VirtualMachine
-					.VM_STATES[VirtualMachine.VM_STATE_STOPPED])) {
+			if (newvir.stateStr().equals(
+					VirtualMachine.VM_STATES[VirtualMachine
+					                         .VM_STATE_STOPPED])) {
 				vnode.setRunningStatus(XMMConstants.MachineRunningState.STOP
 						.toString());
 				return vnode;
-			} else if (newvir.lcmStateStr().equals(VirtualMachine
-					.LCM_STATE[VirtualMachine.LCM_STATE_SAVE_STOP])) {
+			} else if (newvir
+					.lcmStateStr()
+					.equals(VirtualMachine.LCM_STATE[VirtualMachine
+					                                 .LCM_STATE_SAVE_STOP])) {
 				vnode.setRunningStatus(XMMConstants.MachineRunningState.STOP
 						.toString());
 				return vnode;
@@ -765,43 +761,42 @@ public class VirtualClientImpl implements VirtualClient {
 			}
 			vnode.setRunningStatus(XMMConstants.MachineRunningState.STOPPING
 					.toString());
-			
+
 			log.info("The VM(" + vnode.getName() + ") is stopped.");
 		}
 		return vnode;
 	}
-	
-	public VirtualNode migrateVirtualNode(VirtualNode vnode, PhysicalNode host) throws Exception {
+
+	public VirtualNode migrateVirtualNode(VirtualNode vnode, PhysicalNode host)
+			throws Exception {
 		String stat = vnode.getRunningStatus();
 		if (!XMMConstants.MachineRunningState.RUNNING.toString().equals(stat)) {
-			throw new Exception("Virtual machine " 
-					+ vnode.getName() 
-					+ " CANNOT livemigrate in state - " 
-					+ stat + "!");
+			throw new Exception("Virtual machine " + vnode.getName()
+					+ " CANNOT livemigrate in state - " + stat + "!");
 		}
-		
+
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 
 		int vid = Integer.parseInt(vir.getId());
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
 		OneResponse onrc = newvir.info();
-		
+
 		int hostId = Integer.parseInt(host.getHostID());
-		
+
 		if (onrc.isError()) {
 			throw new Exception("Error occurred when view the migrating VM("
 					+ vnode.getName() + "), the detail msg as: "
 					+ onrc.getErrorMessage());
 		} else {
-			OneResponse sonrc;				
-			
+			OneResponse sonrc;
+
 			sonrc = newvir.liveMigrate(hostId);
-			
+
 			if (sonrc.isError()) {
 				log.info("Error occurred when live migrate the VM("
 						+ vnode.getName() + "), the detail msg as: "
 						+ sonrc.getErrorMessage());
-				
+
 				sonrc = newvir.migrate(hostId);
 			}
 			if (sonrc.isError()) {
@@ -809,7 +804,7 @@ public class VirtualClientImpl implements VirtualClient {
 						+ vnode.getName() + "), the detail msg as: "
 						+ sonrc.getErrorMessage());
 			}
-				
+
 			log.info("The VM(" + vnode.getName() + ") is migrated.");
 		}
 		return vnode;
@@ -877,8 +872,7 @@ public class VirtualClientImpl implements VirtualClient {
 						} catch (Exception e) {
 							log.error("Execute \"" + command
 									+ "\" fail, caused by " + e.getMessage());
-							String msg = "The virtual node "
-									+ vnode.getName()
+							String msg = "The virtual node " + vnode.getName()
 									+ " is shutdown failed, and the vmkiller"
 									+ " executed failed.";
 							log.warn(msg);
@@ -898,7 +892,8 @@ public class VirtualClientImpl implements VirtualClient {
 		if (vid < 0) {
 			return vnode;
 		}
-		if (vnode.getRunningStatus().equals(XMMConstants.MachineRunningState.SHUTDOWN.toString())){
+		if (vnode.getRunningStatus().equals(
+				XMMConstants.MachineRunningState.SHUTDOWN.toString())) {
 			return vnode;
 		}
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
@@ -945,8 +940,7 @@ public class VirtualClientImpl implements VirtualClient {
 	public void freeVMPartition(Partition par) throws Exception {
 		String ocid = par.getAttributes().get(PVNPNController.ONE_CLUSTER_ID);
 		if (ocid == null || "".equals(ocid)) {
-			log.warn("The partition "
-					+ par.getName()
+			log.warn("The partition " + par.getName()
 					+ "'s info maintain errored, because its cluster id in"
 					+ " opennebula is blank or null.");
 			return;
@@ -955,8 +949,7 @@ public class VirtualClientImpl implements VirtualClient {
 		try {
 			cid = Integer.parseInt(ocid);
 		} catch (Exception e) {
-			log.warn("The partition "
-					+ par.getName()
+			log.warn("The partition " + par.getName()
 					+ "'s info maintain errored, because its cluster id in"
 					+ " opennebula is not a valid integer.");
 			return;
@@ -977,8 +970,7 @@ public class VirtualClientImpl implements VirtualClient {
 		}
 		String ocid = par.getAttributes().get(PVNPNController.ONE_CLUSTER_ID);
 		if (ocid == null || "".equals(ocid)) {
-			log.warn("The partition "
-					+ par.getName()
+			log.warn("The partition " + par.getName()
 					+ "'s info maintain errored, because its cluster id in"
 					+ " opennebula is blank or null.");
 			return;
@@ -987,8 +979,7 @@ public class VirtualClientImpl implements VirtualClient {
 		try {
 			cid = Integer.parseInt(ocid);
 		} catch (Exception e) {
-			log.warn("The partition "
-					+ par.getName()
+			log.warn("The partition " + par.getName()
 					+ "'s info maintain errored, because its cluster id in"
 					+ " opennebula is not a valid integer.");
 			return;
@@ -997,22 +988,25 @@ public class VirtualClientImpl implements VirtualClient {
 			Cluster.add(client, cid, hid);
 		}
 	}
-	
-	public VirtualNode bootVirtualNode(VirtualNode vnode) throws Exception{
-		
+
+	public VirtualNode bootVirtualNode(VirtualNode vnode) throws Exception {
+
 		String stat = vnode.getRunningStatus();
-		if (! XMMConstants.MachineRunningState.SHUTDOWN.toString().equals(stat)
-				&& ! XMMConstants.MachineRunningState.ERROR.toString().equals(stat)
-				&& ! XMMConstants.MachineRunningState.STOP.toString().equals(stat)
-				&& ! XMMConstants.MachineRunningState.BOOT.toString().equals(stat)
-				&& ! XMMConstants.MachineRunningState.SHUTTING.toString().equals(stat)
-				&& ! XMMConstants.MachineRunningState.WAIT_DEPLOY.toString().equals(stat)) {
-			throw new Exception("Virtual machine " 
-								+ vnode.getName() 
-								+ " CANNOT boot in state - " 
-								+ stat + "!");
+		if (!XMMConstants.MachineRunningState.SHUTDOWN.toString().equals(stat)
+				&& !XMMConstants.MachineRunningState.ERROR.toString().equals(
+						stat)
+				&& !XMMConstants.MachineRunningState.STOP.toString().equals(
+						stat)
+				&& !XMMConstants.MachineRunningState.BOOT.toString().equals(
+						stat)
+				&& !XMMConstants.MachineRunningState.SHUTTING.toString()
+						.equals(stat)
+				&& !XMMConstants.MachineRunningState.WAIT_DEPLOY.toString()
+						.equals(stat)) {
+			throw new Exception("Virtual machine " + vnode.getName()
+					+ " CANNOT boot in state - " + stat + "!");
 		}
-		
+
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 		int vid = Integer.parseInt(vir.getId());
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
@@ -1022,8 +1016,8 @@ public class VirtualClientImpl implements VirtualClient {
 					+ vnode.getName() + "), the detail msg as: "
 					+ onrc.getErrorMessage());
 		} else {
-			if(	newvir.stateStr().equals(VirtualMachine
-							.VM_STATES[VirtualMachine.VM_STATE_ACTIVE])){ 
+			if (newvir.stateStr().equals(
+					VirtualMachine.VM_STATES[VirtualMachine.VM_STATE_ACTIVE])) {
 				OneResponse sonrc = newvir.restart();
 				if (sonrc.isError()) {
 					throw new Exception("Error occurred when boot the VM("
@@ -1032,26 +1026,27 @@ public class VirtualClientImpl implements VirtualClient {
 				}
 				vnode.setRunningStatus(XMMConstants.MachineRunningState.RUNNING
 						.toString());
-				
+
 				log.info("The VM(" + vnode.getName() + ") is boot.");
 			}
 		}
 		return vnode;
 	}
 
-	public VirtualNode shutdownVirtualNode(VirtualNode vnode) throws Exception{
-		
+	public VirtualNode shutdownVirtualNode(VirtualNode vnode) throws Exception {
+
 		String stat = vnode.getRunningStatus();
-		if (! XMMConstants.MachineRunningState.RUNNING.toString().equals(stat)
-				&& ! XMMConstants.MachineRunningState.ERROR.toString().equals(stat)
-				&& ! XMMConstants.MachineRunningState.STOP.toString().equals(stat)
-				&& ! XMMConstants.MachineRunningState.SUSPENDED.toString().equals(stat)) {
-			throw new Exception("Virtual machine " 
-								+ vnode.getName() 
-								+ " CANNOT shutdown in state - " 
-								+ stat + "!");
+		if (!XMMConstants.MachineRunningState.RUNNING.toString().equals(stat)
+				&& !XMMConstants.MachineRunningState.ERROR.toString().equals(
+						stat)
+				&& !XMMConstants.MachineRunningState.STOP.toString().equals(
+						stat)
+				&& !XMMConstants.MachineRunningState.SUSPENDED.toString()
+						.equals(stat)) {
+			throw new Exception("Virtual machine " + vnode.getName()
+					+ " CANNOT shutdown in state - " + stat + "!");
 		}
-		
+
 		VirtualMachine vir = new VirtualMachine(vnode.getVmInfo(), this.client);
 		int vid = Integer.parseInt(vir.getId());
 		VirtualMachine newvir = new VirtualMachine(vid, this.client);
@@ -1062,9 +1057,9 @@ public class VirtualClientImpl implements VirtualClient {
 					+ onrc.getErrorMessage());
 		} else {
 			/**
-			 * We shut down the VM by our own shell, instead of shutdown in one-oca,
-			 * in order to start it again.
-			 * Here, we introduce a SHUTTING state as mid-status.
+			 * We shut down the VM by our own shell, instead of shutdown in
+			 * one-oca, in order to start it again. Here, we introduce a
+			 * SHUTTING state as mid-status.
 			 */
 			StringBuffer cmdSB = new StringBuffer();
 			String cmd = XMMUtil.getOperateVirtualNodeCmdInCfgFile();
@@ -1073,7 +1068,9 @@ public class VirtualClientImpl implements VirtualClient {
 				throw new Exception("can't get operateVirtualNodeCmd "
 						+ "in Cfg file.");
 			}
-			cmdSB.append(cmd).append(" " + vnode.getParentPhysialNodeName() + " " + "one-" + vid + " shutdown");
+			cmdSB.append(cmd).append(
+					" " + vnode.getParentPhysialNodeName() + " " + "one-" + vid
+							+ " shutdown");
 			String stdout = XMMUtil.runCommand(cmdSB.toString());
 			if (stdout.trim().equals("true")) {
 				log.info("shutdown virtual node " + vnode.getName()
@@ -1081,13 +1078,14 @@ public class VirtualClientImpl implements VirtualClient {
 			} else {
 				log.info("shutdown virtual node " + vnode.getName()
 						+ " Failed: " + stdout);
-				throw new Exception("shutdown virtual node " + vnode.getName() + " Failed: " + stdout);
+				throw new Exception("shutdown virtual node " + vnode.getName()
+						+ " Failed: " + stdout);
 			}
 			vnode.setRunningStatus(XMMConstants.MachineRunningState.SHUTTING
 					.toString());
-			
+
 			newvir.stop();
-			
+
 			log.info("The VM(" + vnode.getName() + ") is shutting down.");
 		}
 		return vnode;
