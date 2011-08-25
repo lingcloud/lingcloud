@@ -35,8 +35,11 @@ def get_vm_num(name):
 
 def get_vm_cpuinfos(doc, domid):
 
+	val = 0
 	r = xpath.Evaluate('/domain/vcpu/text()', doc)
-	ret = 'vcpu:' + r[0].nodeValue + ','
+	if len(r)>0:
+		val = r[0].nodeValue
+	ret = 'vcpu:' + val + ','
 	cmd = 'virsh vcpuinfo ' + domid
 	(stat, output) = commands.getstatusoutput(cmd)
 	l = output.find('\nCPU Affinity')
@@ -49,9 +52,13 @@ def get_vm_cpuinfos(doc, domid):
 def get_vm_meminfos(doc, domid):
 
 	r = xpath.Evaluate('/domain/memory/text()', doc)
-	ret = 'memory:' + r[0].nodeValue + ','
+	if len(r) > 0:
+		val = r[0].nodeValue
+	ret = 'memory:' + val + ','
 	r = xpath.Evaluate('/domain/currentMemory/text()', doc)
-	ret += 'currMem:' + r[0].nodeValue
+	if len(r) > 0:
+		val = r[0].nodeValue
+	ret += 'currMem:' + val
 	
 	return ret
 
@@ -65,10 +72,13 @@ def get_vm_diskinfos(doc, domid):
 		cmd = imgCmd + i.value
 		(stat, output) = commands.getstatusoutput(cmd)
 		out = output.splitlines()
-		ret += '***' + out[0].split(':')[1][-25:] + ','
-		ret += out[1].split(':')[1] + ','
-		ret += out[2].split(':')[1] + ','
-		ret += out[3].split(':')[1] 
+		if len(out) > 3:
+			ret += '***' + out[0].split(':')[1][-25:] + ','
+			ret += out[1].split(':')[1] + ','
+			ret += out[2].split(':')[1] + ','
+			ret += out[3].split(':')[1] 
+		else:
+			ret += i.Value + ',Unkown,Unkown,Unkown'
 
 		ret = ret.replace(' ','')
 
@@ -84,10 +94,32 @@ def get_vm_netinfos(doc, domid):
 		c += 1
 		if c > 1:
 			ret += ';'
-		dev = i.getElementsByTagName('target').item(0).getAttribute('dev')
-		ret += dev + ','
-		ret += i.getElementsByTagName('ip').item(0).getAttribute('address') + ','
-		ret += i.getElementsByTagName('mac').item(0).getAttribute('address') + ','
+		dev = 0
+		val = i.getElementsByTagName('target')
+		if len(val)>0:
+			val = val.item(0).getAttribute('dev')
+			dev = val
+		else:
+			val = 'None'
+		ret += val + ','
+
+		val = i.getElementsByTagName('ip')
+		if len(val)>0:
+			val = val.item(0).getAttribute('address')
+		else:
+			val = 'None'
+		ret += val + ','
+
+		val = i.getElementsByTagName('mac')
+		if len(val)>0:
+			val = val.item(0).getAttribute('address')
+		else:
+			val = 'None'
+		ret += val + ','
+		if dev == 0:
+			ret = '0,0'
+			continue;
+
 		cmd = ifCmd + ' ' + dev
 		(stat, output) = commands.getstatusoutput(cmd)
 		output = output.replace(dev + ' ','')
@@ -141,21 +173,21 @@ def get_vm_infos(name):
 
 	if c > 0:
 		cmd = gmetric + ' -n "vm_cpu_infos" -v "' + cpuinfos + '"'
-		# print cmd
+		#print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_mem_infos" -v "' + meminfos + '"'
-		# print cmd
+		#print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
-		cmd = gmetric + ' -n "vm_disk_infos" -v "' + diskinfos + '"'
-		# print cmd
-		# print len(cmd)
+		#cmd = gmetric + ' -n "vm_disk_infos" -v "' + diskinfos + '"'
+		#print cmd
+		#print len(cmd)
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_net_infos" -v "' + netinfos + '"'
-		# print cmd
+		#print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
 		cmd = gmetric + ' -n "vm_name_infos" -v "' + vminfos + '"'
-		# print cmd
-		# print len(cmd)
+		#print cmd
+		#print len(cmd)
 		(stat, output) = commands.getstatusoutput(cmd)
 
 	return 'To be done' # ret # Ganglia python module's string length limited

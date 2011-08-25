@@ -592,7 +592,8 @@ class GangliaBridge extends MonitorBridge {
 			return ret;
 		}
 		if (stat.contains("run") ||
-				stat.contains("idle") ) {
+				stat.contains("idle") ||
+				stat.contains("block")) {
 			ret = MonitorConstants.MONITOR_STAT_OK;
 		}else if (stat.contains("paused")) {
 			ret = MonitorConstants.MONITOR_STAT_WARN;

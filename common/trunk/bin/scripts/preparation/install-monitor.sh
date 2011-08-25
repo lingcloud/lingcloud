@@ -96,6 +96,17 @@ onConfigureAfterInstall() {
 			echo "# The ports 8649 and 8651 are not opened. Please open them manually."
 		fi
 	else
+		grep "^[[:blank:]]*$GANGLIA_HOME/sbin/start-gmond-as-server.sh" "/etc/rc.local"
+		if [ $? == 0 ]
+		then
+			echo "# This host is started as a monitor server."
+			echo -n "# Do you want to start it as a monitor client (y/n)? "
+			read _INPUT_
+			if [ "$_INPUT_" != "Y" -a "$_INPUT_" != "y" ]
+			then
+				return 1
+			fi
+		fi
 		addOnce "$GANGLIA_HOME/sbin/start-gmond-as-client.sh" "/etc/rc.local"
 		$GANGLIA_HOME/sbin/start-gmond-as-client.sh
 	fi
@@ -182,6 +193,8 @@ ganglia)
 		command ln -s "$GANGLIA_HOME/bin/gmetric" "$GANGLIA_PYTHON_MODULE_DIR/gmetric"
 		
 		echo "rrd_rootdir \"$GANGLIA_RRDS_DIR\"" >> "$GANGLIA_HOME/etc/gmetad.conf"
+		echo "include ('$GANGLIA_HOME/etc/conf.d/*.conf')" >> "$GANGLIA_HOME/etc/gmond-client.conf"
+		echo "include ('$GANGLIA_HOME/etc/conf.d/*.conf')" >> "$GANGLIA_HOME/etc/gmond-server.conf"
 		sed -i "s;^GANGLIA_HOME=.*;GANGLIA_HOME=$GANGLIA_HOME;g" $GANGLIA_HOME/sbin/start-g*.sh
 
 		onConfigureAfterInstall "$MONITOR_ROLE"
