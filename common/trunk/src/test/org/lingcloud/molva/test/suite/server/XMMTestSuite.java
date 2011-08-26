@@ -27,7 +27,7 @@ import org.lingcloud.molva.test.xmm.XMMImplTester;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({ XMMImplTester.class, XMMClientTester.class })
+//@SuiteClasses({ XMMImplTester.class, XMMClientTester.class })
 public class XMMTestSuite {
 
 }

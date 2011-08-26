@@ -32,11 +32,11 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 public class TestConfig {
 	private static final String TEST_LINGCLOUD_SERVER = "lingCloudServer";
 
-	private static final String TEST_LINGCLOUD_SERVER_DEFAULT = "10.0.0.10";
+	private static final String TEST_LINGCLOUD_SERVER_DEFAULT = "172.22.1.11";
 
 	private static final String TEST_XEN_SERVER = "testCaseXenServer";
 
-	private static final String TEST_XEN_SERVER_DEFAULT = "10.0.0.10";
+	private static final String TEST_XEN_SERVER_DEFAULT = "172.22.1.11";
 
 	private static final String TEST_COMMON_SERVER = "testCaseCommonServer";
 
