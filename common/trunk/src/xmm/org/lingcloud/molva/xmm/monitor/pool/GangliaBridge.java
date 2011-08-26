@@ -603,7 +603,6 @@ class GangliaBridge extends MonitorBridge {
 	
 	protected int getVMInfos(Map<String,VM> vmMap, Node hostNode) throws Exception {
 		VM vm = null;
-		vmMap.clear();
 		for (String key : vmMap.keySet()) {
 			vm = vmMap.get(key);
 			vm.setFlag(false);
@@ -615,6 +614,12 @@ class GangliaBridge extends MonitorBridge {
 		String nets = xpath.evaluate("./METRIC[@NAME='vm_net_infos']/@VAL", hostNode);
 		String[] bufs ;
 		String sep = "\\|";
+		
+		log.error(names);
+		if (null == names || "".equals(names)) {
+			vmMap.clear();
+			return 0;
+		}
 		
 		/**
 		 * VM name and state list

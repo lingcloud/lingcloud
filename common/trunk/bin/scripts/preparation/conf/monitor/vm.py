@@ -171,7 +171,7 @@ def get_vm_infos(name):
 		netinfos += prefix + get_vm_netinfos(doc, i[0])
 		vminfos += sep + i[1] + ':' +i[2] 
 
-	if c > 0:
+	if c >= 0:
 		cmd = gmetric + ' -n "vm_cpu_infos" -v "' + cpuinfos + '"'
 		#print cmd
 		(stat, output) = commands.getstatusoutput(cmd)
