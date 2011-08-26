@@ -450,6 +450,9 @@ public class VirtualMachine extends PoolElement {
 		}else if (lcmState.contains("SAVE")) {
 			newvi.setRunningStatus(XMMConstants.MachineRunningState.SAVING
 					.toString());
+		}else if (state.equals(VM_STATES[VM_STATE_FAILED])) {
+			newvi.setRunningStatus(XMMConstants.MachineRunningState.ERROR
+					.toString());
 		}else if ( lcmState.equals(LCM_STATE[LCM_STATE_INIT])
 						|| lcmState.equals(LCM_STATE[LCM_STATE_PROLOG])
 						|| lcmState.equals(LCM_STATE[LCM_STATE_BOOT])) {
