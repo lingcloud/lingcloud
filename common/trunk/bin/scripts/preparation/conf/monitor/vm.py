@@ -54,10 +54,14 @@ def get_vm_meminfos(doc, domid):
 	r = xpath.Evaluate('/domain/memory/text()', doc)
 	if len(r) > 0:
 		val = r[0].nodeValue
+	else:
+		val = '0'
 	ret = 'memory:' + val + ','
 	r = xpath.Evaluate('/domain/currentMemory/text()', doc)
 	if len(r) > 0:
 		val = r[0].nodeValue
+	else:
+		val = '0'
 	ret += 'currMem:' + val
 	
 	return ret
@@ -190,7 +194,7 @@ def get_vm_infos(name):
 		#print len(cmd)
 		(stat, output) = commands.getstatusoutput(cmd)
 
-	return 'To be done' # ret # Ganglia python module's string length limited
+	return c # ret # Ganglia python module's string length limited
 
 def metric_init(params):
 	'''Initialdize the random number generator and create the
@@ -210,10 +214,10 @@ def metric_init(params):
 	d2 = {'name': 'vm_infos',
 		'call_back': get_vm_infos,
 		'time_max': 90,
-		'value_type': 'string',
-		'units': '',
+		'value_type': 'uint',
+		'units': 'N',
 		'slope': 'both',
-		'format': '%s',
+		'format': '%u',
 		'description': 'Virtual machine informations',
 		'groups': 'vm'}
 
