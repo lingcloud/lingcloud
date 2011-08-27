@@ -267,7 +267,7 @@ public class MonitorClient {
 					}
 					stat = hostInfo.getHostState();
 					tmp += "{";
-					tmp += "hostName:'" + hostInfo.getHostName();
+					tmp += "hostName:'" + hostInfo.getHostIP();
 					tmp += "',hostState:'" + stat;
 					tmp += "',hostPic:'" + getHostPic(stat);
 					tmp += "',monitorInfors:[";

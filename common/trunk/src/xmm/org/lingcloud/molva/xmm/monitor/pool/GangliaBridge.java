@@ -49,6 +49,8 @@ class GangliaBridge extends MonitorBridge {
 	
 	private XPath xpath = XPathFactory.newInstance().newXPath();
 	
+	private Map<String, Host> hostMap = null;
+	
 	protected Document getGangliaMonitorData() throws Exception {
 		
 		Process child = null;
@@ -816,30 +818,37 @@ class GangliaBridge extends MonitorBridge {
 		if (hostMap == null) {
 			hostMap = new HashMap<String, Host>();
 		}
-		
+		this.hostMap = hostMap;
 		Document doc = getGangliaMonitorData();
 		
 		NodeList nl = doc.getElementsByTagName("HOST");
 		if (nl == null) {
 			return hostMap;
 		}
+		hostMap.clear();
 		for (int i = 0 ; i < nl.getLength() ; i++) {
 			Node hn = nl.item(i);
 			NamedNodeMap attMap = hn.getAttributes();
 			String name = attMap.getNamedItem("NAME").getNodeValue();
 			String ip = attMap.getNamedItem("IP").getNodeValue();
 			String tm = attMap.getNamedItem("REPORTED").getNodeValue();
-			Host host = hostMap.get(name);
+			Host host = hostMap.get(ip);
 			tm = MonitorUtil.getTimeFromInt(tm);
 			if (host == null) {
 				host = new Host(name, ip, tm);
-				hostMap.put(name, host);
+				hostMap.put(ip, host);
 			}else {
+				host.setHostName(name);
 				host.setHostIP(ip);
 				host.setHostTime(tm);
 			}
-			getSrvFromNode(host.getSrvMap(), hn);
-			getVMInfos(host.getVMMap(), hn);
+			try {
+				getSrvFromNode(host.getSrvMap(), hn);
+				getVMInfos(host.getVMMap(), hn);
+			}catch (Exception e) {
+				log.error(e);
+			}
+			
 		}
 		
 		return hostMap;
@@ -857,13 +866,17 @@ class GangliaBridge extends MonitorBridge {
 		String imgFile;
 		String timeRange;
 		String opt;
+		String subDir = host;
 		try {
+			if (this.hostMap != null) {
+				subDir = this.hostMap.get(host).getHostName();
+			}
 			imgName = MonitorUtil.getImgNameByHostSrv(host, srvName, beg, end);
 			imgFile = MonitorUtil.getImgDirLocation()
 								+ "/"
 								+ imgName;
 			timeRange = getTimeRangeForRRDtool(beg, end);
-			opt = getImgCreatorOptionForRRDtool(host, srvName);
+			opt = getImgCreatorOptionForRRDtool(subDir, host, srvName);
 			cmd = MonitorUtil.getRRDtoolCmdInCfgFile();
 			cmd += " graph ";
 			cmd += " " + imgFile;
@@ -887,12 +900,12 @@ class GangliaBridge extends MonitorBridge {
 		return imgName;
 	}
 	
-	protected String getImgCreatorOptionForRRDtool(String host, String srvName) throws Exception {
+	protected String getImgCreatorOptionForRRDtool(String subDir,String host, String srvName) throws Exception {
 		String dsDir = MonitorUtil.getRrds4GangliaInCfgFile() 
 							+ "/"
 							+ MonitorConstants.ganglia_cluster
 							+ "/" 
-							+ host;
+							+ subDir;
 		String dsName;
 		// title
 		String opt = " -t '"
