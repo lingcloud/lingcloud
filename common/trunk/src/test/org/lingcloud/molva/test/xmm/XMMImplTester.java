@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 import org.apache.commons.logging.Log;
@@ -114,7 +115,6 @@ public class XMMImplTester {
 
 	@Before
 	public void initialze() {
-
 	}
 
 	@After
@@ -295,7 +295,7 @@ public class XMMImplTester {
 				break;
 			}
 			
-			Thread.sleep(TestConstants.RETRY_INTERVAL);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 		}
 		
 		return validated;
@@ -312,6 +312,7 @@ public class XMMImplTester {
 			assertTrue(validated);
 			log.info("startVirtualCluster Test success.");
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("Test failed. Reason: " + e);
 			fail();
 		}
@@ -320,7 +321,7 @@ public class XMMImplTester {
 	private boolean startVirtualCluster(String vcid) throws Exception {
 		boolean validated = false;
 		
-		xmmImpl.stopVirtualCluster(vcid);
+		xmmImpl.startVirtualCluster(vcid);
 		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
 			List<VirtualNode> vmnList = listVirtualNodeInVirtualCluster(
 					vcid);
@@ -336,7 +337,7 @@ public class XMMImplTester {
 				break;
 			}
 			
-			Thread.sleep(TestConstants.RETRY_INTERVAL);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 		}
 		
 		return validated;
@@ -724,7 +725,7 @@ public class XMMImplTester {
 
 		NodeRequirement nr = new NodeRequirement();
 		nr.setVirtualApplicanceID(TestConstants.TEST_EVN_GUID_APP);
-		nr.setCpuNum(2);
+		nr.setCpuNum(1);
 		nr.setMemorySize(TestConstants.K / 2);
 		nr.setNeedPublicIP(true);
 
@@ -749,7 +750,7 @@ public class XMMImplTester {
 			if (cluster.getLifecycleState() == LeaseLifeCycleState.EFFECTIVE) {
 				break;
 			}
-			Thread.sleep(TestConstants.RETRY_INTERVAL);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 		}
 
 		/**
@@ -778,7 +779,7 @@ public class XMMImplTester {
 			if (cluster.getLifecycleState() == LeaseLifeCycleState.EFFECTIVE) {
 				break;
 			}
-			Thread.sleep(TestConstants.RETRY_INTERVAL);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 		}
 
 		return vc;

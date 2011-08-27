@@ -997,7 +997,8 @@ public class ApplianceService {
 			} else {
 				// get the latest information
 				VADisk vadisk = new VADisk(disk);
-				if (vadisk.getState() == VAMConstants.STATE_READY) {
+				if (vadisk.getState() == VAMConstants.STATE_READY 
+						|| vadisk.getState() == VAMConstants.STATE_ERROR) {
 					state = vadisk.getState();
 				}
 				format = vadisk.getFormat();

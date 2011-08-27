@@ -15,7 +15,9 @@ package org.lingcloud.molva.test.suite.server;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.lingcloud.molva.test.xmm.monitor.*;
+import org.lingcloud.molva.test.xmm.monitor.MonitorBridgeTester;
+import org.lingcloud.molva.test.xmm.monitor.MonitorClientTester;
+import org.lingcloud.molva.test.xmm.monitor.MonitorPoolTester;
 
 /**
  * <strong>Purpose:</strong><br>
@@ -27,7 +29,7 @@ import org.lingcloud.molva.test.xmm.monitor.*;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ MonitorBridgeTester.class, MonitorPoolTester.class,
-	MonitorClientTester.class})
+	MonitorClientTester.class })
 public class MonitorTestSuite {
 
 }

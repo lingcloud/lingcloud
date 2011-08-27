@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -111,7 +112,6 @@ public class XMMClientTester {
 
 	@Before
 	public void initialze() {
-
 	}
 
 	@After
@@ -197,7 +197,7 @@ public class XMMClientTester {
 	private boolean startVirtualCluster(String vcid) throws Exception {
 		boolean validated = false;
 		
-		xmmClient.stopVirtualCluster(vcid);
+		xmmClient.startVirtualCluster(vcid);
 		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
 			List<VirtualNode> vmnList 
 				= xmmClient.listVirtualNodeInVirtualCluster(vcid);
@@ -213,7 +213,7 @@ public class XMMClientTester {
 				break;
 			}
 			
-			Thread.sleep(TestConstants.RETRY_INTERVAL);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 		}
 		
 		return validated;
@@ -238,7 +238,7 @@ public class XMMClientTester {
 				break;
 			}
 			
-			Thread.sleep(TestConstants.RETRY_INTERVAL);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 		}
 		
 		return validated;
@@ -260,6 +260,7 @@ public class XMMClientTester {
 	
 	@Test
 	public void stopAndStartVirtualCluster() {
+		log.info("begin stopAndStartVirtualCluster...");
 		try {
 			boolean validated = stopVirtualCluster(vmCluster.getGuid());
 			assertTrue(validated);
@@ -269,6 +270,7 @@ public class XMMClientTester {
 			assertTrue(validated);
 			log.info("startVirtualCluster Test success.");
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("Test failed. Reason: " + e);
 			fail();
 		}
@@ -546,7 +548,8 @@ public class XMMClientTester {
 	}
 
 	@Test
-	public void stopAndStartVirtualNode() {
+	public void shutdownAndBootVirtualNode() {
+		log.info("begin stopAndStartVirtualNode...");
 		try {
 			List<VirtualNode> vmnList = xmmClient
 				.listVirtualNodeInVirtualCluster(vmCluster.getGuid());
@@ -554,37 +557,38 @@ public class XMMClientTester {
 			assertTrue(vmnList.size() > 0);
 			VirtualNode vn = vmnList.get(0);
 			
-			VirtualNode vnode = xmmClient.stopVirtualNode(vn.getGuid());
+			VirtualNode vnode = xmmClient.shutdownVirtualNode(vn.getGuid());
 			assertNotNull(vnode);
 			
 			for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
-				vnode = xmmClient.viewVirtualNode(vnode.getGuid());
+				vnode = xmmClient.viewVirtualNode(vn.getGuid());
 				if (vnode.getRunningStatus().equals(XMMConstants
 						.MachineRunningState.SHUTDOWN.toString())) {
 					break;
 				}
-				Thread.sleep(TestConstants.RETRY_INTERVAL);
+				Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 			}
 			assertTrue(vnode.getRunningStatus().equals(
 					XMMConstants.MachineRunningState.SHUTDOWN.toString()));
 			
 			log.info("stopVirtualNode Test success.");
 			
-			vnode = xmmClient.startVirtualNode(vn.getGuid());
+			vnode = xmmClient.bootVirtualNode(vn.getGuid());
 			assertNotNull(vnode);
 			for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
-				vnode = xmmClient.viewVirtualNode(vnode.getGuid());
+				vnode = xmmClient.viewVirtualNode(vn.getGuid());
 				if (vnode.getRunningStatus().equals(XMMConstants
 						.MachineRunningState.RUNNING.toString())) {
 					break;
 				}
-				Thread.sleep(TestConstants.RETRY_INTERVAL);
+				Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 			}
 			assertTrue(vnode.getRunningStatus().equals(
 					XMMConstants.MachineRunningState.RUNNING.toString()));
 			log.info("startVirtualNode Test success.");
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("Test failed. Reason: " + e);
 			fail();
 		}
@@ -646,9 +650,9 @@ public class XMMClientTester {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void stopAndStartPhysicalNode() {
+		log.info("begin stopAndStartPhysicalNode...");
 		try {
 			PhysicalNode phn = xmmClient.stopPhysicalNode(genPhyNode.getGuid());
 			assertNotNull(phn);
@@ -659,13 +663,15 @@ public class XMMClientTester {
 						.MachineRunningState.SHUTDOWN.toString())) {
 					break;
 				}
-				Thread.sleep(TestConstants.RETRY_INTERVAL);
+				Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 			}
 			
 			assertTrue(phn.getRunningStatus().equals(
 					XMMConstants.MachineRunningState.SHUTDOWN.toString()));
 			
 			log.info("stopPhysicalNode Test success.");
+			
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 			
 			phn = xmmClient.startPhysicalNode(genPhyNode.getGuid());
 			assertNotNull(phn);
@@ -676,7 +682,7 @@ public class XMMClientTester {
 						.MachineRunningState.RUNNING.toString())) {
 					break;
 				}
-				Thread.sleep(TestConstants.RETRY_INTERVAL);
+				Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 			}
 			
 			assertTrue(phn.getRunningStatus().equals(
@@ -685,6 +691,7 @@ public class XMMClientTester {
 			log.info("startPhysicalNode Test success.");
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("Test failed. Reason: " + e);
 			fail();
 		}
@@ -893,7 +900,7 @@ public class XMMClientTester {
 
 		NodeRequirement nr = new NodeRequirement();
 		nr.setVirtualApplicanceID(TestConstants.TEST_EVN_GUID_APP);
-		nr.setCpuNum(2);
+		nr.setCpuNum(1);
 		nr.setMemorySize(TestConstants.K / 2);
 		nr.setNeedPublicIP(true);
 
@@ -916,7 +923,7 @@ public class XMMClientTester {
 			if (cluster.getLifecycleState() == LeaseLifeCycleState.EFFECTIVE) {
 				break;
 			}
-			Thread.sleep(TestConstants.RETRY_INTERVAL);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 		}
 
 		/**
@@ -941,11 +948,11 @@ public class XMMClientTester {
 
 		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
 			VirtualCluster cluster = xmmClient.viewVirtualCluster(
-					vmCluster.getGuid());
+					genCluster.getGuid());
 			if (cluster.getLifecycleState() == LeaseLifeCycleState.EFFECTIVE) {
 				break;
 			}
-			Thread.sleep(TestConstants.RETRY_INTERVAL);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 		}
 		
 		return vc;

@@ -21,7 +21,7 @@ import org.lingcloud.molva.test.xmm.vam.VirtualApplianceManagerTester;
 
 /**
  * <strong>Purpose:</strong><br>
- * The test suite for LingCloud XMM.
+ * The test suite for LingCloud Virtual Appliance Manager.
  * 
  * @version 1.0.0 2011-7-23<br>
  * @author Ruijian Wang<br>

@@ -13,11 +13,11 @@
 package org.lingcloud.molva.test.xmm.monitor;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,8 +29,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.lingcloud.molva.test.util.TestConfig;
-import org.lingcloud.molva.xmm.monitor.pool.*;
-import org.lingcloud.molva.xmm.monitor.pojos.*;
+import org.lingcloud.molva.xmm.monitor.pojos.Host;
+import org.lingcloud.molva.xmm.monitor.pojos.MonitorConf;
+import org.lingcloud.molva.xmm.monitor.pojos.Service;
+import org.lingcloud.molva.xmm.monitor.pool.MonitorPool;
 
 /**
  * <strong>Purpose:</strong><br>
@@ -48,9 +50,7 @@ public class MonitorPoolTester {
 
 	@BeforeClass
 	public static void initializeForAllTest() {
-
 		try {
-			System.setProperty("lingcloud.home", "/opt/lingcloud");
 			mp = MonitorPool.getInstanse();
 			assertNotNull(mp);
 		} catch (Exception e) {
@@ -63,7 +63,6 @@ public class MonitorPoolTester {
 
 	@AfterClass
 	public static void destroyForAllTest() {
-
 		try {
 			mp = null;
 		} catch (Exception e) {
@@ -84,50 +83,64 @@ public class MonitorPoolTester {
 
 	@Test
 	public void update() {
+		long oldperiod = Long.MIN_VALUE;
 		try {
 			int size;
 			long period = 0;
-			long oldperiod = mp.getTimePeriod();
+			oldperiod = mp.getTimePeriod();
 			mp.setTimePeriod(period);
-			Thread.sleep(70000);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 			size = mp.update();
-			mp.setTimePeriod(oldperiod);
+			
 			assertTrue(size > 0);
 			log.info("update Test success.");
-
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
 			fail();
+		} finally {
+			if (oldperiod != Long.MIN_VALUE) {
+				mp.setTimePeriod(oldperiod);
+			}
 		}
 	}
 
 	@Test
 	public void setTimePeriod() {
+		long oldperiod = Long.MIN_VALUE;
 		try {
-			long period = 3 * 60 * 1000;
-			long oldperiod = mp.getTimePeriod();
+			final long period = 3 * 60 * 1000;
+			oldperiod = mp.getTimePeriod();
 			mp.setTimePeriod(period);
+			
 			assertTrue(mp.getTimePeriod() == period);
 			log.info("setTimePeriod Test success.");
-			mp.setTimePeriod(oldperiod);
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
 			fail();
+		} finally {
+			if (oldperiod != Long.MIN_VALUE) {
+				mp.setTimePeriod(oldperiod);
+			}
 		}
 	}
 
 	@Test
 	public void getTimePeriod() {
+		long oldperiod = Long.MIN_VALUE;
 		try {
-			long period = 3 * 60 * 1000;
-			long oldperiod = mp.getTimePeriod();
+			final long period = 3 * 60 * 1000;
+			oldperiod = mp.getTimePeriod();
 			mp.setTimePeriod(period);
+			
 			assertTrue(mp.getTimePeriod() == period);
 			log.info("getTimePeriod Test success.");
-			mp.setTimePeriod(oldperiod);
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
 			fail();
+		} finally {
+			if (oldperiod != Long.MIN_VALUE) {
+				mp.setTimePeriod(oldperiod);
+			}
 		}
 	}
 

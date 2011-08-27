@@ -30,8 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-//@SuiteClasses({ GNodeManagerTester.class, AssetManagerTester.class,
-//		LeaseManagerTester.class, LeasePoolManagerTester.class })
+@SuiteClasses({ GNodeManagerTester.class, AssetManagerTester.class,
+		LeaseManagerTester.class, LeasePoolManagerTester.class })
 public class OCLTestSuite {
 
 }

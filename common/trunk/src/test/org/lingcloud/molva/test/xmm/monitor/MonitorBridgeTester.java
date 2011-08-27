@@ -26,9 +26,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.lingcloud.molva.xmm.monitor.pool.*;
-import org.lingcloud.molva.xmm.monitor.pojos.*;
+import org.lingcloud.molva.xmm.monitor.pojos.Host;
+import org.lingcloud.molva.xmm.monitor.pool.MonitorBridge;
 
 /**
  * <strong>Purpose:</strong><br>
@@ -48,7 +47,6 @@ public class MonitorBridgeTester {
 	public static void initializeForAllTest() {
 
 		try {
-			System.setProperty("lingcloud.home", "/opt/lingcloud");
 			mb = MonitorBridge.getInstanse();
 			assertNotNull(mb);
 		} catch (Exception e) {
@@ -82,31 +80,39 @@ public class MonitorBridgeTester {
 
 	@Test
 	public void setTimePeriod() {
+		long oldperiod = Long.MIN_VALUE;
 		try {
-			long period = 3 * 60 * 1000;
-			long oldperiod = mb.getTimePeriod();
+			final long period = 3 * 60 * 1000;
+			oldperiod = mb.getTimePeriod();
 			mb.setTimePeriod(period);
 			assertTrue(mb.getTimePeriod() == period);
 			log.info("setTimePeriod Test success.");
-			mb.setTimePeriod(oldperiod);
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
 			fail();
+		} finally {
+			if (oldperiod != Long.MIN_VALUE) {
+				mb.setTimePeriod(oldperiod);
+			}
 		}
 	}
 
 	@Test
 	public void getTimePeriod() {
+		long oldperiod = Long.MIN_VALUE;
 		try {
-			long period = 3 * 60 * 1000;
-			long oldperiod = mb.getTimePeriod();
+			final long period = 3 * 60 * 1000;
+			oldperiod = mb.getTimePeriod();
 			mb.setTimePeriod(period);
 			assertTrue(mb.getTimePeriod() == period);
 			log.info("getTimePeriod Test success.");
-			mb.setTimePeriod(oldperiod);
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
 			fail();
+		} finally {
+			if (oldperiod != Long.MIN_VALUE) {
+				mb.setTimePeriod(oldperiod);
+			}
 		}
 	}
 
@@ -114,8 +120,10 @@ public class MonitorBridgeTester {
 	public void update() {
 		try {
 			Map<String, Host> hs = new HashMap<String, Host>();
+			hs.put("test", new Host("localhost"));
 
 			Map<String, Host> hsupdate = mb.update(hs);
+			assertNotNull(hsupdate);
 			assertTrue(hsupdate.size() > 0);
 			log.info("update Test success.");
 		} catch (Exception e) {
@@ -129,8 +137,10 @@ public class MonitorBridgeTester {
 
 		try {
 			Map<String, Host> hs = new HashMap<String, Host>();
-
+			hs.put("test", new Host("localhost"));
+			
 			Map<String, Host> hsget = mb.getHostMap(hs);
+			assertNotNull(hsget);
 			assertTrue(hsget.size() > 0);
 			log.info("getHostMap Test success.");
 		} catch (Exception e) {
@@ -145,6 +155,7 @@ public class MonitorBridgeTester {
 			String name = "hostname";
 			Host host = new Host(name);
 			Host hostup = mb.updateHost(host);
+			assertNotNull(hostup);
 			assertTrue(hostup.getHostName().equals(name));
 			log.info("updateHost Test success.");
 		} catch (Exception e) {

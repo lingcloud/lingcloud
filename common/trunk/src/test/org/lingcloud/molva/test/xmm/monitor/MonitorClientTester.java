@@ -17,8 +17,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,14 +28,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.lingcloud.molva.test.util.TestConfig;
-import org.lingcloud.molva.xmm.client.XMMClient;
 import org.lingcloud.molva.xmm.monitor.MonitorClient;
 import org.lingcloud.molva.xmm.monitor.pojos.Host;
 import org.lingcloud.molva.xmm.monitor.pojos.VM;
 import org.lingcloud.molva.xmm.monitor.pool.MonitorBridge;
-import org.lingcloud.molva.xmm.monitor.pool.MonitorPool;
 
-import antlr.collections.List;
 
 /**
  * <strong>Purpose:</strong><br>
@@ -48,19 +45,15 @@ import antlr.collections.List;
 public class MonitorClientTester {
 
 	private static Log log = LogFactory.getLog(MonitorBridgeTester.class);
-	private static MonitorPool mp = null;
 
 	private static MonitorClient mc = null;
 	private static MonitorBridge mbnew = null;
 
 	@BeforeClass
 	public static void initializeForAllTest() {
-
 		try {
-			System.setProperty("lingcloud.home", "/opt/lingcloud");
 			mc = MonitorClient.getInstanse();
 			mbnew = MonitorBridge.getInstanse();
-			mp = MonitorPool.getInstanse();
 			assertNotNull(mc);
 			assertNotNull(mbnew);
 		} catch (Exception e) {
@@ -171,11 +164,16 @@ public class MonitorClientTester {
 		try {
 			Map<String, Host> hs = new HashMap<String, Host>();
 			Map<String, Host> hsupdate = mbnew.getHostMap(hs);
+			assertNotNull(hsupdate);
 			Host hostnew = hsupdate.get(TestConfig.getTestXenServer());
+			assertNotNull(hostnew);
 			Map<String, VM> map = hostnew.getVMMap();
+			assertNotNull(map);
 
 			String vmname = null;
-			vmname = map.keySet().iterator().next();
+			Iterator<String> it = map.keySet().iterator();
+			assertTrue(it.hasNext());
+			vmname = it.next();
 			String stat = mc.getVMInfos(hostnew.getHostName(), vmname);
 			assertNotNull(stat);
 			log.info("getVMInfos Test success.");
