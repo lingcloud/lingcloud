@@ -16,7 +16,7 @@ from xml import xpath,dom
 descriptors = list()
 vm_list = list()
 
-gmetric = os.getcwd() + '/gmetric -t string '
+gmetric = os.path.dirname(os.path.abspath(__file__)) + '/gmetric -t string '
 
 def get_vm_num(name):
 	global vm_list

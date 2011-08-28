@@ -29,7 +29,7 @@ modules {
 
 collection_group {
 	collect_every = 90
-	time_threshold = 600
+	time_threshold = 300
 
 	metric {
 		name = "current_user"
@@ -40,7 +40,7 @@ collection_group {
 
 collection_group {
 	collect_every = 90
-	time_threshold = 600
+	time_threshold = 300
 
 	metric {
 		name = "total_process"
@@ -82,7 +82,7 @@ collection_group {
 
 collection_group {
 	collect_every = 90 
-	time_threshold = 600
+	time_threshold = 300
 
 	metric {
 		name = "vm_num"
