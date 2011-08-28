@@ -30,12 +30,18 @@ package applet.ssh;
 
 import javax.swing.*;
 
+/*
+ * <applet code=applet.ssh.JCTermApplet width=100 height=100 >
+ * </applet>
+ */
+
 public class JCTermApplet extends JApplet {
-	JCTermSwing term;
-	JInternalFrame frame;
+	JCTermSwing term = null;
+//	JInternalFrame frame = null;
+	JCTermSwingFrame jctermsf = null;
 
 	public JCTermApplet() {
-		term = new JCTermSwing();
+		//term = new JCTermSwing();
 	}
 
 	public void init() {
@@ -108,6 +114,7 @@ public class JCTermApplet extends JApplet {
 //	    frame.setMaximizable(true);
 //
 //	    //jctermsf.openSession();
+		
 		/**
 		 * Show JFrame view to user.
 		 * 
@@ -116,8 +123,7 @@ public class JCTermApplet extends JApplet {
 		 * username:username of server used to login.
 		 * password:password of user.
 		 */
-		this.setSize(1, 1);
-		JCTermSwingFrame jctermsf = new JCTermSwingFrame("SSH Connection");
+		jctermsf = new JCTermSwingFrame("SSH Connection");
 
 		try {
 			//Ip of server.
@@ -128,16 +134,24 @@ public class JCTermApplet extends JApplet {
 			jctermsf.setPasswd(getParameter("passwd"));
 			//The default size of window.Since the window is resizable,there is no need to set
 			//the width and height of the window by methods.
-			jctermsf.setSize(800, 600);
+			
+			//jctermsf.setSize(800, 600);
 		} catch (Exception e) {
-			jctermsf.setSize(800, 600);
+			//jctermsf.setSize(800, 600);
 		}
 
 		jctermsf.setVisible(true);
+		jctermsf.repaint();
 
 	}
 
 	public void start() {
 		requestFocus();
+	}
+	
+	public void destory() {
+		jctermsf.setVisible(false);
+		super.setVisible(false);
+		super.destroy();
 	}
 }
