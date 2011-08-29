@@ -618,8 +618,6 @@ showDialogForOperateVirtualNode = function (basePath, action, vNodeGuid, hostId)
         		+ "','" + vNodeGuid
         		+ "', 'migrateDiv')</script>";
     	str += "<div id=\"migrateDiv\"></div>";
-    	
-    	str += "<input type=\"hidden\" name=\"hostId\" value=\"" + "172.22.1.13" + "\" />";
     }else {
     	str += "<table width=\"400px\"><tbody><tr><td>&nbsp;&nbsp;"
     			+ lingcloud.Infrastructure.virtualNodeOp.confirmTip 

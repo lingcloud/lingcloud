@@ -361,6 +361,9 @@ public class MonitorClient {
 		String res = "";
 		Host host = mntPool.getHost(hostName);
 		VM vm = host.getVMMap().get(vmName);
+		if (vm == null) {
+			vm = new VM(vmName, MonitorConstants.MONITOR_STAT_CRIT);
+		}
 		VM.CPUInfo cpu = vm.getCPUInfo();
 		VM.MemInfo mem = vm.getMemInfo();
 		VM.DiskInfo disk = vm.getDiskInfo();

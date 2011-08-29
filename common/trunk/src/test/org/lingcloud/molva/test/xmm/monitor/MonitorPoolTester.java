@@ -29,6 +29,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.lingcloud.molva.test.util.TestConfig;
+import org.lingcloud.molva.xmm.monitor.MonitorConstants;
 import org.lingcloud.molva.xmm.monitor.pojos.Host;
 import org.lingcloud.molva.xmm.monitor.pojos.MonitorConf;
 import org.lingcloud.molva.xmm.monitor.pojos.Service;
@@ -144,7 +145,6 @@ public class MonitorPoolTester {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void getAllHostMap() {
 		try {
@@ -157,6 +157,7 @@ public class MonitorPoolTester {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void getMonitorConfByParName() {
 		try {
@@ -173,6 +174,7 @@ public class MonitorPoolTester {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void setMonitorConf() {
 		try {
@@ -192,7 +194,7 @@ public class MonitorPoolTester {
 	@Test
 	public void getSrvInHost() {
 		try {
-			Service se = mp.getSrvInHost("cpu_num",
+			Service se = mp.getSrvInHost(MonitorConstants.MONITOR_HOST_CPU,
 					TestConfig.getTestLingCloudServer());
 			assertNotNull(se);
 			log.info("getTimePeriod Test success.");
@@ -220,7 +222,7 @@ public class MonitorPoolTester {
 	public void getHost() {
 		try {
 
-			Host hostnew = mp.getHost(TestConfig.getTestXenServer());
+			Host hostnew = mp.getHost(TestConfig.getTestLingCloudServer());
 			assertNotNull(hostnew);
 			log.info("getHost Test success.");
 
@@ -233,8 +235,9 @@ public class MonitorPoolTester {
 	@Test
 	public void getSrvImgUri() {
 		try {
-			String name = "hostname";
-			assertTrue("".equals(mp.getSrvImgUri(name, null, 0, 0)));
+			String name = TestConfig.getTestLingCloudServer();
+			assertTrue(!"".equals(mp.getSrvImgUri(name, 
+					MonitorConstants.MONITOR_HOST_CPU, 0, 0)));
 			log.info("getSrvImgUri Test success.");
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);

@@ -26,6 +26,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.lingcloud.molva.test.util.TestConfig;
+import org.lingcloud.molva.xmm.monitor.MonitorConstants;
 import org.lingcloud.molva.xmm.monitor.pojos.Host;
 import org.lingcloud.molva.xmm.monitor.pool.MonitorBridge;
 
@@ -101,7 +103,7 @@ public class MonitorBridgeTester {
 	public void getTimePeriod() {
 		long oldperiod = Long.MIN_VALUE;
 		try {
-			final long period = 3 * 60 * 1000;
+			final long period = 10 * 60 * 1000;
 			oldperiod = mb.getTimePeriod();
 			mb.setTimePeriod(period);
 			assertTrue(mb.getTimePeriod() == period);
@@ -120,7 +122,6 @@ public class MonitorBridgeTester {
 	public void update() {
 		try {
 			Map<String, Host> hs = new HashMap<String, Host>();
-			hs.put("test", new Host("localhost"));
 
 			Map<String, Host> hsupdate = mb.update(hs);
 			assertNotNull(hsupdate);
@@ -137,7 +138,6 @@ public class MonitorBridgeTester {
 
 		try {
 			Map<String, Host> hs = new HashMap<String, Host>();
-			hs.put("test", new Host("localhost"));
 			
 			Map<String, Host> hsget = mb.getHostMap(hs);
 			assertNotNull(hsget);
@@ -152,7 +152,7 @@ public class MonitorBridgeTester {
 	@Test
 	public void updateHost() {
 		try {
-			String name = "hostname";
+			String name = TestConfig.getTestLingCloudServer();
 			Host host = new Host(name);
 			Host hostup = mb.updateHost(host);
 			assertNotNull(hostup);
@@ -168,8 +168,9 @@ public class MonitorBridgeTester {
 	@Test
 	public void getSrvImgUri() {
 		try {
-			String name = "hostname";
-			assertTrue("".equals(mb.getSrvImgUri(name, null, 0, 0)));
+			String name = TestConfig.getTestLingCloudServer();
+			String uri = mb.getSrvImgUri(name, MonitorConstants.MONITOR_HOST_CPU, 0, 0);
+			assertTrue(!"".equals(uri));
 			log.info("getSrvImgUri Test success.");
 		} catch (Exception e) {
 			log.error("Test failed. Reason: " + e);
