@@ -53,13 +53,13 @@ LINGCLOUD_SERVER=10.0.0.11
 LINGCLOUD_MOUNT_IMAGES_DIR="$NFS_MOUNT_DIR/lingcloud-images"
 
 # the public IP pool for runtime virtual machines
-PUBLIC_IP_POOL=10.0.0.201-230
+PUBLIC_IP_POOL=10.0.0.211-225
 
 # the host used to make appliance
 MAKE_APPLIANCE_HOST=10.0.0.12
 
 # the public IP pool for virtual appliances being made
-MAKE_APPLIANCE_IP_POOL=10.0.0.231-235
+MAKE_APPLIANCE_IP_POOL=10.0.0.226-230
 
 # monitor system type
 MONITOR_SYSTEM_TYPE=ganglia
