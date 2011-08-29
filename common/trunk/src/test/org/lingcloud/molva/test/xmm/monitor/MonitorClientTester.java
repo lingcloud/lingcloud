@@ -88,8 +88,8 @@ public class MonitorClientTester {
 
 		try {
 			mc = null;
-//			removePhysicalNode();
-//			destoryPartion();
+			removePhysicalNode();
+			destoryPartion();
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("Destory failed. Reasion: " + e);
