@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+	<!--Config DataSources -->
+	<data-sources></data-sources>
+
+	<!--Config struts form -->
+	<form-beans>
+		
+		<form-bean name="addPartitionForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="name" type="java.lang.String"></form-property>
+			<form-property name="controller" type="java.lang.String"></form-property>
+			<form-property name="nodetype" type="java.lang.String"></form-property>
+			<form-property name="preInstalledSoft" type="java.lang.String"></form-property>
+			<form-property name="description" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="deletePartitionForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="parguid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="newHostNodeForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="parguid" type="java.lang.String"></form-property>
+			<form-property name="privateip" type="java.lang.String"></form-property>
+			<form-property name="publicip" type="java.lang.String"></form-property>
+			<form-property name="redeploy" type="java.lang.String"></form-property>
+			<form-property name="description" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="deletePNNodeForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="parguid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+			<form-property name="pnguid" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="fastNewVirtualClusterForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="parguid" type="java.lang.String"></form-property>
+			<form-property name="clustername" type="java.lang.String"></form-property>
+			<form-property name="amm" type="java.lang.String"></form-property>
+			<form-property name="tenantId" type="java.lang.String"></form-property>
+			<form-property name="vntype" type="java.lang.String"></form-property>
+			<form-property name="nodenum" type="java.lang.String"></form-property>
+			<form-property name="publicIpSupport" type="java.lang.String"></form-property>
+			<form-property name="vnguid" type="java.lang.String"></form-property>
+			<form-property name="pnnodeip" type="java.lang.String[]"></form-property>
+			<form-property name="nodeinfotype" type="java.lang.String"></form-property>
+			<form-property name="nodeip" type="java.lang.String[]"></form-property>
+			<form-property name="vaguid" type="java.lang.String[]"></form-property>
+			<form-property name="cpunum" type="java.lang.String[]"></form-property>
+			<form-property name="memsize" type="java.lang.String[]"></form-property>
+			<form-property name="deployPolicy" type="java.lang.String[]"></form-property>
+			<form-property name="deployPolicyParam" type="java.lang.String[]"></form-property>
+			<form-property name="effectiveTime" type="java.lang.String"></form-property>
+			<form-property name="expireTime" type="java.lang.String"></form-property>
+			<form-property name="desc" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+			<form-property name="targetdiv" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="freeClusterForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="vcguid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="startClusterForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="vcguid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="stopClusterForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="vcguid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="deleteVirtualApplianceForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="vaguid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		
+		<form-bean name="newApplianceCategoryForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="categoryname" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		
+		<form-bean name="deleteApplianceCategoryForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="guid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		
+		<form-bean name="newVirtualApplianceForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="name" type="java.lang.String"></form-property>
+			<form-property name="location" type="java.lang.String"></form-property>
+			<form-property name="os" type="java.lang.String"></form-property>
+			<form-property name="osversion" type="java.lang.String"></form-property>
+			<form-property name="format" type="java.lang.String"></form-property>
+			<form-property name="app" type="java.lang.String"></form-property>
+			<form-property name="category" type="java.lang.String"></form-property>
+			<form-property name="loader" type="java.lang.String"></form-property>
+			<form-property name="accessway" type="java.lang.String[]"></form-property>
+			<form-property name="cpuamount" type="java.lang.String"></form-property>
+			<form-property name="memsize" type="java.lang.String"></form-property>
+			<form-property name="language" type="java.lang.String"></form-property>
+			<form-property name="loginstyle" type="java.lang.String"></form-property>
+			<form-property name="username" type="java.lang.String"></form-property>
+			<form-property name="password" type="java.lang.String"></form-property>
+			<form-property name="description" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="newVirtualDiscForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="discname" type="java.lang.String"></form-property>
+			<form-property name="location" type="java.lang.String"></form-property>
+			<form-property name="format" type="java.lang.String"></form-property>
+			<form-property name="type" type="java.lang.String"></form-property>
+			<form-property name="os" type="java.lang.String"></form-property>
+			<form-property name="osversion" type="java.lang.String"></form-property>
+			<form-property name="app" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="deleteVirtualDiscForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="guid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="newVirtualDiskForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="diskid" type="java.lang.String"></form-property>
+			<form-property name="file" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="deleteVirtualDiskForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="guid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="makeNewVirtualApplianceForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="appname" type="java.lang.String"></form-property>
+			<form-property name="format" type="java.lang.String"></form-property>
+			<form-property name="vcd" type="java.lang.String"></form-property>
+			<form-property name="os" type="java.lang.String"></form-property>
+			<form-property name="osversion" type="java.lang.String"></form-property>
+			<form-property name="loader" type="java.lang.String"></form-property>
+			<form-property name="memsize" type="java.lang.String"></form-property>
+			<form-property name="diskcapacity" type="java.lang.String"></form-property>
+			<form-property name="cpuamount" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="useExistedVirtualApplianceForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="appliance" type="java.lang.String"></form-property>
+			<form-property name="appname" type="java.lang.String"></form-property>
+			<form-property name="format" type="java.lang.String"></form-property>
+			<form-property name="memsize" type="java.lang.String"></form-property>
+			<form-property name="action" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="operateVirtualApplianceForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="guid" type="java.lang.String"></form-property>
+			<form-property name="action" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="operateVirtualVirtualNodeForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="vNodeGuid" type="java.lang.String"></form-property>
+			<form-property name="action" type="java.lang.String"></form-property>
+			<form-property name="hostId" type="java.lang.String"></form-property>
+			<form-property name="pnName" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="operatePhysicalNodeForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="pNodeGuid" type="java.lang.String"></form-property>
+			<form-property name="action" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="saveVirtualApplianceForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="guid" type="java.lang.String"></form-property>
+			<form-property name="format" type="java.lang.String"></form-property>
+			<form-property name="app" type="java.lang.String"></form-property>
+			<form-property name="category" type="java.lang.String"></form-property>
+			<form-property name="accessway" type="java.lang.String[]"></form-property>
+			<form-property name="language" type="java.lang.String"></form-property>
+			<form-property name="loginstyle" type="java.lang.String"></form-property>
+			<form-property name="username" type="java.lang.String"></form-property>
+			<form-property name="password" type="java.lang.String"></form-property>
+			<form-property name="description" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="changeDiscForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="guid" type="java.lang.String"></form-property>
+			<form-property name="discguid" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="modifyVirtualDiscForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="guid" type="java.lang.String"></form-property>
+			<form-property name="discname" type="java.lang.String"></form-property>
+			<form-property name="format" type="java.lang.String"></form-property>
+			<form-property name="type" type="java.lang.String"></form-property>
+			<form-property name="os" type="java.lang.String"></form-property>
+			<form-property name="osversion" type="java.lang.String"></form-property>
+			<form-property name="app" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="modifyVirtualApplianceForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="guid" type="java.lang.String"></form-property>
+			<form-property name="name" type="java.lang.String"></form-property>
+			<form-property name="os" type="java.lang.String"></form-property>
+			<form-property name="osversion" type="java.lang.String"></form-property>
+			<form-property name="format" type="java.lang.String"></form-property>
+			<form-property name="app" type="java.lang.String"></form-property>
+			<form-property name="category" type="java.lang.String"></form-property>
+			<form-property name="loader" type="java.lang.String"></form-property>
+			<form-property name="accessway" type="java.lang.String[]"></form-property>
+			<form-property name="cpuamount" type="java.lang.String"></form-property>
+			<form-property name="memsize" type="java.lang.String"></form-property>
+			<form-property name="language" type="java.lang.String"></form-property>
+			<form-property name="loginstyle" type="java.lang.String"></form-property>
+			<form-property name="username" type="java.lang.String"></form-property>
+			<form-property name="password" type="java.lang.String"></form-property>
+			<form-property name="description" type="java.lang.String"></form-property>
+			<form-property name="thispage" type="java.lang.String"></form-property>
+		</form-bean>
+		<form-bean name="loginForm"  dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+        	<form-property name="username" type="java.lang.String"></form-property>
+			<form-property name="password" type="java.lang.String"></form-property>
+        </form-bean>
+        <form-bean name="logoutForm"  dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+        </form-bean>
+        
+	</form-beans>
+
+	<!--Set global exception handling -->
+	<global-exceptions></global-exceptions>
+
+	<!--Set global skip forward -->
+	<global-forwards>
+		<forward name="global-signon" path="/index.jsp" />
+		<forward name="global-adminsignon" path="/index.jsp" />
+		<forward name="unknown-error" path="/JSP/error.jsp"></forward>
+	</global-forwards>
+
+	<!--Config struts action -->
+	<action-mappings>
+		
+		<action path="/addPartition" type="org.lingcloud.molva.portal.struts.action.AddPartitionAction" name="addPartitionForm" scope="session" validate="false" input="/JSP/ViewVirtualCluster.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+		
+		<action path="/deletePartition" type="org.lingcloud.molva.portal.struts.action.DeletePartitionAction" name="deletePartitionForm" scope="session" validate="false" input="/JSP/ViewVirtualCluster.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+		
+		<action path="/newHostNode" type="org.lingcloud.molva.portal.struts.action.NewPhysicalNodeAction" name="newHostNodeForm" scope="session" validate="false" input="/JSP/ViewVirtualCluster.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+		
+		<action path="/deletePNNode" type="org.lingcloud.molva.portal.struts.action.DeletePhysicalNodeAction" name="deletePNNodeForm" scope="session" validate="false" input="/JSP/ViewVirtualCluster.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+		
+		<action path="/newVirtualAppliance" type="org.lingcloud.molva.portal.struts.action.NewVirtualApplianceAction" name="newVirtualApplianceForm" scope="session" validate="false" input="/JSP/ViewVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualAppliance.jsp" />
+		</action>
+		
+		<action path="/fastNewVirtualCluster" type="org.lingcloud.molva.portal.struts.action.FastNewVirtualClusterAction" name="fastNewVirtualClusterForm" scope="session" validate="false" input="/JSP/ViewVirtualCluster.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+
+		<action path="/freeCluster" type="org.lingcloud.molva.portal.struts.action.FreeVirtualClusterAction" name="freeClusterForm" scope="session" validate="false" input="/JSP/ViewVirtualCluster.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+		<action path="/startCluster" type="org.lingcloud.molva.portal.struts.action.StartVirtualClusterAction" name="startClusterForm" scope="session" validate="false" input="/JSP/ViewVirtualCluster.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+		<action path="/stopCluster" type="org.lingcloud.molva.portal.struts.action.StopVirtualClusterAction" name="stopClusterForm" scope="session" validate="false" input="/JSP/ViewVirtualCluster.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+		<action path="/deleteVirtualAppliance" type="org.lingcloud.molva.portal.struts.action.DeleteVirtualApplianceAction" name="deleteVirtualApplianceForm" scope="session" validate="false" input="/JSP/ViewVirtualAppliance.jsp">
+			<forward name="makeSuccess" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+			<forward name="success" path="/JSP/ViewVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualAppliance.jsp" />
+		</action>
+		<action path="/newApplianceCategory" type="org.lingcloud.molva.portal.struts.action.NewApplianceCategoryAction" name="newApplianceCategoryForm" scope="session" validate="false" input="/JSP/ViewVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualAppliance.jsp" />
+		</action>
+		<action path="/deleteApplianceCategory" type="org.lingcloud.molva.portal.struts.action.DeleteApplianceCategoryAction" name="deleteApplianceCategoryForm" scope="session" validate="false" input="/JSP/ViewVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualAppliance.jsp" />
+		</action>
+		<action path="/newVirtualDisc" type="org.lingcloud.molva.portal.struts.action.NewVirtualDiscAction" name="newVirtualDiscForm" scope="session" validate="false" input="/JSP/ViewVirtualDisc.jsp">
+			<forward name="success" path="/JSP/ViewVirtualDisc.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualDisc.jsp" />
+		</action>
+		<action path="/deleteVirtualDisc" type="org.lingcloud.molva.portal.struts.action.DeleteVirtualDiscAction" name="deleteVirtualDiscForm" scope="session" validate="false" input="/JSP/ViewVirtualDisc.jsp">
+			<forward name="success" path="/JSP/ViewVirtualDisc.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualDisc.jsp" />
+		</action>
+		<action path="/newVirtualDisk" type="org.lingcloud.molva.portal.struts.action.NewVirtualDiskAction" name="newVirtualDiskForm" scope="session" validate="false" input="/JSP/viewVirtualDisk.jsp">
+			<forward name="success" path="/JSP/viewVirtualDisk.jsp" />
+			<forward name="failure" path="/JSP/viewVirtualDisk.jsp" />
+		</action>
+		<action path="/deleteVirtualDisk" type="org.lingcloud.molva.portal.struts.action.DeleteVirtualDiskAction" name="deleteVirtualDiskForm" scope="session" validate="false" input="/JSP/viewVirtualDisk.jsp">
+			<forward name="success" path="/JSP/viewVirtualDisk.jsp" />
+			<forward name="failure" path="/JSP/viewVirtualDisk.jsp" />
+		</action>
+		<action path="/makeNewVirtualAppliance" type="org.lingcloud.molva.portal.struts.action.MakeNewVirtualApplianceAction" name="makeNewVirtualApplianceForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+		</action>
+		<action path="/makeByExistedVirtualAppliance" type="org.lingcloud.molva.portal.struts.action.MakeByExistedVirtualApplianceAction" name="useExistedVirtualApplianceForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+		</action>
+		<action path="/operateVirtualAppliance" type="org.lingcloud.molva.portal.struts.action.OperateVirtualApplianceAction" name="operateVirtualApplianceForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+		</action>
+		<action path="/operateVirtualNodeAction" type="org.lingcloud.molva.portal.struts.action.OperateVirtualNodeAction" name="operateVirtualVirtualNodeForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+		<action path="/operatePhysicalNodeAction" type="org.lingcloud.molva.portal.struts.action.OperatePhysicalNodeAction" name="operatePhysicalNodeForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewVirtualCluster.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualCluster.jsp" />
+		</action>
+		<action path="/saveVirtualAppliance" type="org.lingcloud.molva.portal.struts.action.SaveVirtualApplianceAction" name="saveVirtualApplianceForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+		</action>
+		<action path="/changeDisc" type="org.lingcloud.molva.portal.struts.action.ChangeDiscAction" name="changeDiscForm" scope="session" validate="false" input="/JSP/ViewMakeVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewMakeVirtualAppliance.jsp" />
+		</action>
+		<action path="/modifyVirtualDisc" type="org.lingcloud.molva.portal.struts.action.ModifyVirtualDiscAction" name="modifyVirtualDiscForm" scope="session" validate="false" input="/JSP/ViewVirtualDisc.jsp">
+			<forward name="success" path="/JSP/ViewVirtualDisc.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualDisc.jsp" />
+		</action>
+		<action path="/modifyVirtualAppliance" type="org.lingcloud.molva.portal.struts.action.ModifyVirtualApplianceAction" name="modifyVirtualApplianceForm" scope="session" validate="false" input="/JSP/ViewVirtualAppliance.jsp">
+			<forward name="success" path="/JSP/ViewVirtualAppliance.jsp" />
+			<forward name="failure" path="/JSP/ViewVirtualAppliance.jsp" />
+		</action>
+		<action path="/login" type="org.lingcloud.molva.portal.struts.action.LoginAction" name="loginForm" scope="session" validate="false">
+           <forward name="success" path="/index.jsp" />
+           <forward name="failure" path="/JSP/LoginErrorJump.jsp" />
+        </action>
+        <action path="/logout" type="org.lingcloud.molva.portal.struts.action.LogoutAction" name="logoutForm" scope="session" validate="false">
+           <forward name="success" path="/index.jsp" />
+           <forward name="failure" path="/index.jsp" />
+        </action>
+	</action-mappings>
+
+	<!--Config message resource file -->
+	<message-resources parameter="org.lingcloud.molva.portal.struts.ApplicationResources" />
+
+</struts-config>

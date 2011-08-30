@@ -1,0 +1,155 @@
+#!/bin/bash
+#
+# Copyright (C) 2008-2011,
+# LingCloud Team,
+# Institute of Computing Technology,
+# Chinese Academy of Sciences.
+# P.O.Box 2704, 100190, Beijing, China.
+#
+# http://lingcloud.org
+#
+# Configuration file for LingCloud Molva
+
+# LingCloud server
+lingCloudServer=${LINGCLOUD_SERVER}
+
+# LingCloud home directory
+lingCloudHome="${LINGCLOUD_HOME_DIR}"
+
+# NFS directory (remote export path and local mount path must be the same)
+nfsMountDir="${NFS_MOUNT_DIR}"
+
+# OpenNebula install directory
+oneDir="${NFS_MOUNT_DIR}/opennebula"
+
+# OpenNebula version
+oneVersion="2.0.1"
+
+# OpenNebula username and password
+oneUserPassword="${OPENNEBULA_USERNAME}:${OPENNEBULA_PASSWORD}"
+
+# virtualization Server URL
+virtualizationServerUrl="http\\://${LINGCLOUD_SERVER}\\:2633/RPC2"
+
+# molva web service URL
+molvaWebServiceUrl="http\\://${LINGCLOUD_SERVER}\\:8080/axis/services/XMM"
+ 
+# whether enable public IP (true/false)
+publicIpEnable="true"
+
+# public IP pool
+publicIpPool="${PUBLIC_IP_POOL}"
+
+# partition image server
+partitionImageServer="${LINGCLOUD_SERVER}"
+
+# test physical node command
+testPhysicalNodeCmd="${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/test-physical-node.sh"
+
+# operate physical node command
+operatePhysicalNodeCmd="${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/op-physical-node.sh"
+
+# operate virtual node command,mainly shutdown
+operateVirtualNodeCmd="${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/op-virtual-node.sh"
+
+# partition driver path
+partitionDriverPath="${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/partition-driver.sh"
+
+# configuring driver path, this script is not available now, it is rarely used.
+virtualClusterConfigDriverPath="${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/vcConfig_driver.sh"
+
+# static meta info sender
+staticMetaInfoSender="scp -o StrictHostKeyChecking=no -o PasswordAuthentication=no ${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/static-metaInfo-collector.sh root@\\$host:/tmp/static-metaInfo-collector.sh"
+
+# static meta info collector
+staticMetaInfoCollector="ssh -o StrictHostKeyChecking=no -o PasswordAuthentication=no root@\\$host bash -c /tmp/static-metaInfo-collector.sh"
+
+# command killing VM, this script is not available now, it is rarely used.
+vmKiller="${LINGCLOUD_HOME_DIR}/bin/scripts/xmm/vmkiller.sh"
+
+# the way manage images
+imageMgmtWay="nfs"
+
+# asset polling interval (ms)
+assetPollingInterval=300000
+
+# mount temporary directory location
+tempDirLocation="${LINGCLOUD_MOUNT_IMAGES_DIR}/vam/temp"
+
+# mount upload directory location
+uploadDirLocation="${LINGCLOUD_MOUNT_IMAGES_DIR}/vam/upload"
+
+# mount story directory location
+fileDirLocation="${LINGCLOUD_MOUNT_IMAGES_DIR}/vam/file"
+
+# remote story host
+nfsHost="${NFS_SERVER}"
+
+# remote story host user
+nfsUser="root"
+
+# network bridge name
+networkBridge="xenbr0"
+
+# the default virtual disk image format 
+imageFormat="raw"
+
+# the snapshot image format
+snapshotImageFormat="qcow"
+
+# the host used to make appliance
+makeApplianceHost="${MAKE_APPLIANCE_HOST}"
+
+# the user of the host used to make appliance
+makeApplianceUser="root"
+
+# the count of appliances can be made (MAX: 19)
+makeApplianceVMCount="${MAKE_APPLIANCE_VM_COUNT}"
+
+# the IP pool of appliances
+makeApplianceIpPool="${MAKE_APPLIANCE_IP_POOL}"
+
+# the information of virtual machine used to make appliance
+# makeApplianceVM*=<name>,<MAC address>,<bridge>,<vnc port>
+# makeApplianceVM1=appliance-1,02:00:00:01:00:f1|ee:ee:ac:16:01:f1,xenbr0,81
+# makeApplianceVM2=appliance-2,02:00:00:01:00:f2|ee:ee:ac:16:01:f2,xenbr0,82
+# makeApplianceVM3=appliance-3,02:00:00:01:00:f3|ee:ee:ac:16:01:f3,xenbr0,83
+# makeApplianceVM4=appliance-4,02:00:00:01:00:f4|ee:ee:ac:16:01:f4,xenbr0,84
+# makeApplianceVM5=appliance-5,02:00:00:01:00:f5|ee:ee:ac:16:01:f5,xenbr0,85
+${MAKE_APPLIANCE_VM}
+
+# utility scripts path
+utilityScriptsPath="${LINGCLOUD_HOME_DIR}/bin/scripts/utils"
+
+# whether enable access control for portal (true/false)
+accessControlEnable=${ACCESS_CONTROL_ENABLE}
+
+# the admin group name for access control
+accessControlAdminGroup=${ACCESS_CONTROL_ADMIN}
+
+# the user group name for access control
+accessControlUserGroup=${ACCESS_CONTROL_USER}
+
+# display language of UI (e.g. en, zh)
+uiLanguage="${UI_LANGUAGE}"
+
+# monitor system type, only ganglia is supported in the current version
+monitorSystemType=${MONITOR_SYSTEM_TYPE}
+
+# the monitor server host
+monitorServerHost=${MONITOR_SERVER}
+
+# the monitor server port
+monitorServerPort=8649
+
+# the monitor install location
+monitorDir="${NFS_MOUNT_DIR}/monitor"
+
+# the RRDtool command for monitor
+cmdRRDtool=/usr/local/rrdtool/bin/rrdtool
+
+# Xen server for test case
+testCaseXenServer=${LINGCLOUD_SERVER}
+
+# Common server for test case
+testCaseCommonServer=

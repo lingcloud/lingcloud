@@ -1,0 +1,9 @@
+.lingcloud_page_div{
+	text-align:center;
+	font-size:12px;
+	color:#0B60AF
+}
+.lingcloud_page_div span{
+	margin-left: 30px;
+	cursor: pointer;
+}
