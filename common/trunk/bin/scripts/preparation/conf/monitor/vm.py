@@ -128,7 +128,7 @@ def get_vm_netinfos(doc, domid):
 		(stat, output) = commands.getstatusoutput(cmd)
 		output = output.replace(dev + ' ','')
 		l = output.find('tx_bytes')
-		if l > 0:
+		if l >= 0:
 			tmp = output[l:]
 			l = tmp.find('\n')
 			tmp = tmp[0:l]
@@ -139,11 +139,13 @@ def get_vm_netinfos(doc, domid):
 			ret += '0'
 		ret += ','
 		l = output.find('rx_bytes')
-		if l > 0:
+		if l >= 0:
 			tmp = output[l:]
 			l = tmp.find('\n')
 			tmp = tmp[0:l]
-			ret += tmp.replace(' ', ':')
+			l = tmp.find(' ')
+			tmp = tmp[l:]
+			ret += tmp
 		else:
 			ret += '0'
 

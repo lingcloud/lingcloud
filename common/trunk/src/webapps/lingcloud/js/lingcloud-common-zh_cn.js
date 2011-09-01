@@ -276,6 +276,7 @@ var lingcloud = {
 			selectTime:'\u8BF7\u9009\u62E9\u65F6\u95F4',
 			tips14Move:'\u53F0\u673A\u5668\u6709',
 			tips24Move:'\u7684',
+			nodelist:'\u8282\u70b9\u5217\u8868',
 			sumInfor: {
 				total: '\u603B\u5171',			
 				parNode: '\u4E2A\u5206\u533A',		

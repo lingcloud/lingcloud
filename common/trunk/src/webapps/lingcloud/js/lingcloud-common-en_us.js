@@ -279,6 +279,7 @@ var lingcloud = {
 			selectTime:'Please select time',
 			tips14Move:' machine(s) with the ',
 			tips24Move:' ',
+			nodelist:'Node List',
 			sumInfor: {
 				total: 'Total',			
 				parNode: 'Partition',		
