@@ -43,6 +43,11 @@ public class TestUtils {
 		int read = 0;
 		File srcfile = new File(srcPath);
 		if (srcfile.exists()) {
+			File file = new File(dstPath);
+			File dir = file.getParentFile();
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
 			FileInputStream fis = new FileInputStream(srcPath);
 			FileOutputStream fos = new FileOutputStream(dstPath);
 			byte[] buffer = new byte[TestConstants.K];
