@@ -42,6 +42,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.lingcloud.molva.ocl.asset.AssetConstants;
@@ -562,6 +563,10 @@ public class XMMPortalUtil {
 			return "";
 		}
 	}
+	
+	public static String htmlEncode(String html) {
+		return StringEscapeUtils.escapeHtml(html);
+	}
 }
 
 /**
@@ -691,4 +696,6 @@ class ClientCode {
 			return "";
 		}
 	}
+	
+	
 }

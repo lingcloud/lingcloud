@@ -253,7 +253,7 @@
 										for(int k=0; k < pl.size(); k++){
 											Partition tmp = pl.get(k);
 											%>
-											d.add('<%=tmp.getGuid()%>',0,'<%=tmp.getName()%>','javascript:showPartitionInfo(\'<%=basePath%>\',\'<%=tmp.getGuid()%>\');','', '','<%=basePath%>images/partition.png','<%=basePath%>images/partition.png','','asset_info_div');
+											d.add('<%=tmp.getGuid()%>',0,"<%=XMMPortalUtil.htmlEncode(tmp.getName())%>",'javascript:showPartitionInfo(\'<%=basePath%>\',\'<%=tmp.getGuid()%>\');','', '','<%=basePath%>images/partition.png','<%=basePath%>images/partition.png','','asset_info_div');
 											<%
 											List<VirtualCluster> vcl = null;
 											try {
@@ -264,11 +264,11 @@
 													LeaseLifeCycleState state = vctmp.getLifecycleState();
 													if(state == LeaseLifeCycleState.FAIL || state == LeaseLifeCycleState.EXPIRED || state == LeaseLifeCycleState.REJECTED){
 													%>
-														d.add('<%=vctmp.getGuid()%>','<%=tmp.getGuid()%>','<%=vctmp.getName()%>','javascript:showVirtualClusterInfo(\'<%=basePath%>\',\'<%=vctmp.getGuid()%>\');','', '','<%=basePath%>images/vcerror.png','<%=basePath%>images/vcerror.png','','asset_info_div');
+														d.add('<%=vctmp.getGuid()%>','<%=tmp.getGuid()%>',"<%=XMMPortalUtil.htmlEncode(vctmp.getName())%>",'javascript:showVirtualClusterInfo(\'<%=basePath%>\',\'<%=vctmp.getGuid()%>\');','', '','<%=basePath%>images/vcerror.png','<%=basePath%>images/vcerror.png','','asset_info_div');
 													<%} else if(state == LeaseLifeCycleState.TERMINATION){%>
-														d.add('<%=vctmp.getGuid()%>','<%=tmp.getGuid()%>','<%=vctmp.getName()%>','javascript:showVirtualClusterInfo(\'<%=basePath%>\',\'<%=vctmp.getGuid()%>\');','', '','<%=basePath%>images/vcshutdown.png','<%=basePath%>images/vcshutdown.png','','asset_info_div');
+														d.add('<%=vctmp.getGuid()%>','<%=tmp.getGuid()%>',"<%=XMMPortalUtil.htmlEncode(vctmp.getName())%>",'javascript:showVirtualClusterInfo(\'<%=basePath%>\',\'<%=vctmp.getGuid()%>\');','', '','<%=basePath%>images/vcshutdown.png','<%=basePath%>images/vcshutdown.png','','asset_info_div');
 													<%} else {%>
-														d.add('<%=vctmp.getGuid()%>','<%=tmp.getGuid()%>','<%=vctmp.getName()%>','javascript:showVirtualClusterInfo(\'<%=basePath%>\',\'<%=vctmp.getGuid()%>\');','', '','<%=basePath%>images/cluster.png','<%=basePath%>images/cluster.png','','asset_info_div');
+														d.add('<%=vctmp.getGuid()%>','<%=tmp.getGuid()%>',"<%=XMMPortalUtil.htmlEncode(vctmp.getName())%>",'javascript:showVirtualClusterInfo(\'<%=basePath%>\',\'<%=vctmp.getGuid()%>\');','', '','<%=basePath%>images/cluster.png','<%=basePath%>images/cluster.png','','asset_info_div');
 														<%List<Node> nodelist = nodemap.get(vctmp.getGuid());
 															if(nodelist!=null && nodelist.size()>0){
 																for(int n_num = 0; n_num < nodelist.size(); n_num++){
@@ -281,11 +281,11 @@
 																	}
 																	if(node.isHeadNode()){
 																	%>
-																	d.add('<%=node.getGuid()%>','<%=vctmp.getGuid()%>','<%=node.getName()%>','javascript:showNodeInfo(\'<%=basePath%>\',\'<%=node.getGuid()%>\',\'<%=nodetype%>\');','', '','<%=basePath%>images/headnode.png','<%=basePath%>images/headnode.png','','asset_info_div');
+																	d.add('<%=node.getGuid()%>','<%=vctmp.getGuid()%>',"<%=XMMPortalUtil.htmlEncode(node.getName())%>",'javascript:showNodeInfo(\'<%=basePath%>\',\'<%=node.getGuid()%>\',\'<%=nodetype%>\');','', '','<%=basePath%>images/headnode.png','<%=basePath%>images/headnode.png','','asset_info_div');
 																	<%
 																	}else{
 																	%>
-																	d.add('<%=node.getGuid()%>','<%=vctmp.getGuid()%>','<%=node.getName()%>','javascript:showNodeInfo(\'<%=basePath%>\',\'<%=node.getGuid()%>\',\'<%=nodetype%>\');','', '','<%=basePath%>images/node.png','<%=basePath%>images/node.png','','asset_info_div');
+																	d.add('<%=node.getGuid()%>','<%=vctmp.getGuid()%>',"<%=XMMPortalUtil.htmlEncode(node.getName())%>",'javascript:showNodeInfo(\'<%=basePath%>\',\'<%=node.getGuid()%>\',\'<%=nodetype%>\');','', '','<%=basePath%>images/node.png','<%=basePath%>images/node.png','','asset_info_div');
 																	<%
 																	}
 																}	
