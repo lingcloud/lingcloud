@@ -377,7 +377,10 @@ public class VirtualApplianceManagerTester {
             VirtualAppliance vaAllocate = vam.allocateAppliance(
             		vaNew.getGuid(), null, null);			
             assertNotNull(vaAllocate);
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+            
             vam.revokeAppliance(vaAllocate.getGuid(), null, null);
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
             
 			log.info("allocateAppliance Test success.");
 		} catch (Exception e) {
@@ -400,7 +403,10 @@ public class VirtualApplianceManagerTester {
             VirtualAppliance vaAllocate = vam.allocateAppliance(
             		vaNew.getGuid(), null, null);
             assertNotNull(vaAllocate);
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+            
             assertTrue(vam.revokeAppliance(vaAllocate.getGuid(), null, null));
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
             
 			log.info("revokeAppliance Test success.");
 		} catch (Exception e) {
