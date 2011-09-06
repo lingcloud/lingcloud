@@ -13,17 +13,11 @@
 
 package org.lingcloud.molva.xmm.vam.services;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.lingcloud.molva.xmm.vam.daos.DaoFactory;
 import org.lingcloud.molva.xmm.vam.daos.VAFileDao;
@@ -772,56 +766,6 @@ public class FileService {
 	 */
 	public void createReplica(VAFile file) throws Exception {
 		copyDisk(file);
-	}
-
-	/**
-	 * get the capacity and size of the disk.
-	 * 
-	 * @param vafile
-	 *            disk object
-	 * @return input disk object with capacity and size
-	 */
-	public VADisk getDiskCapacity(VAFile vafile) {
-		Runtime rt = Runtime.getRuntime();
-		Process proc;
-		long capacity = 0;
-		long size = 0;
-
-		// get the disk capacity and size
-		try {
-			String command = VAMUtil.getDiskInfoCommand(vafile.getSavePath());
-			String[] shell = new String[] { "/bin/sh", "-c", command };
-			proc = rt.exec(shell);
-
-			InputStream is = proc.getInputStream();
-
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				if (line.startsWith("virtual size")) {
-					Pattern pattern = Pattern.compile("(\\d+) bytes");
-					Matcher matcher = pattern.matcher(line);
-					if (matcher.find()) {
-						capacity = Long.parseLong(matcher.group(1));
-					}
-				}
-			}
-
-			String path = vafile.getSavePath();
-			File file = new File(path);
-			if (file.exists()) {
-				size = file.length();
-			}
-
-		} catch (IOException e) {
-			VAMUtil.errorLog(e.getMessage());
-		}
-		VADisk vadisk = new VADisk(vafile);
-		vadisk.setCapacity(capacity);
-		vadisk.setSize(size);
-
-		return vadisk;
 	}
 
 	/**

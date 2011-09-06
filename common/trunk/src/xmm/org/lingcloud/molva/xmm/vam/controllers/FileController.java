@@ -17,6 +17,7 @@ import org.lingcloud.molva.xmm.vam.daos.VAFileDao;
 import org.lingcloud.molva.xmm.vam.pojos.VADisk;
 import org.lingcloud.molva.xmm.vam.pojos.VAFile;
 import org.lingcloud.molva.xmm.vam.pojos.VAObject;
+import org.lingcloud.molva.xmm.vam.pojos.VADisk.DiskInfo;
 import org.lingcloud.molva.xmm.vam.services.FileOperation;
 import org.lingcloud.molva.xmm.vam.services.ServiceFactory;
 import org.lingcloud.molva.xmm.vam.util.VAMConfig;
@@ -173,7 +174,12 @@ public class FileController extends Controller {
 		}
 
 		// update disk information
-		VADisk vadisk = ServiceFactory.getFileService().getDiskCapacity(vafile);
+		VADisk vadisk = new VADisk(vafile);
+		DiskInfo info = VAMUtil.getDiskInfo(vafile.getSavePath());
+		if (info != null) {
+			vadisk.setSize(info.getDiskSize());
+			vadisk.setCapacity(info.getVirtualSize());
+		}
 
 		if (!vafile.getParent().equals(VAMConstants.NULL)) {
 			vadisk.setParent(VAMConstants.NULL);

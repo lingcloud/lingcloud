@@ -840,8 +840,10 @@ public class ApplianceService {
 				if (format != null && format.equalsIgnoreCase(
 						VAMConfig.getImageFormat())
 						&& backingFile == null) {
-					disk = fileService.getDiskCapacity(disk);
-					fileService.updateFile(disk);
+					VADisk vadisk = new VADisk(disk);
+					vadisk.setCapacity(info.getVirtualSize());
+					vadisk.setSize(info.getDiskSize());
+					fileService.updateFile(vadisk);
 					
 					appliance.setState(VAMConstants.STATE_READY);
 					appliance = vaDao.update(appliance);
