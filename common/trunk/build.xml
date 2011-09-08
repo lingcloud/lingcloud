@@ -45,11 +45,11 @@
 		<pathelement location="${common.dist.dir}/lib/lingcloud-molva-xmm-${project.xmm.version}.jar" />
 	</path>
 
-	<target name="set-debug-on" if="test.run">
+	<target name="set-debug-on" if="debug.on">
 		<property name="javac.debug" value="on" />
 	</target>
 	
-	<target name="set-debug-off" unless="test.run">
+	<target name="set-debug-off" unless="debug.on">
 		<property name="javac.debug" value="off" />
 	</target>
 
@@ -330,7 +330,7 @@
 		<mkdir dir="${common.dist.dir}/test/reports/html" />
 		<mkdir dir="${common.dist.dir}/test/coverage" />
 		<mkdir dir="${common.dist.dir}/build/instrument" />
-		<property name="test.run" value="true" />
+		<property name="debug.on" value="true" />
 	</target>
 	
 	<target name="test-junit" depends="test-init,build-test,test-instrument">
@@ -388,5 +388,25 @@
 
 	<target name="test" depends="test-init,test-junit,test-junit-report,
 		test-coverage-report,clean-build"/>
+	
+	<target name="debug-init" >
+		<property name="debug.on" value="true" />
+	</target>
 
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="bin/3rdparty/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<target name="debug-tomcat" >
+		<loadfile property="startup.sh.text" srcFile="${common.dist.dir}/bin/tomcat/bin/startup.sh" />
+		
+		<propertyregex property="temp.file" input="${startup.sh.text}" regexp='" start ' replace='" jpda start ' />
+			
+		<echo file="${common.dist.dir}/bin/tomcat/bin/startup.sh">${temp.file}</echo>
+		<chmod file="${common.dist.dir}/bin/tomcat/bin/startup.sh" perm="ugo+x"/>
+	</target>
+
+	<target name="debug" depends="debug-init,build,debug-tomcat" />
 </project>
