@@ -18,8 +18,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.lingcloud.molva.ocl.util.ConfigUtil;
-import org.lingcloud.molva.xmm.vam.util.VAMUtil;
 
 /**
  * <strong>Purpose:</strong><br>
@@ -30,6 +31,8 @@ import org.lingcloud.molva.xmm.vam.util.VAMUtil;
  * 
  */
 public class TestConfig {
+	private static Log log = LogFactory.getLog(TestConfig.class);
+	
 	private static final String TEST_LINGCLOUD_SERVER = "lingCloudServer";
 
 	private static final String TEST_LINGCLOUD_SERVER_DEFAULT = "10.0.0.11";
@@ -79,7 +82,7 @@ public class TestConfig {
 		try {
 			getConfig();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			log.error(e.getMessage());
 		}
 	}
 
@@ -89,20 +92,26 @@ public class TestConfig {
 	 * @throws Exception
 	 */
 	private static void getConfig() throws Exception {
-		String confPath = ConfigUtil.getConfigFile(CONF_FILE).toString();
-		
-		if (confPath == null) {
-			return;
-		}
-
 		InputStream in = null;
 		try {
-			in = new BufferedInputStream(new FileInputStream(confPath));
+			String confPath = ConfigUtil.getConfigFile(CONF_FILE).toString();
+			
+			if (confPath == null) {
+				return;
+			}
+			
+			in = new BufferedInputStream(
+					new FileInputStream(confPath));
+			properties.load(in);
 		} catch (FileNotFoundException e) {
-			VAMUtil.errorLog("Can't find the molva configuration file.");
+			log.error("Can't find the molva configuration file.");
 			return;
+		} finally {
+			if (in != null) {
+				in.close();
+			}
 		}
-		properties.load(in);
+		
 
 	}
 
@@ -127,7 +136,8 @@ public class TestConfig {
 	}
 
 	public static int getSeleniumPort() {
-		return Integer.parseInt((String) properties.get(SELENIUM_SERVER_PORT));
+		return Integer.parseInt((String) 
+				properties.getProperty(SELENIUM_SERVER_PORT));
 	}
 
 	public static String getSeleniumSpeed() {
