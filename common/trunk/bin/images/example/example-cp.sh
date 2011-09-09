@@ -14,5 +14,5 @@
 
 mkdir -pv ./vam/upload/disc
 mkdir -pv ./vam/upload/disk
-cp -fv example.iso ./vam/upload/disc
-cp -fv example.img ./vam/upload/disk
+command cp -fv example.iso ./vam/upload/disc
+command cp -fv example.img ./vam/upload/disk
