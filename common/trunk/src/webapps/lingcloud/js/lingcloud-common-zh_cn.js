@@ -272,7 +272,7 @@ var lingcloud = {
 			unkw:	'\u672A\u77E5'				
 		},
 		monitorSummary: {
-			name:'\u8FD0\u884C\u60C5\u51B5\u7EDF\u8BA1',
+			name:'\u76d1\u63a7\u6982\u8981',
 			selectTime:'\u8BF7\u9009\u62E9\u65F6\u95F4',
 			tips14Move:'\u53F0\u673A\u5668\u6709',
 			tips24Move:'\u7684',
@@ -288,7 +288,7 @@ var lingcloud = {
 			
 		},
 		monitorDetail: {
-			name:'\u8BE6\u7EC6\u76D1\u63A7\u4FE1\u606F',					
+			name:'\u8BE6\u7EC6\u4FE1\u606F',					
 			
 			tHost: '\u7269\u7406\u4E3B\u673A',				
 			tSrv: '\u76d1\u63a7\u9879',					

@@ -72,12 +72,12 @@ public interface MonitorConstants {
 			MONITOR_HOST_VMLIST
 	};
 	
-	int[] itemID = { 0, 0, 0, 0, 2, 4, 1, 1, 3, 3, 3, 3, 3};
+	int[] itemID = { 0, 0, 0, 0, 0, 3, 1, 1, 2, 2, 2, 2, 2};
 
 	String[] monitorItemCtg = { 
 							"Performace",
 							"Process", 
-							"Network", 
+				//			"Network", 
 							"Applicance", 
 							"Users"
 							};

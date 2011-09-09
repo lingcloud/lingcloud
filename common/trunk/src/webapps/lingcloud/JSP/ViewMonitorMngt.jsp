@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <%@ include file="MonitorHeader.jsp" %>
+<title><bean:message key="org.lingcloud.molva.xmm.monitor.monitorManagement" />&nbsp;- <bean:message key="org.lingcloud.molva.lingcloud" /></title>
 </head>
 
 <body onload="monitorManagementTab('<%=basePath%>');">

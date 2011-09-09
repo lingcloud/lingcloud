@@ -34,7 +34,6 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title><bean:message key="org.lingcloud.molva.xmm.portal.systemMonitor" />&nbsp;- <bean:message key="org.lingcloud.molva.lingcloud" /></title>
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="head" -->
 <link rel="shortcut icon" href="<%=basePath%>images/icon.png"
