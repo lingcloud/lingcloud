@@ -16,6 +16,7 @@ package org.lingcloud.molva.test.portal;
 import com.thoughtworks.selenium.*;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.lingcloud.molva.test.util.TestConfig;
 import org.lingcloud.molva.test.util.TestConstants;
@@ -39,6 +40,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.start();
 		selenium.windowMaximize();
 	}
+	
 
 	@Test
 	public void testAddCategory() throws Exception {
@@ -52,6 +54,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("category1"));
 
 	}
+	
 	@Test
 	public void testAddAndModifyCDImage() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualDisc.jsp#");
@@ -98,6 +101,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("Windows xp"));
 		verifyTrue(selenium.isTextPresent("Ready"));
 	}
+
 	@Test
 	public void testAddAndModifyAppliance() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualDisc.jsp#");
@@ -174,6 +178,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("application3"));
 
 	}
+
 	@Test
 	public void testAddVMPartition() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
@@ -191,6 +196,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("description3"));
 		verifyTrue(selenium.isTextPresent("software1"));
 	}
+
 	@Test
 	public void testAddVMNode() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
@@ -203,10 +209,11 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("sd1");
-		
+
 		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
-		{
-			selenium.click("css=a > img[title=Refresh]");
+		{		
+			Thread.sleep(TestConstants.RETRY_INTERVAL);
+			selenium.click("css=a > img[title='Refresh']");
 			Thread.sleep(TestConstants.RETRY_INTERVAL);
             if(selenium.isTextPresent("RUNNING"))		
 			break;
@@ -215,6 +222,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent(TestConfig.getTestXenServer()));
 
 	}
+
 	@Test
 	public void testAddVMCluster() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
@@ -256,6 +264,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("RUNNING"));
 		
 	}
+
 	@Test
 	public void testStopVMCluster() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
@@ -278,6 +287,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		}
 		verifyTrue(selenium.isTextPresent("BOOT"));
 	}
+
 	@Test
 	public void testStartVMCluster() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
@@ -292,6 +302,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.click("//a[contains(text(),'cluster1')]");
 		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
 		{
+			Thread.sleep(TestConstants.RETRY_INTERVAL);
 			selenium.click("css=#vcNodeRrd1 > td > a[title=Refresh] > img");	
 			Thread.sleep(TestConstants.RETRY_INTERVAL*2);
 			if( selenium.isTextPresent("RUNNING") )
@@ -300,6 +311,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("RUNNING"));
 
 	}
+
 	@Test
 	public void testAddGeneralPartition() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");	
@@ -318,6 +330,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("description4"));
 
 	}
+
 	@Test
 	public void testAddGeneralNode() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");		
@@ -333,6 +346,7 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent(TestConfig.getTestCommonServer()));
 
 	}
+	
 	@Test
 	public void testAddGeneralCluster() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");	
@@ -351,6 +365,53 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("cluster2"));
 
 	}
+	@Test
+	public void testMonitor() throws Exception {
+		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
+		selenium.click("link=Monitor");
+		selenium.waitForPageToLoad("30000");
+		selenium.open("/lingcloud/JSP/ViewMonitor.jsp");
+		selenium.click("link=Monitor");
+		selenium.waitForPageToLoad("30000");
+		selenium.click("css=a.current > img");
+		selenium.waitForPageToLoad("30000");
+		verifyTrue(selenium.isTextPresent("partion2"));
+		verifyTrue(selenium.isTextPresent("partion1"));
+		selenium.click("//div[@id='middletext']/table/tbody/tr/td[4]/a/h3");
+		selenium.waitForPageToLoad("30000");
+		selenium.click("link=partion2");
+		verifyTrue(selenium.isTextPresent(TestConfig.getTestCommonServer()));
+		selenium.click("link=partion1");
+		verifyTrue(selenium.isTextPresent(TestConfig.getTestLingCloudServer()));
+
+		selenium.click("//div[@id='middletext']/table/tbody/tr/td[5]/a/h3");
+		selenium.waitForPageToLoad("30000");
+		selenium.click("//input[@name='allmonitoritems' and @value='Disk_Usage']");
+		selenium.click("//input[@name='allmonitoritems' and @value='Memory_Usage']");
+		selenium.click("//input[@name='allmonitoritems' and @value='Xend']");
+		
+		selenium.click("css=input[type=\"button\"]");
+		selenium.click("id=popup_cancel");
+		selenium.click("//div[@id='middletext']/table/tbody/tr/td[4]/a/h3");
+		selenium.waitForPageToLoad("30000");
+		verifyFalse(selenium.isTextPresent("Disk Usage"));
+		verifyFalse(selenium.isTextPresent("Memory Usage"));
+		verifyFalse(selenium.isTextPresent("Xend"));
+		selenium.click("//div[@id='middletext']/table/tbody/tr/td[5]/a/h3");
+		selenium.waitForPageToLoad("30000");
+		selenium.click("//input[@name='allmonitoritems' and @value='Disk_Usage']");
+		selenium.click("//input[@name='allmonitoritems' and @value='Memory_Usage']");
+		selenium.click("//input[@name='allmonitoritems' and @value='Xend']");
+		selenium.click("css=input[type=\"button\"]");
+		selenium.click("id=popup_cancel");
+		selenium.click("//div[@id='middletext']/table/tbody/tr/td[4]/a/h3");
+		selenium.waitForPageToLoad("30000");
+		verifyTrue(selenium.isTextPresent("Disk Usage"));
+		verifyTrue(selenium.isTextPresent("Memory Usage"));
+		verifyTrue(selenium.isTextPresent("Xend"));
+	}
+
+
 
 	@After
 	public void tearDown() throws Exception {
