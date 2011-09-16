@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.lingcloud.molva.test.util.TestConfig;
 import org.lingcloud.molva.test.util.TestConstants;
 import org.lingcloud.molva.test.util.TestUtils;
+
 /**
  * <strong>Purpose:</strong><br>
  * The test suite for LingCloud Portal.
@@ -36,11 +37,9 @@ public class AllDeployTester extends SeleneseTestCase {
 				TestConfig.getSeleniumPort(), TestUtils.getBrowser(),
 				TestConfig.getTestLingCloudPortalURL());
 		selenium.setSpeed(TestConfig.getSeleniumSpeed());
-		
 		selenium.start();
 		selenium.windowMaximize();
 	}
-	
 
 	@Test
 	public void testAddCategory() throws Exception {
@@ -52,9 +51,8 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		verifyTrue(selenium.isTextPresent("category1"));
-
 	}
-	
+
 	@Test
 	public void testAddAndModifyCDImage() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualDisc.jsp#");
@@ -69,7 +67,6 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.select("format", "label=iso");
 		selenium.select("type", "label=Applications");
 		selenium.type("oneapp", "word");
-
 		selenium.click("link=+");
 		selenium.click("link=Clear");
 		selenium.type("oneapp", "txt");
@@ -79,12 +76,10 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("image1"));
 		verifyTrue(selenium.isTextPresent("Application"));
 		verifyTrue(selenium.isTextPresent("txt"));
-		
-		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
-		{
+		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
 			selenium.click("css=a[title=Refresh] > img");
 			Thread.sleep(TestConstants.RETRY_INTERVAL);
-			if(selenium.isTextPresent("Ready"))
+			if (selenium.isTextPresent("Ready"))
 				break;
 		}
 		verifyTrue(selenium.isTextPresent("Ready"));
@@ -117,12 +112,8 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.select("memsize", "label=256MB");
 		selenium.select("cpuamount", "label=1");
 		selenium.type("diskcapacity", "7");
-		
-		
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
-
-
 		selenium.click("//th[@id='actionlog_title']/a/img");
 		selenium.waitForPageToLoad("100000");
 		verifyTrue(selenium.isTextPresent("stop"));
@@ -159,7 +150,6 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.click("link=Clear");
 		selenium.type("oneapp", "application3");
 		selenium.click("//table[@id='modifyVirtualApplianceTable']/tbody/tr[5]/td[2]/a");
-		
 		selenium.click("SSH");
 		selenium.click("VNC");
 		selenium.select("cpuamount", "label=1");
@@ -176,7 +166,6 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("appliance3"));
 		verifyTrue(selenium.isTextPresent("txt"));
 		verifyTrue(selenium.isTextPresent("application3"));
-
 	}
 
 	@Test
@@ -209,18 +198,15 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.click("popup_ok");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("sd1");
-
-		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
-		{		
+		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
 			Thread.sleep(TestConstants.RETRY_INTERVAL);
 			selenium.click("css=a > img[title='Refresh']");
 			Thread.sleep(TestConstants.RETRY_INTERVAL);
-            if(selenium.isTextPresent("RUNNING"))		
-			break;
+			if (selenium.isTextPresent("RUNNING"))
+				break;
 		}
-		verifyTrue(selenium.isTextPresent("RUNNING"));		
+		verifyTrue(selenium.isTextPresent("RUNNING"));
 		verifyTrue(selenium.isTextPresent(TestConfig.getTestXenServer()));
-
 	}
 
 	@Test
@@ -235,7 +221,6 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.click("publicIpSupport");
 		selenium.click("nodeinfotype");
 		selenium.select("vaguid0", "label=appliance3");
-
 		selenium.select("memsize0", "label=512MB");
 		selenium.select("cpunum0", "label=1");
 		selenium.click("popup_ok");
@@ -243,26 +228,20 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.click("jd1");
 		selenium.click("//a[contains(text(),'cluster1')]");
 		verifyTrue(selenium.isTextPresent("cluster1"));
-		
-		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
-		{
-			selenium.click("css=a[title=Refresh] > img");	
+		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
+			selenium.click("css=a[title=Refresh] > img");
 			Thread.sleep(TestConstants.RETRY_INTERVAL);
-			if(selenium.isTextPresent("EFFECTIVE"))
-			break;
+			if (selenium.isTextPresent("EFFECTIVE"))
+				break;
 		}
-		
 		verifyTrue(selenium.isTextPresent("EFFECTIVE"));
-
-		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
-		{
+		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
 			selenium.click("css=#vcNodeRrd1 > td > a[title=Refresh] > img");
 			Thread.sleep(TestConstants.RETRY_INTERVAL);
-			if(selenium.isTextPresent("RUNNING"))
-			break;
+			if (selenium.isTextPresent("RUNNING"))
+				break;
 		}
 		verifyTrue(selenium.isTextPresent("RUNNING"));
-		
 	}
 
 	@Test
@@ -277,13 +256,11 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		selenium.click("jd2");
 		selenium.click("//a[contains(text(),'cluster1')]");
-	
-		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
-		{
+		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
 			selenium.click("css=#vcNodeRrd1 > td > a[title=Refresh] > img");
-			Thread.sleep(TestConstants.RETRY_INTERVAL*2);
-			if(selenium.isTextPresent("BOOT"))
-			break;
+			Thread.sleep(TestConstants.RETRY_INTERVAL * 2);
+			if (selenium.isTextPresent("BOOT"))
+				break;
 		}
 		verifyTrue(selenium.isTextPresent("BOOT"));
 	}
@@ -300,21 +277,19 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//a[contains(text(),'partion1')]");
 		selenium.click("//a[contains(text(),'cluster1')]");
-		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++)
-		{
+		for (int i = 0; i < TestConstants.MAX_RETRY_TIMES; i++) {
 			Thread.sleep(TestConstants.RETRY_INTERVAL);
-			selenium.click("css=#vcNodeRrd1 > td > a[title=Refresh] > img");	
-			Thread.sleep(TestConstants.RETRY_INTERVAL*2);
-			if( selenium.isTextPresent("RUNNING") )
-			break;
+			selenium.click("css=#vcNodeRrd1 > td > a[title=Refresh] > img");
+			Thread.sleep(TestConstants.RETRY_INTERVAL * 2);
+			if (selenium.isTextPresent("RUNNING"))
+				break;
 		}
 		verifyTrue(selenium.isTextPresent("RUNNING"));
-
 	}
 
 	@Test
 	public void testAddGeneralPartition() throws Exception {
-		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");	
+		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[3]/a/img");
@@ -328,12 +303,11 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("partion2"));
 		verifyTrue(selenium.isTextPresent("software2"));
 		verifyTrue(selenium.isTextPresent("description4"));
-
 	}
 
 	@Test
 	public void testAddGeneralNode() throws Exception {
-		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");		
+		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[5]/a/img");
@@ -344,12 +318,11 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//a[contains(text(),'partion2')]");
 		verifyTrue(selenium.isTextPresent(TestConfig.getTestCommonServer()));
-
 	}
-	
+
 	@Test
 	public void testAddGeneralCluster() throws Exception {
-		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");	
+		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Infrastructure");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[7]/a/h3");
@@ -363,10 +336,10 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.click("jd4");
 		selenium.click("//a[contains(text(),'cluster2')]");
 		verifyTrue(selenium.isTextPresent("cluster2"));
-
 	}
+
 	@Test
-	public void testMonitor() throws Exception {
+	public void testMonitorInfo() throws Exception {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Monitor");
 		selenium.waitForPageToLoad("30000");
@@ -383,13 +356,18 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent(TestConfig.getTestCommonServer()));
 		selenium.click("link=partion1");
 		verifyTrue(selenium.isTextPresent(TestConfig.getTestLingCloudServer()));
+	}
 
+	@Test
+	public void testMonitorSetting() throws Exception {
+		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
+		selenium.click("link=Monitor");
+		selenium.waitForPageToLoad("30000");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[5]/a/h3");
 		selenium.waitForPageToLoad("30000");
 		selenium.click("//input[@name='allmonitoritems' and @value='Disk_Usage']");
 		selenium.click("//input[@name='allmonitoritems' and @value='Memory_Usage']");
 		selenium.click("//input[@name='allmonitoritems' and @value='Xend']");
-		
 		selenium.click("css=input[type=\"button\"]");
 		selenium.click("id=popup_cancel");
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[4]/a/h3");
@@ -410,8 +388,6 @@ public class AllDeployTester extends SeleneseTestCase {
 		verifyTrue(selenium.isTextPresent("Memory Usage"));
 		verifyTrue(selenium.isTextPresent("Xend"));
 	}
-
-
 
 	@After
 	public void tearDown() throws Exception {
