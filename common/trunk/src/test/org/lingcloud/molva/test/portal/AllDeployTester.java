@@ -343,11 +343,6 @@ public class AllDeployTester extends SeleneseTestCase {
 		selenium.open("/lingcloud/JSP/ViewVirtualCluster.jsp");
 		selenium.click("link=Monitor");
 		selenium.waitForPageToLoad("30000");
-		selenium.open("/lingcloud/JSP/ViewMonitor.jsp");
-		selenium.click("link=Monitor");
-		selenium.waitForPageToLoad("30000");
-		selenium.click("css=a.current > img");
-		selenium.waitForPageToLoad("30000");
 		verifyTrue(selenium.isTextPresent("partion2"));
 		verifyTrue(selenium.isTextPresent("partion1"));
 		selenium.click("//div[@id='middletext']/table/tbody/tr/td[4]/a/h3");
