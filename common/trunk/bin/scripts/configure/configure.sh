@@ -280,6 +280,55 @@ then
 	echo "GRANT ALL PRIVILEGES ON naming.* TO '$NAMING_MYSQL_USERNAME'@'%' IDENTIFIED BY \"$NAMING_MYSQL_PASSWORD\"; FLUSH PRIVILEGES;" | mysql -v -uroot -p"$MYSQL_ROOT_PASSWORD"
 fi
 
+# 4. Configure extensions.
+
+do_set "DO_CONFIG_EXTENSIONS" "configure extensions"
+if [ "$?" = "0" ]
+then
+
+	_EXTENSIONS_DIR="$_LINGCLOUD_HOME/extensions"
+	if [ -d "$_EXTENSIONS_DIR" ]
+	then
+	
+		echo "Extensions directory is: $_EXTENSIONS_DIR"
+		for _EXTENSION_NAME in `ls "$_EXTENSIONS_DIR"`
+		do
+			_EXTENSION_DIR="$_EXTENSIONS_DIR/$_EXTENSION_NAME"
+			echo "Found an extension: $_EXTENSION_NAME"
+			
+			echo "Create configuration files for the extension"
+			if [ -d "$_EXTENSION_DIR/conf" ]
+			then
+				pushd "$_EXTENSION_DIR/conf"
+				ls *.tmpl &> /dev/null
+				if [ "$?" = "0" ]
+				then
+					for _FILE_IN in *.tmpl
+					do
+						_FILE_OUT="${_FILE_IN/%.tmpl/}"
+						> "$_FILE_OUT" || onerror "failed to create configuration file"
+						sub_file "$_FILE_IN" "$_FILE_OUT" || onerror "failed to do variables substitution"
+					done
+				fi
+				popd
+			else
+				echo "No \"conf\" found in the extension directory, ignore."
+			fi
+			
+			echo "Call the configure script of the extension"
+			if [ -e "$_EXTENSION_DIR/configure.sh" ]
+			then
+				bash "$_EXTENSION_DIR/configure.sh"
+			else
+				echo "No \"configure.sh\" found in the extension directory, ignore."
+			fi
+		done
+		
+	else
+		echo "No extensions directory found, ignore."
+	fi
+fi
+
 # Done
 
 popd

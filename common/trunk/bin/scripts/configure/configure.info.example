@@ -119,3 +119,10 @@ NAMING_MYSQL_USERNAME="$MYSQL_USERNAME"
 
 # existed MySQL password for Molva naming
 NAMING_MYSQL_PASSWORD="$MYSQL_PASSWORD"
+
+################################################################################
+# Configuration for extensions
+################################################################################
+
+# set is to 1 if you want to configure extensions
+DO_CONFIG_EXTENSIONS=1
