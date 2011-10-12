@@ -186,6 +186,7 @@
 	</target>
 	
 	<target name="build-assemble-extensions" depends="init,build-ocl,build-xmm" if="with-extensions">
+		<echo>Extensions are enabled.</echo>
 		<!-- call sub-builds -->
 		<subant target="">
 			<property name="extensions.build.dir" 
@@ -439,6 +440,7 @@
 	</taskdef>
 
 	<target name="debug" depends="extract-bin" if="debug">
+		<echo>Debug mode is on.</echo>
 		<loadfile property="startup.sh.text" srcFile="${common.dist.dir}/bin/tomcat/bin/startup.sh" />
 		<propertyregex property="temp.file" input="${startup.sh.text}" regexp='" start ' replace='" jpda start ' />
 		<echo file="${common.dist.dir}/bin/tomcat/bin/startup.sh">${temp.file}</echo>
