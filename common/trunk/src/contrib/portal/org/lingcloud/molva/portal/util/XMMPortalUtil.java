@@ -12,12 +12,15 @@
  */
 package org.lingcloud.molva.portal.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
@@ -29,9 +32,12 @@ import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.security.Key;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.crypto.Cipher;
@@ -103,7 +109,7 @@ public class XMMPortalUtil {
 	private static final int DEFAULT_RDP_PORT = 3389;
 
 	private static final int DEFAULT_SSH_PORT = 22;
-	
+
 	private static final int SOCKET_TIMEOUT = 3000;
 
 	public static final String VN_AUTO_CREATE = "auto_create";
@@ -123,8 +129,118 @@ public class XMMPortalUtil {
 	public static final int[] MEM_SIZE = new int[] { 128, 256, 512, 1024, 2048,
 			4096, 8192 };
 
+	private static List<String> extensionNames = null;
+
+	private static Properties properties = null;
+
+	private static final String EXTENSIONS = "WEB-INF/extensions";
+
+	private static final String MESSAGE_RESOURCE = "messageResource";
+
+	private static final String MENU_KEY = "menuKey";
+
 	private XMMPortalUtil() {
 
+	}
+
+	private static void loadExtensions(String portalHome) {
+		String extensionsDir = portalHome + "/" + EXTENSIONS;
+		extensionNames = new ArrayList<String>();
+		properties = new Properties();
+
+		File dir = new File(extensionsDir);
+		if (!dir.exists() || !dir.isDirectory()) {
+			return;
+		}
+
+		File[] extensions = dir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".properties");
+			}
+		});
+
+		Arrays.sort(extensions, new Comparator<File>() {
+			public int compare(File f1, File f2) {
+				return f1.getName().compareTo(f2.getName());
+			}
+		});
+
+		for (File ext : extensions) {
+			if (ext.isFile()) {
+				try {
+					String filename = ext.getName();
+					String extName = filename.substring(0, filename.lastIndexOf("."));
+
+					if (extName.length() > 0) {
+						Properties extPorp = new Properties();
+						InputStream in = new BufferedInputStream(
+								new FileInputStream(ext.getAbsolutePath()));
+						extPorp.load(in);
+						in.close();
+						
+						properties.put(extName + "." + MESSAGE_RESOURCE,
+								extPorp.get(MESSAGE_RESOURCE));
+						properties.put(extName + "." + MENU_KEY,
+								extPorp.get(MENU_KEY));
+						
+						extensionNames.add(extName);
+					}
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+			}
+		}
+	}
+
+	public static List<String> getExtensionNames(String portalHome) {
+		if (extensionNames == null) {
+			synchronized (XMMPortalUtil.class) {
+				if (extensionNames == null) {
+					loadExtensions(portalHome);
+				}
+			}
+		}
+		return extensionNames;
+	}
+
+	public static String getProperty(String key, String defaultValue) {
+		if (properties == null) {
+			return defaultValue;
+		}
+
+		String value = (String) properties.get(key);
+		if (value == null) {
+			value = defaultValue;
+		}
+
+		return value;
+	}
+
+	public static String getExtensionMenuKey(String extension) {
+		return getProperty(extension + "." + MENU_KEY, null);
+	}
+
+	public static String getExtensionMessage(String extension, String key,
+			Locale loc) {
+		if (resource == null || key == null || loc == null) {
+			return null;
+		}
+
+		String resource = getProperty(extension + "." + MESSAGE_RESOURCE, null);
+		if (resource == null) {
+			return null;
+		}
+
+		String message = null;
+		try {
+			ResourceBundle bundle = ResourceBundle.getBundle(resource, loc);
+			message = bundle.getString(key);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+
+		return message;
 	}
 
 	public static String getMonitorServerUrlInCfgFile() throws Exception {
@@ -517,8 +633,8 @@ public class XMMPortalUtil {
 
 	}
 
-	public static List<PhysicalNode> getPhysicalNodeByUserID(
-			final String userid) throws Exception {
+	public static List<PhysicalNode> getPhysicalNodeByUserID(final String userid)
+			throws Exception {
 		String[] conditions = new String[] { "tenantId" };
 		String[] operations = new String[] { "=" };
 		Object[] values = new Object[] { userid };
@@ -563,7 +679,7 @@ public class XMMPortalUtil {
 			return "";
 		}
 	}
-	
+
 	public static String htmlEncode(String html) {
 		return StringEscapeUtils.escapeHtml(html);
 	}
@@ -573,24 +689,23 @@ public class XMMPortalUtil {
  * 
  * <strong>Purpose:</strong><br>
  * TODO.
- *
+ * 
  * @version 1.0.1 2009-10-4<br>
  * @author Xiaoyi Lu<br>
- *
+ * 
  */
 class ClientCode {
 	private static Log log = LogFactory.getFactory().getInstance(
 			ClientCode.class);
 	public static final int PORT_NO = 50001;
-	
+
 	private static final int VNC_PORT = 5900;
 
 	private ClientCode() {
 
 	}
 
-	public static String getPortForVNC(String ip, String pass, 
-			String geometry) {
+	public static String getPortForVNC(String ip, String pass, String geometry) {
 		String port = "";
 
 		String gPassword = pass;
@@ -696,6 +811,4 @@ class ClientCode {
 			return "";
 		}
 	}
-	
-	
 }

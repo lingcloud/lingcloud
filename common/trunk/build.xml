@@ -2,6 +2,7 @@
 
 	<property name="common.dist.dir" value="dist" />
 	<property name="common.src.dir" value="src" />
+	<property name="common.extensions.dir" value="extensions" />
 
 	<property name="target" value="1.5" />
 	<property name="source" value="1.5" />
@@ -45,11 +46,11 @@
 		<pathelement location="${common.dist.dir}/lib/lingcloud-molva-xmm-${project.xmm.version}.jar" />
 	</path>
 
-	<target name="set-debug-on" if="debug.on">
+	<target name="set-debug-on" if="debug">
 		<property name="javac.debug" value="on" />
 	</target>
 	
-	<target name="set-debug-off" unless="debug.on">
+	<target name="set-debug-off" unless="debug">
 		<property name="javac.debug" value="off" />
 	</target>
 
@@ -80,14 +81,17 @@
 		<delete file="bin/scripts/configure/naming-conf/naming.sql" />
 		<delete file="bin/scripts/configure/opennebula-conf/oned.conf" />
 		<delete file="bin/scripts/configure/opennebula-conf/tm_clone.sh" />
+		<subant target="clean-conf">
+			<dirset dir="extensions" includes="*" />
+		</subant>
 	</target>
 
 	<target name="clean-build">
 		<delete dir="${common.dist.dir}/build" />
 	</target>
 
-	<target name="build" depends="extract-bin,build-subprojects,assemble-webapps,
-		clean-build" />
+	<target name="build" depends="clean,extract-bin,build-subprojects,assemble-webapps,
+		build-assemble-extensions,debug,clean-build" />
 
 	<target name="build-subprojects" depends="build-ocl,build-xmm,
 		build-portal" />
@@ -179,6 +183,45 @@
 				</section>
 			</manifest>
 		</jar>
+	</target>
+	
+	<target name="build-assemble-extensions" depends="init,build-ocl,build-xmm" if="with-extensions">
+		<!-- call sub-builds -->
+		<subant target="">
+			<property name="extensions.build.dir" 
+				value="${basedir}/${common.dist.dir}/build/extensions" />
+			<property name="extensions.classpath" refid="common.lingcloud.classpath" />
+			<property name="javac.debug" value="${javac.debug}" />
+			<property name="javac.optimize" value="${javac.optimize}" />
+			<dirset dir="extensions" includes="*" />
+		</subant>
+		<!-- list extensions -->
+		<foreach target="list-extensions" param="extension.dir">
+			<path>
+				<dirset dir="${common.extensions.dir}" includes="*"/>
+			</path>
+		</foreach>
+	</target>
+	
+	<target name="list-extensions">
+		<basename property="extension.name" file="${extension.dir}"/>
+		<!-- copy jars -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/lingcloud/WEB-INF/lib">
+			<fileset dir="${extension.dir}/lib" includes="*.jar" />
+			<fileset dir="${extension.dir}/lib/3rdparty" includes="*.jar"/>
+		</copy>
+		<!-- copy webapps -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps">
+			<fileset dir="${extension.dir}/src/webapps" includes="**/*" />
+		</copy>
+		<!-- add extension struts configuration -->
+		<replace file="${common.dist.dir}/bin/tomcat/webapps/lingcloud/WEB-INF/web.xml" 
+			token="/WEB-INF/struts-config.xml," 
+			value="/WEB-INF/struts-config.xml,/WEB-INF/struts-config-${extension.name}.xml," />
+		<!-- copy extension properties -->
+		<copy todir="${common.dist.dir}/bin/tomcat/webapps/lingcloud/WEB-INF/extensions">
+			<fileset dir="${extension.dir}" includes="${extension.name}.properties" />
+		</copy>
 	</target>
 
 	<target name="assemble-xmm-axis" depends="extract-bin,build-xmm">
@@ -330,7 +373,7 @@
 		<mkdir dir="${common.dist.dir}/test/reports/html" />
 		<mkdir dir="${common.dist.dir}/test/coverage" />
 		<mkdir dir="${common.dist.dir}/build/instrument" />
-		<property name="debug.on" value="true" />
+		<property name="debug" value="true" />
 	</target>
 	
 	<target name="test-junit" depends="test-init,build-test,test-instrument">
@@ -388,26 +431,20 @@
 
 	<target name="test" depends="test-init,test-junit,test-junit-report,
 		test-coverage-report,clean-build"/>
-	
-	<target name="debug-init" >
-		<property name="debug.on" value="true" />
-	</target>
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
 			<pathelement location="bin/3rdparty/ant/ant-contrib-1.0b3.jar"/>
 		</classpath>
 	</taskdef>
-	
-	<target name="debug-tomcat" >
+
+	<target name="debug" depends="extract-bin" if="debug">
 		<loadfile property="startup.sh.text" srcFile="${common.dist.dir}/bin/tomcat/bin/startup.sh" />
-		
+				
 		<propertyregex property="temp.file" input="${startup.sh.text}" regexp='" start ' replace='" jpda start ' />
-			
+					
 		<echo file="${common.dist.dir}/bin/tomcat/bin/startup.sh">${temp.file}</echo>
 		<chmod file="${common.dist.dir}/bin/tomcat/bin/startup.sh" perm="ugo+x"/>
 	</target>
-
-	<target name="debug" depends="debug-init,build,debug-tomcat" />
 
 </project>

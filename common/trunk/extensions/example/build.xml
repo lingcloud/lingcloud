@@ -4,16 +4,44 @@
 		
 		<echo>In "build" for lingcloud-extension-example</echo>
 		<echo>Build path is "${extensions.build.dir}"</echo>
-		<echo>Webapps path is "${extensions.webapps.dir}"</echo>
-		
+		<echo>Classpath is "${extensions.classpath}"</echo>
+		<echo>Javac debug is "${javac.debug}"</echo>
+		<echo>Javac optimize is "${javac.optimize}"</echo>
+		<tstamp>
+			<format property="project.timestamp" pattern="yyyy-MM-dd'T'HH:mm:ss" />
+		</tstamp>
+		<mkdir dir="${extensions.build.dir}/example" />
+		<path id="extensions.example.classpath" >
+			<pathelement path="${extensions.classpath}"/>
+			<fileset dir="lib/3rdparty" includes="*.jar"/>
+		</path>
+		<javac srcdir="src/example" destdir="${extensions.build.dir}/example" 
+			classpathref="extensions.example.classpath" debug="${javac.debug}" 
+			optimize="${javac.optimize}" source="1.5" target="1.5" />
+		<copy todir="${extensions.build.dir}/example">
+			<fileset dir="src/example" includes="**/*.properties" />
+		</copy>
+		<jar destfile="lib/lingcloud-molva-extensions-example.jar" 
+			basedir="${extensions.build.dir}/example" includes="**/*.class,**/*.properties">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-On" value="${os.name} "/>
+				<section name="lingcloud-molva-extensions-example.jar">
+					<attribute name="Specification-Title" value="lingcloud-molva-extensions-example"/>
+					<attribute name="Specification-Version" value="1.0"/>
+					<attribute name="Specification-Vendor" value="LingCloud Team"/>
+					<attribute name="Implementation-Title" value="lingcloud-molva-extensions-example"/>
+					<attribute name="Implementation-Version" value="${project.timestamp}"/>
+					<attribute name="Implementation-Vendor" value="LingCloud Team"/>
+				</section>
+			</manifest>
+		</jar>
 	</target>
 
 	<target name="clean-conf" >
 		
 		<echo>In "clean-conf" for lingcloud-extension-example</echo>
-		<echo>Build path is "${extensions.build.dir}"</echo>
-		<echo>Webapps path is "${extensions.webapps.dir}"</echo>
-		
+		<delete file="conf/example.conf" />
 	</target>
 	
 </project>
