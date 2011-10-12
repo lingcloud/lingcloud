@@ -440,9 +440,7 @@
 
 	<target name="debug" depends="extract-bin" if="debug">
 		<loadfile property="startup.sh.text" srcFile="${common.dist.dir}/bin/tomcat/bin/startup.sh" />
-				
 		<propertyregex property="temp.file" input="${startup.sh.text}" regexp='" start ' replace='" jpda start ' />
-					
 		<echo file="${common.dist.dir}/bin/tomcat/bin/startup.sh">${temp.file}</echo>
 		<chmod file="${common.dist.dir}/bin/tomcat/bin/startup.sh" perm="ugo+x"/>
 	</target>

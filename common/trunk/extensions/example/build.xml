@@ -42,6 +42,7 @@
 		
 		<echo>In "clean-conf" for lingcloud-extension-example</echo>
 		<delete file="conf/example.conf" />
+		
 	</target>
 	
 </project>

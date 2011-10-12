@@ -45,6 +45,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title><bean:message key="org.lingcloud.molva.extensions.example.title" bundle="example" /></title>
+<link rel="shortcut icon" href="<%=basePath%>images/icon.png"
+	type="image/x-icon" />
 <link href="<%=basePath%>css/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
