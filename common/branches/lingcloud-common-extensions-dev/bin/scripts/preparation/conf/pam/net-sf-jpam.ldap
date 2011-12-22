@@ -1,4 +1,0 @@
-auth       required   /lib64/security/pam_ldap.so
-account    required   /lib64/security/pam_ldap.so
-password   required   /lib64/security/pam_ldap.so
-session    required   /lib64/security/pam_ldap.so

@@ -1,9 +1,0 @@
-What's new in LingCloud 0.9 (Aug. 2011)
-
-  * System monitor module based on ganglia.
-  * Access control and asset ownership based on PAM.
-  * IP address allocation scheme.
-  * Fine-grained operations for physical and virtual machines.
-  * Test suite for LingCloud Molva.
-  * Fix bugs.
-  * Other small improvements.

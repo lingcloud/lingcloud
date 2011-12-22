@@ -1,4 +1,0 @@
-auth       required   /lib64/security/pam_unix.so
-account    required   /lib64/security/pam_unix.so
-password   required   /lib64/security/pam_unix.so
-session    required   /lib64/security/pam_unix.so
