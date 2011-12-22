@@ -9,13 +9,13 @@
 	<property name="javac.optimize" value="on" />
 
 	<property name="project.ocl.title" value="LingCloud Molva Open Cloud Lease" />
-	<property name="project.ocl.version" value="0.9" />
+	<property name="project.ocl.version" value="0.9.1" />
 	<property name="project.xmm.title" value="LingCloud Molva eXtendible Machine Manager" />
-	<property name="project.xmm.version" value="0.9" />
+	<property name="project.xmm.version" value="0.9.1" />
 	<property name="project.portal.title" value="LingCloud Molva Portal" />
-	<property name="project.portal.version" value="0.9" />
+	<property name="project.portal.version" value="0.9.1" />
 	<property name="project.test.title" value="LingCloud Molva Test" />
-	<property name="project.test.version" value="0.9" />
+	<property name="project.test.version" value="0.9.1" />
 	<property name="project.vendor.name" value="LingCloud Team" />
 
 	<property name="common.3rdparty.jre.file" value="jre-6u25-linux-x64.bin" />
