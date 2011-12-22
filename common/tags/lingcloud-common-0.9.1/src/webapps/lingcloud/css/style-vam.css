@@ -1,0 +1,94 @@
+div .divCategory {float: left; width: 23%; border-width: 0px; border-color: #358AD0; border-style:solid; padding: 0% 1% 0% 1%;}
+.divCategory h3{color: #215E8F;}
+.divCategory .ulCategory{list-style:none; padding:0; border-width: 1px 1px 0 1px; border-color: #C0C0C0; border-style:solid;}
+.divCategory .ulCategory li{font-size: 9pt; padding-left:10px; border-bottom-width: 1px; border-bottom-color: #C0C0C0; border-bottom-style:solid; height: 18pt;line-height:18pt;background-color:#F0F0F0; }
+.divCategory a{color:#358AD0; text-decoration:none;}
+div .divApp {float: left; width: 71%; padding-left:2%;}
+.divApp .divResult {background-color:#F1F4F9; margin-top:15px; width:98%; height:40px; border-width: 1px 0 1px 0; border-color: #C0C0C0; border-style:solid;}
+.divResult span {margin-left:20px; height:38px; line-height:38px;}
+.divApp hr {color:#F1F4F9; margin-top:10px; }
+.divApp .divAppInfo {width: 98%; height:110px; margin-top:10px;padding-bottom:10px; border-bottom-width: 1px; border-bottom-color: #C0C0C0; border-bottom-style:solid; }
+.divApp .divAppInfo .divTitle {padding-left:2%;width:97%;background-color:#F0F0F0;}
+.divApp .divAppInfo .spanTitle {color:358AD0; font-size:12pt; height:30px; line-height:30px;}
+.divApp .divAppInfo .spanTitle a {color:#358AD0; text-decoration:none;}
+.divApp .divAppInfo .divAppInfoLeft {float:left; height:110px; padding-left:2%;width:77%;border-right-width: 1px; border-right-color: #C0C0C0; border-right-style:solid;}
+.divApp .divAppInfo .divAppInfoRight {float:left; height:110px; width: 20%;}
+.divAppInfoLeft .divDsc {margin: 5px 0 5px 0; padding-left:2%;width:97%; height:50px ;display:block;text-indent:2em;}
+.divAppInfoLeft .divInfo { color: #969696; padding-left:2%;width:97%; height:50px ;}
+.divAppInfoRight li{font-size: 9pt;height: 18pt;line-height:18pt;}
+
+div .divContent {margin-left:15%;width:400px}
+.divContent .divTitle {margin-left: 5%;padding-left:2%;width:97%;}
+.divTitle .spanTitle { color:#358AD0; font-size:14pt; height:40px; line-height:40px;}
+.divContent .divDsc {  color:#505050; font-size:11pt; line-height:16pt; margin: 10px 0 20px 0; margin-left:5%; padding-left:4%;width:70%;  display:block;text-indent:2em;  }
+.divContent .tbInfo {margin-left: 0; width: 90%; font-size:9pt}
+.divContent .tdKey {width: 35%; padding-left:2%;background-color:#98B7E9; color:#fff; height: 30px; line-height:30px;}
+.divContent .tdValue {padding-left:2%; width: 65%; border-color:#98B7E9 ;border-width:1px; border-style:solid;height: 30px;line-height:30px;}
+
+div.divTab {
+	width:100%
+}
+div.divTab ul {
+	width:100%;
+	overflow:hidden;
+	list-style:none;
+	margin:20px 0 20px;
+	padding:0;
+	
+	font-size:12px;
+	font-weight:bold;
+	
+	border-bottom-width:1px;
+	border-bottom-style:solid;
+	border-bottom-color:#999
+}
+
+div.divTab ul li {
+	float:left;
+	margin:0 5px 0 5px;
+	padding:0;
+}
+
+div.divTab ul li a {
+	float:left;
+	cursor:pointer;
+	text-decoration:none;
+	background:url(../images/bg-tab-left.png) no-repeat;
+}
+
+div.divTab ul li a span {
+	float:left;
+	padding:0 12px;
+	line-height:32px;
+	height:32px;
+	background:url(../images/bg-tab-right.png) no-repeat right;
+}
+div.divTab ul li a:hover,
+div.divTab ul li a.active{
+	background: url(../images/bg-tab-active-left.png) no-repeat;
+}
+div.divTab ul li a:hover span,
+div.divTab ul li a.active span{
+	background: url(../images/bg-tab-active-right.png) no-repeat right;
+}
+
+div.divShow {
+	width:100%;
+
+	display:"";
+}
+
+div.divHide {
+	width:100%;
+
+	display:none;
+}
+
+#actionlog_title{
+	background: #ebebea;
+	padding: 4px;
+	font-size: 12px;
+	color: #21334a;
+	text-align: center;
+	font-weight: bold;
+}

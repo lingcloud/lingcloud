@@ -1,0 +1,45 @@
+
+                                LingCloud Notice
+
+               Copyright (C) 2008-2011, LingCloud Team, ICT, CAS
+                  http://lingcloud.org  support@lingcloud.org
+
+================================================================================
+1. Commercial use
+================================================================================
+
+According to Apache License 2.0, the main part of LingCloud open-source release 
+is free for commercial use without technical support services. However, to use 
+LingCloud commercially, you must also follow the licenses of the 3rd-party 
+components, so you probably need to buy the commercial licenses from the 
+3rd-party or find alternative solutions. The components involving commercial 
+licenses include but not limited to:
+  * MySQL Connector/J
+  * TightVNC Java Viewer
+
+================================================================================
+2. GPL licensed 3rd-party components
+================================================================================
+
+There are a few GPL licensed 3rd-party components in LingCloud open-source 
+release, which is reasonable and legal usage for the following reasons in our 
+opinion.
+
+(a) MySQL Connector/J. A FOSS License Exception is declared by Oracle to allow 
+the open-source integration without the limit of GPL.
+( http://www.mysql.com/about/legal/licensing/foss-exception/ )
+
+(b) RRDtool. A FLOSS License Exception is declared by Tobias Oetiker, the author
+of RRDtool, to allow the open-source integration without the limit of GPL.
+( http://oss.oetiker.ch/rrdtool/license.en.html )
+
+(c) TightVNC Java Viewer. We have got a pre-authorization for open-source 
+integration by email from GlavSoft LLC. We are waiting for the formal license 
+agreement.
+
+(d) properJavaRDP. We have got a permit by email from Tom Elliott, one of the 
+project administrators of properJavaRDP. This permit allows LingCloud using the
+binary package of properJavaRDP without specific requirements.
+
+We are grateful to all the open-source authors and volunteers of the 3rd-party 
+components.

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+	<!--Config struts form -->
+	<form-beans>
+		
+		<form-bean name="ExampleForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+			<form-property name="action" type="java.lang.String"></form-property>
+			<form-property name="message" type="java.lang.String"></form-property>
+		</form-bean>
+        
+	</form-beans>
+
+	<!--Config struts action -->
+	<action-mappings>
+		
+		<action path="/example" type="org.lingcloud.molva.extensions.example.portal.struts.action.ExampleAction" name="ExampleForm" scope="session" validate="false" input="/JSP/example.jsp">
+			<forward name="success" path="/JSP/exampleresult.jsp" />
+			<forward name="failure" path="/JSP/exampleresult.jsp" />
+		</action>
+		
+	</action-mappings>
+
+	<!--Config message resource file -->
+	<message-resources parameter="org.lingcloud.molva.extensions.example.portal.struts.Example" key="example" />
+
+</struts-config>
