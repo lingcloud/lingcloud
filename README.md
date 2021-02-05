@@ -36,3 +36,36 @@ The main part of LingCloud is licensed under Apache License 2.0. We welcome any 
 
 + Usability
   - Easy to learn and low cost for management and maintenance
+
+## Publications
+
+- `[ISPA '11]` Vega LingCloud: A Resource Single Leasing Point System to Support Heterogeneous Application Modes on Shared Infrastructure
+
+```
+@inproceedings{lu2011,
+ author = {Lu, Xiaoyi and Lin, Jian and Zha, Li and Xu, Zhiwei},
+ title = {{Vega LingCloud: A Resource Single Leasing Point System to Support Heterogeneous Application Modes on Shared Infrastructure}},
+ booktitle = {{Proceedings of the 2011 IEEE Ninth International Symposium on Parallel and Distributed Processing with Applications}},
+ series = {ISPA '11},
+ pages = {99--106},
+ year = {2011},
+ publisher = {IEEE Computer Society},
+ doi = {10.1109/ISPA.2011.58},
+}
+```
+
+- `[FCS '13]` Consolidated Cluster Systems for Data Centers in the Cloud Age: a Survey and Analysis
+
+```
+@article{lin2013,
+  author = {Lin, Jian and Zha, Li and Xu, Zhiwei},
+  title = {{Consolidated Cluster Systems for Data Centers in the Cloud Age: a Survey and Analysis}},
+  journal = {{Frontiers of Computer Science}},
+  volume = {7},
+  number = {1},
+  pages = {1--19},
+  year = {2013},
+  publisher = {Springer},
+  doi = {10.1007/s11704-012-2086-y},
+}
+```
